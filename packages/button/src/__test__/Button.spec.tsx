@@ -63,4 +63,30 @@ describe('Button', () => {
     await user.click(screen.getByRole('button'));
     expect(handleClick).not.toHaveBeenCalled();
   });
+
+  it('renders startIcon before children', () => {
+    const StartIcon = () => <span data-testid="start-icon">★</span>;
+    render(
+      <Button startIcon={<StartIcon />}>
+        Save
+      </Button>,
+    );
+
+    expect(screen.getByTestId('start-icon')).toBeInTheDocument();
+  });
+
+  it('renders endIcon after children', () => {
+    const EndIcon = () => <span data-testid="end-icon">→</span>;
+    render(
+      <Button endIcon={<EndIcon />}>Next</Button>,
+    );
+
+    expect(screen.getByTestId('end-icon')).toBeInTheDocument();
+  });
+
+  it('displays no icon if no startIcon or endIcon is provided', () => {
+    render(<Button>No Icon</Button>);
+    expect(screen.queryByTestId('start-icon')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('end-icon')).not.toBeInTheDocument();
+  });
 });
