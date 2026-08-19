@@ -1,46 +1,69 @@
-import type { ComponentPropsWithoutRef } from 'react';
+import {
+  type ElementType,
+  type ForwardedRef,
+  type ReactNode,
+  forwardRef,
+} from 'react';
 import { UnstyledButton } from '@xd/unstyled-button';
+import type { OverridableProps } from './types';
 
-export type ButtonOwnProps = {
-    children?: React.ReactNode;
-    disabled?: boolean;
-    variant?: 'primary' | 'secondary' | 'destructive';
-    size?: 'sm' | 'md' | 'lg';
-    startIcon?: React.ReactNode;
-    endIcon?: React.ReactNode;
-};
+export type ButtonVariant = 'primary' | 'secondary' | 'destructive';
+export type ButtonSize = 'sm' | 'md' | 'lg';
 
-export type ButtonProps = ButtonOwnProps &
-    Omit<ComponentPropsWithoutRef<'button'>, keyof ButtonOwnProps>;
+export interface ButtonOwnProps<T extends ElementType = 'button'> {
+  as?: T;
+  children?: ReactNode;
+  disabled?: boolean;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  startIcon?: ReactNode;
+  endIcon?: ReactNode;
+}
 
-export function Button({
+export type ButtonProps<T extends ElementType = 'button'> = OverridableProps<
+  T,
+  ButtonOwnProps<T>
+>;
+
+function ButtonInner<T extends ElementType = 'button'>(
+  {
+    as,
     children,
     disabled = false,
     variant = 'primary',
     size = 'md',
     startIcon,
     endIcon,
-
     ...restProps
-}: ButtonProps) {
-    return (
-        <UnstyledButton
-            disabled={disabled}
-            data-variant={variant}
-            data-size={size}
-            {...restProps}
-        >
-            {startIcon && (
-                <span aria-hidden="true" data-slot="icon">
-                    {startIcon}
-                </span>
-            )}
-            {children}
-            {endIcon && (
-                <span aria-hidden="true" data-slot="icon">
-                    {endIcon}
-                </span>
-            )}
-        </UnstyledButton>
-    );
+  }: ButtonProps<T>,
+  ref: ForwardedRef<Element>,
+) {
+  return (
+    <UnstyledButton
+      as={as as ElementType | undefined}
+      ref={ref}
+      disabled={disabled}
+      data-variant={variant}
+      data-size={size}
+      {...(restProps as Record<string, unknown>)}
+    >
+      {startIcon && (
+        <span aria-hidden="true" data-slot="icon">
+          {startIcon}
+        </span>
+      )}
+      {children}
+      {endIcon && (
+        <span aria-hidden="true" data-slot="icon">
+          {endIcon}
+        </span>
+      )}
+    </UnstyledButton>
+  );
 }
+
+export const Button = forwardRef(ButtonInner) as <
+  T extends ElementType = 'button',
+>(
+  props: ButtonProps<T> & { ref?: ForwardedRef<Element> },
+) => React.ReactElement;

@@ -66,20 +66,14 @@ describe('Button', () => {
 
   it('renders startIcon before children', () => {
     const StartIcon = () => <span data-testid="start-icon">★</span>;
-    render(
-      <Button startIcon={<StartIcon />}>
-        Save
-      </Button>,
-    );
+    render(<Button startIcon={<StartIcon />}>Save</Button>);
 
     expect(screen.getByTestId('start-icon')).toBeInTheDocument();
   });
 
   it('renders endIcon after children', () => {
     const EndIcon = () => <span data-testid="end-icon">→</span>;
-    render(
-      <Button endIcon={<EndIcon />}>Next</Button>,
-    );
+    render(<Button endIcon={<EndIcon />}>Next</Button>);
 
     expect(screen.getByTestId('end-icon')).toBeInTheDocument();
   });
@@ -92,9 +86,7 @@ describe('Button', () => {
 
   it('hides startIcon wrapper from assistive tech', () => {
     render(
-      <Button startIcon={<span data-testid="start-icon">★</span>}>
-        Save
-      </Button>,
+      <Button startIcon={<span data-testid="start-icon">★</span>}>Save</Button>,
     );
     const wrapper = screen.getByTestId('start-icon').parentElement;
     expect(wrapper).toHaveAttribute('aria-hidden', 'true');
@@ -108,5 +100,21 @@ describe('Button', () => {
     const wrapper = screen.getByTestId('end-icon').parentElement;
     expect(wrapper).toHaveAttribute('aria-hidden', 'true');
     expect(wrapper).toHaveAttribute('data-slot', 'icon');
+  });
+
+  it('renders as an anchor when as="a" is provided', () => {
+    render(
+      <Button as="a" href="/profile">
+        Profile
+      </Button>,
+    );
+    const link = screen.getByRole('link', { name: /profile/i });
+    expect(link).toHaveAttribute('href', '/profile');
+  });
+
+  it('forwards ref to the underlying DOM element', () => {
+    const ref = { current: null } as React.RefObject<HTMLButtonElement>;
+    render(<Button ref={ref}>Ref test</Button>);
+    expect(ref.current).toBeInstanceOf(HTMLButtonElement);
   });
 });
