@@ -15,4 +15,20 @@ describe('Button', () => {
       'primary',
     );
   });
+
+  it('applies secondary variant when specified', () => {
+    render(<Button variant="secondary">Secondary</Button>);
+    expect(screen.getByRole('button')).toHaveAttribute(
+      'data-variant',
+      'secondary',
+    );
+  });
+
+  it('applies destructive variant when specified', () => {
+    render(<Button variant="destructive">Delete</Button>);
+    expect(screen.getByRole('button')).toHaveAttribute(
+      'data-variant',
+      'destructive',
+    );
+  });
 });
