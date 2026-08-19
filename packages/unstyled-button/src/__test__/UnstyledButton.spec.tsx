@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { UnstyledButton } from '../components/UnstyledButton';
+import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
+import { act } from 'react';
 
 function CustomComponent({
   children,
@@ -47,5 +50,85 @@ describe('UnstyledButton', () => {
     const ref = { current: null } as React.RefObject<HTMLButtonElement>;
     render(<UnstyledButton ref={ref}>Ref test</UnstyledButton>);
     expect(ref.current).toBeInstanceOf(HTMLButtonElement);
+  });
+
+  it('accepts children as a render function', () => {
+    render(
+      <UnstyledButton>
+        {({ isHovered }) => (
+          <span data-testid="inner">{isHovered ? 'hovered' : 'idle'}</span>
+        )}
+      </UnstyledButton>,
+    );
+
+    const inner = screen.getByTestId('inner');
+    expect(inner).toHaveTextContent('idle');
+  });
+
+  it('passes isHovered=true to render function on hover', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <UnstyledButton>
+        {({ isHovered }) => (
+          <span data-testid="inner">{isHovered ? 'hovered' : 'idle'}</span>
+        )}
+      </UnstyledButton>,
+    );
+
+    await user.hover(screen.getByRole('button'));
+    expect(screen.getByTestId('inner')).toHaveTextContent('hovered');
+  });
+
+  it('calls onClick when clicked', async () => {
+    const handleClick = vi.fn();
+    const user = userEvent.setup();
+    render(<UnstyledButton onClick={handleClick}>Click</UnstyledButton>);
+    await user.click(screen.getByRole('button'));
+    expect(handleClick).toHaveBeenCalledOnce();
+  });
+
+  it('does not call onClick when disabled', async () => {
+    const handleClick = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <UnstyledButton disabled onClick={handleClick}>
+        Disabled
+      </UnstyledButton>,
+    );
+    await user.click(screen.getByRole('button'));
+    expect(handleClick).not.toHaveBeenCalled();
+  });
+
+  it('is focusable via Tab key', async () => {
+    const user = userEvent.setup();
+    render(<UnstyledButton>Focus me</UnstyledButton>);
+    await user.tab();
+    expect(screen.getByRole('button')).toHaveFocus();
+  });
+
+  it('triggers on Enter and Space keys', async () => {
+    const handleClick = vi.fn();
+    const user = userEvent.setup();
+    render(<UnstyledButton onClick={handleClick}>Key</UnstyledButton>);
+    const button = screen.getByRole('button');
+
+    act(() => {
+      button.focus();
+    });
+    await user.keyboard('{Enter}');
+    await user.keyboard(' ');
+
+    expect(handleClick).toHaveBeenCalledTimes(2);
+  });
+
+  it('has aria-disabled when disabled', () => {
+    render(<UnstyledButton disabled>Disabled</UnstyledButton>);
+    expect(screen.getByRole('button')).toHaveAttribute('data-disabled', 'true');
+  });
+
+  it('sets data-disabled when disabled', () => {
+    render(<UnstyledButton disabled>Disabled</UnstyledButton>);
+    expect(screen.getByRole('button')).toHaveAttribute('data-disabled', 'true');
   });
 });
