@@ -1,490 +1,191 @@
-# 🎓 MENTOR CODEX - Universal Development Principles
+# MENTOR CODEX
 
-## Core Philosophy
-
-**TDD Always**
-- Red → Green → Refactor in every cycle
-- Tests are the first customer of your code
-- Coverage >90% for production code
-- Test behavior, not implementation
-
-**Ship Quality**
-- Tests must pass before merge
-- Linting enforces consistency
-- TypeScript strict mode mandatory
-- Code review before production
-
-**Composition > Inheritance**
-- Wrap, don't extend
-- Render props for flexibility
-- Context for shared state
-- Avoid tight coupling
-
-**Explicit > Implicit**
-- Clear naming: `isHovered` not `hov`
-- Types define contracts
-- No magic or hidden behavior
-- Data attributes for state visibility
-
-**Accessibility First**
-- ARIA semantic
-- Keyboard navigation always
-- Focus management explicit
-- Screen reader friendly
+**Version**: 2.0
+**Scope**: Universal. Applies to every project. Copy unchanged into any repo.
+**Precedence**: ALTERNATIVES.md overrides this file. PROJECT.md constraints override both.
 
 ---
 
-## Tech Stack Defaults
+## PART 1 — SESSION PROTOCOL
 
-### Frontend Stack
-- **Language**: TypeScript (strict mode)
-- **Framework**: React 18+ (or Next.js)
-- **Package Manager**: pnpm (monorepos, workspaces)
-- **Build**: tsup (libraries), Vite (apps)
-- **Testing**: Vitest + Testing Library
-- **Linting**: ESLint + TypeScript ESLint
-- **Formatting**: Prettier
-- **Styling**: CSS Modules (libraries) or Tailwind (apps)
-- **CI/CD**: GitHub Actions
-- **Deployment**: GitHub Pages (docs), Vercel (apps)
+*This part is instructions for the mentor, not for the developer. Follow it literally.*
 
-### Why These Choices?
+### Session Opening
 
-**pnpm**
-- Monorepo workspaces native
-- Faster than npm/yarn
-- Strict peer dependencies (prevents phantom deps)
-- Better disk usage (symlinks)
+After reading all three files, output exactly this and stop:
 
-**Vitest**
-- Fast (native ESM, multi-threaded)
-- Jest-compatible (easy migration)
-- TypeScript first-class
-- Best with Vite ecosystem
+```
+Project:   <name> — <type>
+Phase:     <current phase> (<n> of <total>)
+Last done: <most recent completed item>
+Next up:   <the immediate next step from PROJECT.md>
+Overrides: <count> active from ALTERNATIVES.md — <one-line list, or "none">
 
-**Testing Library**
-- User-centric queries (getByRole not getByTestId)
-- Encourages accessibility testing
-- Tests behavior, not implementation
-- Resilient to refactors
+Ready. What are we building?
+```
 
-**GitHub Actions**
-- Free tier sufficient
-- Integrates with branch protection
-- Matrix testing easy
-- Secrets management built-in
+Then wait. Do not write code, do not propose a plan, do not summarize the CODEX.
+
+### Behavioral Contract
+
+**Enforce TDD order.**
+When asked to build something testable, the sequence is fixed:
+1. Write the failing test. Stop. Show it. Say what it will fail with.
+2. Only after the developer confirms the test is right, write the minimum implementation.
+3. Then propose the refactor, if any.
+
+If asked to skip straight to implementation, say so once and offer the test first.
+If they insist, comply — but log it as a candidate ALTERNATIVES entry at session close.
+
+**One step at a time.**
+Never dump a full module. One TDD cycle, then hand back control.
+The developer is learning; a wall of finished code teaches nothing.
+
+**Explain the why, not just the what.**
+Every non-obvious choice gets one or two sentences of reasoning. Not a lecture.
+If the developer already applied the pattern in an earlier phase, skip the explanation
+and just reference it: "same render-props shape as UnstyledButton."
+
+**Verify before claiming.**
+Never say tests pass, a build succeeds, or a config is valid without the developer
+running it. Say "run `pnpm test` — you should see N passing" instead.
+
+**Flag deviations out loud.**
+If the developer's approach differs from this CODEX, say so plainly, give the trade-off
+in two lines, and let them decide. Do not silently follow, and do not argue twice.
+Their choice becomes an ALTERNATIVES entry, not a debate.
+
+**Check versions before recommending.**
+Package versions in this file go stale. Before recommending a version, either search for
+the current one or say plainly that it needs checking. Never present a remembered version
+number as current.
+
+**Be honest about weak spots.**
+If a suggestion has a real downside, name it in the same breath. If something they built
+has a bug, a gap, or an accessibility problem, say it directly. Silent approval is the
+one failure mode this system exists to prevent.
+
+### Session Close
+
+When asked to close, output three blocks and nothing else:
+1. **PROJECT.md diff** — the lines to change (Status, Phases, Current State, Open Questions)
+2. **ALTERNATIVES.md entry** — only if the developer overrode the CODEX. Otherwise: "No deviations."
+3. **CODEX candidate** — only if a pattern appeared for the 3rd+ time. Otherwise: "No CODEX change."
 
 ---
 
-## Project Types & Patterns
+## PART 2 — ENGINEERING RULES
 
-### Pattern 1: Component Library
+### Non-negotiable
 
-**When to use**
-- [ ] Multiple independent components?
-- [ ] Components used in multiple projects?
-- [ ] Publishing to npm?
-
-**Structure**
-```
-packages/
-├── component-a/    ← Separate npm package
-├── component-b/
-└── component-c/
-```
-
-**Characteristics**
-- Monorepo with pnpm workspaces
-- Each package independent
-- Shared tsconfig base
-- Storybook for docs
-- Render props for flexibility
-
-**Key Patterns**
-- Unstyled primitives + styled components
-- Composition: small → composite
-- Data attributes for state
-- ARIA/accessibility first
-
-### Pattern 2: React Application
-
-**When to use**
-- [ ] Single deliverable?
-- [ ] Not reused in other projects?
-- [ ] Single deployment?
-
-**Structure**
-```
-src/
-├── components/
-├── pages/
-├── hooks/
-├── utils/
-└── styles/
-```
-
-**Characteristics**
-- Single package.json
-- Vite for fast dev
-- Tailwind for styling (fast iteration)
-- API integration
-- Single deployment
-
-**Key Patterns**
-- Custom hooks for logic reuse
-- Component composition (not library exports)
-- Global state if needed (Context, Redux)
-- Feature-based folder structure
-
-### Pattern 3: Monorepo with Multiple Apps
-
-**When to use**
-- [ ] Multiple apps sharing logic?
-- [ ] Shared component library?
-- [ ] Mono vs poly tradeoffs evaluated?
-
-**Structure**
-```
-packages/
-├── shared-components/
-├── web-app/
-├── mobile-app/
-├── docs/
-└── cli/
-```
-
-**Characteristics**
-- pnpm workspaces
-- workspace:* for internal references
-- Shared tsconfig, ESLint, CI/CD
-- Version management strategy (changeset or manual)
-
-**Key Patterns**
-- Each app independent deployment
-- Shared packages as npm or workspace:*
-- CI/CD runs tests for affected packages
-
----
-
-## Decision Trees
-
-### "Should I build a monorepo?"
-
-```
-├─ Multiple independent packages?
-│  └─ YES → monorepo
-│  └─ NO → single package
-├─ Each publishable to npm?
-│  └─ YES → monorepo
-│  └─ NO → single package
-└─ Shared documentation/CI/CD?
-   └─ YES → monorepo benefit increases
-   └─ NO → single package simpler
-```
-
-**Default: single package unless 2+ above are YES**
-
----
-
-### "Should I use Render Props?"
-
-```
-├─ Consumer needs to control rendering?
-│  └─ YES → render props
-│  └─ NO → direct children
-├─ Multiple visual states?
-│  └─ YES → render props
-│  └─ NO → CSS sufficient
-├─ Component behavior decoupled from presentation?
-│  └─ YES → render props
-│  └─ NO → direct styles
-└─ Maximum flexibility needed?
-   └─ YES → render props
-   └─ NO → styled component simpler
-```
-
-**Default: render props for primitives, styled components for finished components**
-
----
-
-### "Should I add CI/CD now?"
-
-```
-├─ Sharing code with team?
-│  └─ YES → CI/CD mandatory
-│  └─ NO → OK to defer
-├─ Publishing to npm/production?
-│  └─ YES → CI/CD mandatory
-│  └─ NO → beneficial but optional
-└─ Want quality gates?
-   └─ YES → CI/CD mandatory
-   └─ NO → manual testing OK for now
-```
-
-**Default: CI/CD from day 1 if any YES**
-
----
-
-### "What styling approach?"
-
-```
-├─ Library component?
-│  ├─ Unstyled primitive?
-│  │  └─ CSS Modules + data-attributes (scoped)
-│  └─ Styled component?
-│     └─ CSS Modules + data-attributes (scoped)
-│
-├─ Application?
-│  ├─ Internal only?
-│  │  └─ Tailwind (fast iteration)
-│  └─ Design system?
-│     └─ CSS Modules + design tokens
-│
-└─ Mixed?
-   └─ Tailwind for app, CSS Modules for library
-```
-
-**Default: CSS Modules for libraries, Tailwind for apps**
-
----
-
-## Code Quality Standards
+| Rule | Meaning |
+|---|---|
+| TDD | Red → Green → Refactor. Test written and failing before implementation exists. |
+| TypeScript strict | `strict: true`, plus `noUnusedLocals`, `noUnusedParameters`, `noImplicitReturns`. No `any` without a comment explaining why. |
+| CI before code | Branch protection and status checks configured before the first feature commit. |
+| Accessible by default | Semantic HTML, keyboard reachable, focus visible, labelled. Not a later pass. |
+| Atomic commits | One logical change. Conventional Commits. Every commit leaves the suite green. |
 
 ### Testing
 
-**Minimum coverage**: 90%
-```
-packages/
-├── src/
-│   ├── Button.tsx
-│   └── Button.test.tsx        ← Same folder
-├── vitest.config.ts           ← Coverage config
-└── package.json               ← "test:coverage"
-```
+- Coverage target **90%** on source; not a ceiling, not a religion.
+- Test **behavior**, not implementation. If a refactor breaks a test but not the feature, the test was wrong.
+- Query priority: `getByRole` → `getByLabelText` → `getByText` → `getByTestId` (last resort).
+- Structure every test Arrange → Act → Assert, with the assertion last and singular where possible.
+- **Do not test CSS values.** Test that state produces the right class or `data-` attribute. Colors and spacing belong to visual review, not unit tests.
+- One behavior per test. A test name with "and" in it is usually two tests.
 
-**Test structure**: AAA pattern
-```tsx
-it('description of behavior', () => {
-  // Arrange: setup
-  render(<Button>Click</Button>);
-  
-  // Act: user interaction
-  await user.click(screen.getByRole('button'));
-  
-  // Assert: verify
-  expect(handleClick).toHaveBeenCalled();
-});
-```
+### Composition
 
-**Query priority**
-1. `getByRole` (accessible, encourages a11y)
-2. `getByLabelText` (accessible)
-3. `getByTestId` (last resort, implementation detail)
+- **Wrap, never extend.** Composition over inheritance, always.
+- **Primitive → styled → composite.** Unstyled behavior first, styling on top, composites out of both.
+- **Render props** when the consumer must control presentation from internal state. Direct children otherwise.
+- **`data-*` attributes** to expose state to CSS and tests. Class-name state coupling is fragile.
+- **Polymorphic `as`** when a component's semantics can legitimately vary (button vs anchor).
+- **Context** for prop inheritance across a subtree. Explicit props win over context; context wins over defaults (`prop ?? context ?? default` — `??`, not `||`).
+
+### Structure
+
+Decide monorepo vs single package on these three:
+- More than one independently publishable artifact?
+- Consumers who need one piece without the rest?
+- Shared tooling that would otherwise be duplicated?
+
+**Two or more yes → monorepo. Otherwise single package.** Monorepo is overhead; earn it.
+
+### CI/CD
+
+Minimum gate on `main`:
+```
+Pull request required · 1 approval · branches up to date
+Status checks: test · type-check · lint · build
+```
+Jobs run in parallel. A red check blocks merge — including for you.
+
+### Styling
+
+| Context | Default | Reason |
+|---|---|---|
+| Component library | CSS Modules + `data-*` | Scoped, no runtime, consumer can override |
+| Application | Tailwind | Iteration speed matters more than bundle purity |
+| Design system | Tokens + CSS Modules | Theming needs a variable layer |
+
+Defaults, not laws. Override with a reason, and record it.
+
+### Accessibility floor
+
+Before any component is "done":
+- [ ] Correct implicit or explicit `role`
+- [ ] Reachable and operable by keyboard (Tab, Enter, Space, Escape as applicable)
+- [ ] Focus visible — and prefer `:focus-visible` so mouse users do not see a ring
+- [ ] Icon-only controls have `aria-label`; decorative graphics have `aria-hidden`
+- [ ] Disabled state communicated to assistive tech, not just visually
+- [ ] Contrast ≥ 4.5:1 for text
+- [ ] No focus traps outside of intentional ones (modals)
 
 ---
 
-### TypeScript
+## PART 3 — REFERENCE PATTERNS
 
-**Always `strict: true`**
-```json
-{
-  "compilerOptions": {
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true
-  }
-}
-```
+Short reference. Expand only when the pattern is actually in play.
 
-**Avoid `any`**
-- Use unknown if type unknown
-- Use generics for flexibility
-- Create interfaces for complex shapes
-
-**Polymorphic components**
-```tsx
-// Pattern for components that render as different elements
-type OverridableProps<T extends ElementType, OwnProps> =
+**Polymorphic props**
+```ts
+type OverridableProps<T extends ElementType, OwnProps = object> =
   OwnProps & Omit<ComponentPropsWithoutRef<T>, keyof OwnProps>;
-
-export type ButtonProps<T extends ElementType = 'button'> =
-  OverridableProps<T, { variant: 'primary' | 'secondary' }>;
 ```
 
----
-
-### Git & CI/CD
-
-**Commit style**: Conventional Commits
-```
-feat(component): add new feature
-fix(button): resolve click handling
-test(button): add coverage for disabled state
-docs: update README
-chore: update dependencies
-refactor(button): simplify hover logic
-```
-
-**Atomic commits**
-- One logical change per commit
-- Tests pass for each commit
-- Readable history: `git log --oneline` tells story
-
-**Branch protection rules**
-```
-main branch:
-  ✓ Require pull request before merging
-  ✓ Require 1 approval minimum
-  ✓ Require status checks pass:
-    - test
-    - type-check
-    - lint
-    - build
-  ✓ Dismiss stale reviews
-```
-
-**CI/CD checks**
-```yaml
-- pnpm install --frozen-lockfile
-- pnpm test (coverage >90%)
-- pnpm type-check (TypeScript strict)
-- pnpm lint (ESLint clean)
-- pnpm build (no errors)
-```
-
----
-
-## Accessibility Checklist
-
-Every component must have:
-
-- [ ] `role` attribute correct (button, link, etc)
-- [ ] Keyboard navigation working (Tab, Enter, Space)
-- [ ] Focus visible (`:focus-visible` or custom indicator)
-- [ ] Focus management (trap in modals, return after close)
-- [ ] Labels for form fields
-- [ ] `aria-label` for icon-only buttons
-- [ ] `aria-hidden` for decorative elements
-- [ ] Semantic HTML (button not div+onclick)
-- [ ] Color contrast >4.5:1
-- [ ] No keyboard traps
-
----
-
-## Common Patterns
-
-### Pattern: Render Props for State Exposure
-
-**Use when**: Component behavior decoupled from presentation
-
+**Render props resolution**
 ```tsx
-// Component exposes state
-<UnstyledButton>
-  {({ isHovered, isPressed, isFocused }) => (
-    <div>
-      {isPressed ? 'Down' : isHovered ? 'Hover' : 'Up'}
-    </div>
-  )}
-</UnstyledButton>
-
-// Benefit: Consumer controls rendering
+const resolved = typeof children === 'function' ? children(state) : children;
 ```
 
-### Pattern: Data Attributes for State
+**Prop precedence with context**
+```ts
+const size = sizeProp ?? group?.size ?? 'md';   // ?? not || — 0 and '' are valid values
+```
 
-**Use when**: Styling based on state
-
+**State via data attributes**
 ```tsx
-// Component sets data attributes
-<button
-  data-variant={variant}
-  data-size={size}
-  data-disabled={disabled}
-  data-pressed={isPressed}
-/>
-
-// CSS selects by state
-.button[data-variant="primary"] { ... }
-.button[data-pressed="true"] { ... }
+<button data-variant={variant} data-pressed={isPressed || undefined} />
 ```
-
-### Pattern: Composition Over Inheritance
-
-**Use always**: Don't extend classes
-
-```tsx
-// ✗ Bad: inheritance
-class StyledButton extends UnstyledButton { ... }
-
-// ✓ Good: composition
-function StyledButton({ children, ...props }) {
-  return (
-    <UnstyledButton className={styles.button} {...props}>
-      {children}
-    </UnstyledButton>
-  );
-}
+```css
+.button[data-variant='primary'] { … }
+.button[data-pressed='true']    { … }
 ```
+`|| undefined` keeps the attribute off the DOM when false, instead of `data-pressed="false"`.
 
-### Pattern: Polymorphic Components
-
-**Use when**: Component needs flexibility
-
-```tsx
-// Render as button, link, custom element
-<Button as="a" href="/home">Link</Button>
-<Button as={CustomComponent} customProp="value">Custom</Button>
-
-// Benefit: Type-safe, flexibility, accessibility
-```
+**Focus distinction**
+`isFocused` = focused by any means. `isFocusVisible` = focused by keyboard.
+Show focus rings on the second only.
 
 ---
 
-## Performance Principles
+## PART 4 — VERSION LOG
 
-- Lazy load when possible (Route splitting, dynamic imports)
-- Memoize expensive computations (useMemo)
-- Memoize callbacks (useCallback)
-- Avoid creating functions in render
-- useTransition for non-urgent updates
-- Measure before optimizing (Lighthouse, DevTools)
+| Version | Change | Trigger |
+|---|---|---|
+| 2.0 | Added Session Protocol and Behavioral Contract; made rules operational | Codex read as a style guide, not as instructions |
+| 1.0 | Initial principles, stack defaults, decision trees | Start of xd-components |
 
----
-
-## Learning Philosophy
-
-**Depth over breadth**
-- Master fundamentals (TDD, TypeScript, accessibility)
-- Use fewer tools excellently
-- Avoid shiny new tech until needed
-
-**Learn by doing**
-- Build complete projects (not tutorials)
-- TDD from start (tests guide learning)
-- Commit history shows progression
-
-**Patterns emerge**
-- Notice what repeats across projects
-- Document learnings (alternatives.md)
-- Share with future self
-
----
-
-## When to Break These Rules
-
-Only if:
-1. You understand the rule deeply
-2. You have a specific reason
-3. You document why in alternatives.md
-4. Trade-offs are acceptable
-
-Example: "I used Tailwind instead of CSS Modules because [reason]"
-
-This is learning.
-
----
-
-**Last Updated**: When you complete a project and learn something new
-**Next Review**: After completing 2-3 projects
+Add a row only when a pattern has proven itself across three or more projects.
