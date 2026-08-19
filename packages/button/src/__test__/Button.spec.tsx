@@ -31,4 +31,15 @@ describe('Button', () => {
       'destructive',
     );
   });
+
+  it('applies md size by default', () => {
+    render(<Button>Medium</Button>);
+    expect(screen.getByRole('button')).toHaveAttribute('data-size', 'md');
+  });
+
+  const sizes = ['sm', 'md', 'lg'] as const;
+  it.each(sizes)('applies %s size when specified', (size) => {
+    render(<Button size={size}>text</Button>);
+    expect(screen.getByRole('button')).toHaveAttribute('data-size', size);
+  });
 });
