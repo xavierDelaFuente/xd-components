@@ -42,4 +42,10 @@ describe('UnstyledButton', () => {
     const customComponent = screen.getByText('Go home');
     expect(customComponent).toBeInTheDocument();
   });
+
+  it('forwards ref to the underlying DOM element', () => {
+    const ref = { current: null } as React.RefObject<HTMLButtonElement>;
+    render(<UnstyledButton ref={ref}>Ref test</UnstyledButton>);
+    expect(ref.current).toBeInstanceOf(HTMLButtonElement);
+  });
 });
