@@ -89,4 +89,24 @@ describe('Button', () => {
     expect(screen.queryByTestId('start-icon')).not.toBeInTheDocument();
     expect(screen.queryByTestId('end-icon')).not.toBeInTheDocument();
   });
+
+  it('hides startIcon wrapper from assistive tech', () => {
+    render(
+      <Button startIcon={<span data-testid="start-icon">★</span>}>
+        Save
+      </Button>,
+    );
+    const wrapper = screen.getByTestId('start-icon').parentElement;
+    expect(wrapper).toHaveAttribute('aria-hidden', 'true');
+    expect(wrapper).toHaveAttribute('data-slot', 'icon');
+  });
+
+  it('hides endIcon wrapper from assistive tech', () => {
+    render(
+      <Button endIcon={<span data-testid="end-icon">→</span>}>Next</Button>,
+    );
+    const wrapper = screen.getByTestId('end-icon').parentElement;
+    expect(wrapper).toHaveAttribute('aria-hidden', 'true');
+    expect(wrapper).toHaveAttribute('data-slot', 'icon');
+  });
 });

@@ -30,9 +30,17 @@ export function Button({
             data-size={size}
             {...restProps}
         >
-            {startIcon && <>{startIcon}</>}
+            {startIcon && (
+                <span aria-hidden="true" data-slot="icon">
+                    {startIcon}
+                </span>
+            )}
             {children}
-            {endIcon && <>{endIcon}</>}
+            {endIcon && (
+                <span aria-hidden="true" data-slot="icon">
+                    {endIcon}
+                </span>
+            )}
         </UnstyledButton>
     );
 }
