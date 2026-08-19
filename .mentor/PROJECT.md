@@ -65,14 +65,14 @@ Versions in `package.json` are the source of truth — check there, not here.
 **Done**
 - Monorepo scaffold; all root scripts working (`test`, `type-check`, `lint`, `build`)
 - CI: four parallel jobs, branch protection on `main` (PR + 1 approval + 4 checks)
-- `@xd-components/unstyled-button` complete — 11 tests, built via TDD
-- `@xd-components/button` package scaffolded, source files empty
+- `@xd/unstyled-button` complete — 11 tests, built via TDD
+- `@xd/button` package scaffolded, first TDD cycle green (renders + default primary variant, composed on `UnstyledButton`)
 
 **In progress**
-- Module 3: Button. Nothing written yet.
+- Module 3: Button. Cycle 1 done (renders, default `data-variant="primary"`, composed on `UnstyledButton`).
 
 **Next**
-- First TDD cycle on Button: failing test for default render + `data-variant="primary"`.
+- TDD cycle 2 on Button: secondary/destructive variant, driven by a real `variant` prop.
 
 ---
 
@@ -89,7 +89,7 @@ Referenced by later phases; do not re-derive.
 
 ## Open Questions
 
-- Duplicate `OverridableProps` per package, or extract a `@xd-components/types` package? Currently duplicated — revisit at Module 5.
+- Duplicate `OverridableProps` per package, or extract a `@xd/types` package? Currently duplicated — revisit at Module 5.
 - Does `ButtonGroup` create a circular dependency (`button` reads its context, `button-group` imports `button` types)? Resolve before starting Module 5.
 - Publish all four packages at v0.1.0 together, or version independently from the start?
 
