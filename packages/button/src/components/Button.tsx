@@ -6,6 +6,7 @@ import {
 } from 'react';
 import { UnstyledButton } from '@xd/unstyled-button';
 import type { OverridableProps } from './types';
+import './Button.css';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'destructive';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -34,6 +35,7 @@ function ButtonInner<T extends ElementType = 'button'>(
     size = 'md',
     startIcon,
     endIcon,
+    className,
     ...restProps
   }: ButtonProps<T>,
   ref: ForwardedRef<Element>,
@@ -45,6 +47,7 @@ function ButtonInner<T extends ElementType = 'button'>(
       disabled={disabled}
       data-variant={variant}
       data-size={size}
+      className={['xd-button', className].filter(Boolean).join(' ')}
       {...(restProps as Record<string, unknown>)}
     >
       {startIcon && (
