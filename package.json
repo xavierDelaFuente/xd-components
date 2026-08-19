@@ -11,6 +11,7 @@
     "lint": "eslint \"packages/*/src/**/*.{ts,tsx}\"",
     "type-check": "tsc --noEmit",
     "format": "prettier --write \"packages/*/src/**/*.{ts,tsx,css}\"",
+    "check": "pnpm lint && pnpm format && pnpm type-check",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build -o storybook-static"
   },
