@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { describe, it, expect, vi } from 'vitest';
 import { Button } from '../components/Button';
 
 describe('Button', () => {
@@ -41,5 +42,25 @@ describe('Button', () => {
   it.each(sizes)('applies %s size when specified', (size) => {
     render(<Button size={size}>text</Button>);
     expect(screen.getByRole('button')).toHaveAttribute('data-size', size);
+  });
+
+  it('calls onClick when clicked', async () => {
+    const handleClick = vi.fn();
+    const user = userEvent.setup();
+    render(<Button onClick={handleClick}>Click</Button>);
+    await user.click(screen.getByRole('button'));
+    expect(handleClick).toHaveBeenCalledOnce();
+  });
+
+  it('does not call onClick when disabled', async () => {
+    const handleClick = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <Button disabled onClick={handleClick}>
+        Disabled
+      </Button>,
+    );
+    await user.click(screen.getByRole('button'));
+    expect(handleClick).not.toHaveBeenCalled();
   });
 });
