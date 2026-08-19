@@ -16,8 +16,8 @@ export interface UnstyledButtonRenderState {
   isDisabled: boolean;
 }
 
-export interface UnstyledButtonOwnProps {
-  as?: ElementType;
+export interface UnstyledButtonOwnProps<T extends ElementType = ElementType> {
+  as?: T;
   children?: ReactNode | ((state: UnstyledButtonRenderState) => ReactNode);
   disabled?: boolean;
 }
@@ -26,7 +26,7 @@ function UnstyledButtonInner<T extends ElementType = 'button'>(
   { as, children, disabled = false, ...restProps }: UnstyledButtonProps<T>,
   ref: ForwardedRef<Element>,
 ) {
-  const Component = as || 'button';
+  const Component = (as || 'button') as ElementType;
 
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
@@ -88,7 +88,7 @@ function UnstyledButtonInner<T extends ElementType = 'button'>(
 }
 
 export type UnstyledButtonProps<T extends ElementType = 'button'> =
-  OverridableProps<T, UnstyledButtonOwnProps>;
+  OverridableProps<T, UnstyledButtonOwnProps<T>>;
 
 export const UnstyledButton = forwardRef(UnstyledButtonInner) as <
   T extends ElementType = 'button',
