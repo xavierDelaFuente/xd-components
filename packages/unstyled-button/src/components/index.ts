@@ -1,2 +1,6 @@
-export type { UnstyledButtonProps } from './UnstyledButton';
 export { UnstyledButton } from './UnstyledButton';
+export type {
+  UnstyledButtonProps,
+  UnstyledButtonOwnProps,
+  UnstyledButtonRenderState,
+} from './UnstyledButton';

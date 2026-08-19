@@ -1,5 +1,5 @@
 {
-  "name": "@xd-components/unstyled-button",
+  "name": "@xd/unstyled-button",
   "version": "0.1.0",
   "description": "Unstyled button primitive with accessibility",
   "main": "dist/index.js",
