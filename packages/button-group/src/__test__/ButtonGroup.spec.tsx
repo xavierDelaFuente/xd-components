@@ -86,4 +86,14 @@ describe('ButtonGroup', () => {
     );
     expect(screen.getByRole('button')).not.toBeDisabled();
   });
+
+  it('forwards ref to the underlying div element', () => {
+    const ref = { current: null } as React.RefObject<HTMLDivElement>;
+    render(
+      <ButtonGroup ref={ref}>
+        <Button>Left</Button>
+      </ButtonGroup>,
+    );
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+  });
 });

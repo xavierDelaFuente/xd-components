@@ -1,7 +1,7 @@
 # PROJECT — xd-components
 
 **Type**: Component library (monorepo, per-component npm packages)
-**Status**: Module 5 of 8
+**Status**: Module 5 of 8 (functionally complete)
 **Repo**: https://github.com/xavierDelaFuente/xd-components
 **Local**: ~/Repos/2026/xd-components
 
@@ -15,6 +15,7 @@
 | Framework | React 18 |
 | Packages | pnpm workspaces |
 | Test | Vitest + Testing Library + jsdom |
+| Lint/Format | Biome (`biome lint`) — replaced ESLint + Prettier via a separate `build/biome` branch merged into `main` before Module 4 |
 | Build | tsup (ESM + CJS + d.ts) |
 | Styling | Plain CSS (hand-namespaced classes, e.g. `.xd-button`) + `data-*` attributes — see Architecture Decisions |
 | Docs | Storybook |
@@ -56,7 +57,7 @@ Versions in `package.json` are the source of truth — check there, not here.
 - [x] **2 — UnstyledButton** · polymorphic `as`, forwardRef, render props, interaction state, 11 tests
 - [x] **3 — Button** · variants, sizes, icon slots, `as`/forwardRef parity, styling
 - [x] **4 — IconButton** · composition over Button, mandatory `aria-label`
-- [ ] **5 — ButtonGroup** · Context prop inheritance with per-child override
+- [x] **5 — ButtonGroup** · Context prop inheritance with per-child override
 - [ ] **6 — Storybook** · centralised stories, a11y addon
 - [ ] **7 — Build & publish** · verify dist output, npm publish flow
 - [ ] **8 — Deploy** · Storybook to GitHub Pages via Actions
@@ -71,13 +72,14 @@ Versions in `package.json` are the source of truth — check there, not here.
 - `@xd/unstyled-button` complete — 12 tests, built via TDD
 - `@xd/button` complete — 17 tests, built via TDD: variants, sizes, icon slots (with `aria-hidden` wrappers), `onClick` pass-through, polymorphic `as`, `forwardRef`, styled via plain namespaced CSS (`.xd-button`, minimal palette, light/dark via `prefers-color-scheme`)
 - `@xd/icon-button` complete — 8 tests, built via TDD: mandatory `aria-label`, icon-only (no visible text), `forwardRef`, `IconButtonProps` extends `Omit<ButtonProps, 'children' | 'startIcon' | 'endIcon' | 'as'>` rather than duplicating individual props
+- `@xd/button` now also has 19 tests (was 17) — added direct unit tests for its own group-context resolution logic (`ButtonGroupProvider` wired directly, no `button-group` dependency needed)
+- `@xd/button-group` complete — 8 tests, built via TDD: `role="group"` wrapper, `variant`/`size`/`disabled` propagate via context, individual override on all three, `forwardRef`. Group context lives inside `@xd/button` (see Architecture Decisions) to avoid a circular workspace dependency.
 
 **In progress**
 - Module 3 (styling) functionally done but not yet visually verified in a browser — no Storybook/demo app exists yet (that's Module 6).
-- Module 5: ButtonGroup. Nothing written yet.
 
 **Next**
-- First TDD cycle on ButtonGroup: renders children inside a `role="group"` wrapper.
+- Module 6: Storybook. First real chance to visually verify Modules 3–5.
 
 ---
 
@@ -90,6 +92,8 @@ Referenced by later phases; do not re-derive.
 - **`data-*` for state** — set with `|| undefined` so false-y states leave no attribute.
 - **`OverridableProps<T, Own>`** — shared polymorphic prop type, lives in each package's `utils/types.ts`. Only used by packages that need `as` polymorphism (`unstyled-button`, `button`) — `icon-button` doesn't expose `as`, so it has no need for this type.
 - **Compose via `Omit<XProps, '...'> & { ownFields }`, not hand-duplicated props** — `IconButtonProps` extends `Omit<ButtonProps, 'children' | 'startIcon' | 'endIcon' | 'as'>` instead of retyping `variant`/`size`/`disabled`/`onClick` itself. A blocklist of what's disallowed, not an allowlist of what's forwarded — future `Button` props reach `IconButton` with no maintenance here.
+- **`prop ?? group?.x ?? default` precedence** — `Button` resolves `variant`/`size`/`disabled` from its own explicit prop first, then `useButtonGroupContext()`, then a hardcoded default. Test this directly in the package that owns the logic (`@xd/button`), not only through the downstream consumer (`@xd/button-group`) — a regression here would otherwise only surface one package away.
+- **`role="group"` on a `div`, not `<fieldset>`** — Biome's `useSemanticElements` a11y rule suggests `<fieldset>`; suppressed with a `biome-ignore` because `<fieldset>` is for form-control groupings and carries unwanted default browser chrome for a button toolbar. `role="group"` is itself a correct WAI-ARIA pattern here.
 
 ---
 
@@ -102,4 +106,4 @@ Referenced by later phases; do not re-derive.
 
 ---
 
-**Updated**: after Module 4, start of Module 5
+**Updated**: after Module 5
