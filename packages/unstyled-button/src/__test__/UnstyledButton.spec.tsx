@@ -37,7 +37,7 @@ describe('UnstyledButton', () => {
 
   it('renders as a custom Component when "as" prop is provided', () => {
     render(
-      <UnstyledButton as={() => <CustomComponent children="Go home" />}>
+      <UnstyledButton as={() => <CustomComponent>Go home</CustomComponent>}>
         Go home
       </UnstyledButton>,
     );
