@@ -1,7 +1,7 @@
 # PROJECT — xd-components
 
 **Type**: Component library (monorepo, per-component npm packages)
-**Status**: Module 3 of 8
+**Status**: Module 5 of 8
 **Repo**: https://github.com/xavierDelaFuente/xd-components
 **Local**: ~/Repos/2026/xd-components
 
@@ -37,6 +37,7 @@ Versions in `package.json` are the source of truth — check there, not here.
 | Styling hook | `data-*` attributes, not class-name state | Visible in DevTools, stable for tests |
 | CSS scoping | Plain CSS, hand-namespaced classes (`.xd-button`), not CSS Modules | `esbuild-css-modules-plugin` (only viable option found) produces broken dist paths and non-functional class hashing under `tsup`; tsup's own CSS support is documented experimental. Revisit if tooling improves or the project migrates to `tsdown`. |
 | CI timing | Before first feature commit | Quality gate from commit one |
+| Group context ownership | Lives in `@xd/button`, not `@xd/button-group` | Avoids a circular workspace dependency — the doc's original design had `button` import `useButtonGroup` from `button-group` while `button-group` imports `Button`'s types from `button`. Keeping the context inside `button` (consumed internally, exported for `ButtonGroup` to use as `Provider`) keeps the dependency one-directional. |
 
 ---
 
@@ -54,7 +55,7 @@ Versions in `package.json` are the source of truth — check there, not here.
 - [x] **1 — Scaffold** · pnpm workspaces, TS strict, Vitest, tsup, ESLint/Prettier, Actions, branch protection
 - [x] **2 — UnstyledButton** · polymorphic `as`, forwardRef, render props, interaction state, 11 tests
 - [x] **3 — Button** · variants, sizes, icon slots, `as`/forwardRef parity, styling
-- [ ] **4 — IconButton** · composition over Button, mandatory `aria-label`
+- [x] **4 — IconButton** · composition over Button, mandatory `aria-label`
 - [ ] **5 — ButtonGroup** · Context prop inheritance with per-child override
 - [ ] **6 — Storybook** · centralised stories, a11y addon
 - [ ] **7 — Build & publish** · verify dist output, npm publish flow
@@ -69,12 +70,14 @@ Versions in `package.json` are the source of truth — check there, not here.
 - CI: four parallel jobs, branch protection on `main` (PR + 1 approval + 4 checks)
 - `@xd/unstyled-button` complete — 12 tests, built via TDD
 - `@xd/button` complete — 17 tests, built via TDD: variants, sizes, icon slots (with `aria-hidden` wrappers), `onClick` pass-through, polymorphic `as`, `forwardRef`, styled via plain namespaced CSS (`.xd-button`, minimal palette, light/dark via `prefers-color-scheme`)
+- `@xd/icon-button` complete — 8 tests, built via TDD: mandatory `aria-label`, icon-only (no visible text), `forwardRef`, `IconButtonProps` extends `Omit<ButtonProps, 'children' | 'startIcon' | 'endIcon' | 'as'>` rather than duplicating individual props
 
 **In progress**
-- Module 3 functionally done. Not yet visually verified in a browser — no Storybook/demo app exists yet (that's Module 6).
+- Module 3 (styling) functionally done but not yet visually verified in a browser — no Storybook/demo app exists yet (that's Module 6).
+- Module 5: ButtonGroup. Nothing written yet.
 
 **Next**
-- Module 4: IconButton, composing `Button`.
+- First TDD cycle on ButtonGroup: renders children inside a `role="group"` wrapper.
 
 ---
 
@@ -85,17 +88,18 @@ Referenced by later phases; do not re-derive.
 - **Render props** — `UnstyledButton` exposes `{ isHovered, isPressed, isFocused, isFocusVisible, isDisabled }`. Chosen over callback props because callbacks only allow side effects, not conditional rendering.
 - **`isFocusVisible` vs `isFocused`** — ring shows only on keyboard focus. Mouse users already know where they clicked.
 - **`data-*` for state** — set with `|| undefined` so false-y states leave no attribute.
-- **`OverridableProps<T, Own>`** — shared polymorphic prop type, lives in each package's `utils/types.ts`.
+- **`OverridableProps<T, Own>`** — shared polymorphic prop type, lives in each package's `utils/types.ts`. Only used by packages that need `as` polymorphism (`unstyled-button`, `button`) — `icon-button` doesn't expose `as`, so it has no need for this type.
+- **Compose via `Omit<XProps, '...'> & { ownFields }`, not hand-duplicated props** — `IconButtonProps` extends `Omit<ButtonProps, 'children' | 'startIcon' | 'endIcon' | 'as'>` instead of retyping `variant`/`size`/`disabled`/`onClick` itself. A blocklist of what's disallowed, not an allowlist of what's forwarded — future `Button` props reach `IconButton` with no maintenance here.
 
 ---
 
 ## Open Questions
 
-- Duplicate `OverridableProps` per package, or extract a `@xd/types` package? Currently duplicated — revisit at Module 5.
-- Does `ButtonGroup` create a circular dependency (`button` reads its context, `button-group` imports `button` types)? Resolve before starting Module 5.
+- ~~Duplicate `OverridableProps` per package, or extract a `@xd/types` package?~~ Resolved (implicitly): `icon-button` didn't need it at all, so only 2 of 3 packages duplicate it so far. Keep deferring — not worth extracting for one shared type.
+- ~~Does `ButtonGroup` create a circular dependency?~~ Resolved 2026-08-20: group context lives in `@xd/button`, not `@xd/button-group`. See Architecture Decisions.
 - Publish all four packages at v0.1.0 together, or version independently from the start?
 - Is `tsdown` (tsup's actively-maintained successor) worth migrating to? Would likely fix CSS Modules support; touches every package's build config. Not urgent — revisit at Module 7 (Build & Publish) or if tsup's pace keeps slowing.
 
 ---
 
-**Updated**: after Module 3
+**Updated**: after Module 4, start of Module 5
