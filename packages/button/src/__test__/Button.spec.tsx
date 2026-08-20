@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import { Button } from '../components/Button';
+import { ButtonGroupProvider } from '../components/ButtonGroupContext';
 
 describe('Button', () => {
   it('renders with text content', () => {
@@ -116,5 +117,31 @@ describe('Button', () => {
     const ref = { current: null } as React.RefObject<HTMLButtonElement>;
     render(<Button ref={ref}>Ref test</Button>);
     expect(ref.current).toBeInstanceOf(HTMLButtonElement);
+  });
+
+  it('resolves variant, size, and disabled from ButtonGroupProvider context', () => {
+    render(
+      <ButtonGroupProvider value={{ variant: 'secondary', size: 'lg', disabled: true }}>
+        <Button>Grouped</Button>
+      </ButtonGroupProvider>,
+    );
+    const button = screen.getByRole('button');
+    expect(button).toHaveAttribute('data-variant', 'secondary');
+    expect(button).toHaveAttribute('data-size', 'lg');
+    expect(button).toBeDisabled();
+  });
+
+  it('lets an explicit prop override the group context value', () => {
+    render(
+      <ButtonGroupProvider value={{ variant: 'secondary', size: 'lg', disabled: true }}>
+        <Button variant="destructive" size="sm" disabled={false}>
+          Overridden
+        </Button>
+      </ButtonGroupProvider>,
+    );
+    const button = screen.getByRole('button');
+    expect(button).toHaveAttribute('data-variant', 'destructive');
+    expect(button).toHaveAttribute('data-size', 'sm');
+    expect(button).not.toBeDisabled();
   });
 });

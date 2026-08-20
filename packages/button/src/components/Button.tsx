@@ -6,6 +6,7 @@ import {
 } from 'react';
 import { UnstyledButton } from '@xd/unstyled-button';
 import type { OverridableProps } from './types';
+import { useButtonGroupContext } from './ButtonGroupContext';
 import './Button.css';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'destructive';
@@ -30,9 +31,9 @@ function ButtonInner<T extends ElementType = 'button'>(
   {
     as,
     children,
-    disabled = false,
-    variant = 'primary',
-    size = 'md',
+    disabled: disabledProp,
+    variant: variantProp,
+    size: sizeProp,
     startIcon,
     endIcon,
     className,
@@ -40,6 +41,12 @@ function ButtonInner<T extends ElementType = 'button'>(
   }: ButtonProps<T>,
   ref: ForwardedRef<Element>,
 ) {
+  const group = useButtonGroupContext();
+
+  const variant = variantProp ?? group?.variant ?? 'primary';
+  const size = sizeProp ?? group?.size ?? 'md';
+  const disabled = disabledProp ?? group?.disabled ?? false;
+
   return (
     <UnstyledButton
       as={as as ElementType | undefined}

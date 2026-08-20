@@ -5,3 +5,8 @@ export type {
   ButtonVariant,
   ButtonSize,
 } from './components';
+export {
+  ButtonGroupProvider,
+  useButtonGroupContext,
+} from './components';
+export type { ButtonGroupContextValue } from './components';

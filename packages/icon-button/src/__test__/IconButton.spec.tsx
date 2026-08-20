@@ -4,7 +4,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { IconButton } from '../components/IconButton';
 
 const MockIcon = () => (
-  <svg data-testid="mock-icon" viewBox="0 0 24 24">
+  <svg aria-hidden="true" data-testid="mock-icon" viewBox="0 0 24 24">
     <path d="M12 2L2 22h20L12 2z" />
   </svg>
 );
