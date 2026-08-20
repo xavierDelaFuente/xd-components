@@ -28,4 +28,9 @@ describe('IconButton', () => {
     const icon = screen.getByTestId('mock-icon');
     expect(icon.closest('[aria-hidden="true"]')).not.toBeNull();
   });
+
+  it('renders no visible text content', () => {
+    render(<IconButton icon={<MockIcon />} label="Save" />);
+    expect(screen.getByRole('button').textContent?.trim()).toBe('');
+  });
 });

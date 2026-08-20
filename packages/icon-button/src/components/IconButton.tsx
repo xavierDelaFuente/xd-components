@@ -6,9 +6,5 @@ export type IconButtonProps = {
 };
 
 export function IconButton({ label, icon }: IconButtonProps) {
-  return (
-    <Button startIcon={icon} aria-label={label}>
-      {label}
-    </Button>
-  );
+  return <Button startIcon={icon} aria-label={label} />;
 }
