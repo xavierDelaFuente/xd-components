@@ -2,3 +2,12 @@ packages:
   - "packages/*"
 allowBuilds:
   esbuild: true
+minimumReleaseAgeExclude:
+  - '@storybook/addon-a11y@10.5.10'
+  - '@storybook/addon-docs@10.5.10'
+  - '@storybook/builder-vite@10.5.10'
+  - '@storybook/csf-plugin@10.5.10'
+  - '@storybook/react-dom-shim@10.5.10'
+  - '@storybook/react-vite@10.5.10'
+  - '@storybook/react@10.5.10'
+  - storybook@10.5.10

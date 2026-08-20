@@ -10,10 +10,11 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
-    }
+    },
+    "./styles.css": "./dist/index.css"
   },
   "files": ["dist"],
-  "sideEffects": false,
+  "sideEffects": ["*.css"],
   "keywords": ["react", "button", "styled", "accessible"],
   "scripts": {
     "build": "tsup",

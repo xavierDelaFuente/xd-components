@@ -1,7 +1,7 @@
 # PROJECT — xd-components
 
 **Type**: Component library (monorepo, per-component npm packages)
-**Status**: Module 5 of 8 (functionally complete)
+**Status**: Module 6 of 8 (functionally complete)
 **Repo**: https://github.com/xavierDelaFuente/xd-components
 **Local**: ~/Repos/2026/xd-components
 
@@ -37,6 +37,8 @@ Versions in `package.json` are the source of truth — check there, not here.
 | State exposure | Render props on primitives | Consumer controls rendering from internal state |
 | Styling hook | `data-*` attributes, not class-name state | Visible in DevTools, stable for tests |
 | CSS scoping | Plain CSS, hand-namespaced classes (`.xd-button`), not CSS Modules | `esbuild-css-modules-plugin` (only viable option found) produces broken dist paths and non-functional class hashing under `tsup`; tsup's own CSS support is documented experimental. Revisit if tooling improves or the project migrates to `tsdown`. |
+| Storybook version | v10.5.10 official `init`, not the doc's `addon-essentials` | `@storybook/addon-essentials` has been empty since Storybook 9 and won't be published again (verified against npm registry). Used `npx storybook@latest init --yes --type react --builder vite --package-manager pnpm --features docs a11y` instead of hand-assembling config. |
+| CSS distribution | `@xd/button` exports `./styles.css` subpath, `sideEffects: ["*.css"]` | The CSS is a separate file from the JS bundle (tsup doesn't inject at runtime); without an explicit export subpath, `import '@xd/button/styles.css'` 404s under strict `exports` resolution, and `sideEffects: false` would let bundlers tree-shake the import away entirely. Not Storybook-specific — any real consumer hits this. |
 | CI timing | Before first feature commit | Quality gate from commit one |
 | Group context ownership | Lives in `@xd/button`, not `@xd/button-group` | Avoids a circular workspace dependency — the doc's original design had `button` import `useButtonGroup` from `button-group` while `button-group` imports `Button`'s types from `button`. Keeping the context inside `button` (consumed internally, exported for `ButtonGroup` to use as `Provider`) keeps the dependency one-directional. |
 
@@ -47,7 +49,7 @@ Versions in `package.json` are the source of truth — check there, not here.
 - Every package must be independently installable and buildable.
 - No cross-package imports except through published entry points.
 - Peer deps on React; never bundle it.
-- Any CI job that runs `test` or `type-check` must run `build` first. Internal `workspace:*` deps resolve through the consumed package's `dist/` (correct — mirrors real publish consumption), and `dist/` is gitignored, so a fresh checkout has none until something builds it. Bit `@xd/button` on 2026-08-20; will hit `icon-button`/`button-group` too.
+- Any CI job that runs `test`, `type-check`, or `storybook:build` must run `build` first. Internal `workspace:*` deps resolve through the consumed package's `dist/` (correct — mirrors real publish consumption), and `dist/` is gitignored, so a fresh checkout has none until something builds it. Bit `test-lint-build.yml` (2026-08-20) and `deploy-storybook.yml` (2026-08-20, separately, since it lives on its own branch history) — both fixed. Check for this specifically in any new workflow.
 
 ---
 
@@ -58,7 +60,7 @@ Versions in `package.json` are the source of truth — check there, not here.
 - [x] **3 — Button** · variants, sizes, icon slots, `as`/forwardRef parity, styling
 - [x] **4 — IconButton** · composition over Button, mandatory `aria-label`
 - [x] **5 — ButtonGroup** · Context prop inheritance with per-child override
-- [ ] **6 — Storybook** · centralised stories, a11y addon
+- [x] **6 — Storybook** · centralised stories, a11y addon
 - [ ] **7 — Build & publish** · verify dist output, npm publish flow
 - [ ] **8 — Deploy** · Storybook to GitHub Pages via Actions
 
@@ -74,12 +76,14 @@ Versions in `package.json` are the source of truth — check there, not here.
 - `@xd/icon-button` complete — 8 tests, built via TDD: mandatory `aria-label`, icon-only (no visible text), `forwardRef`, `IconButtonProps` extends `Omit<ButtonProps, 'children' | 'startIcon' | 'endIcon' | 'as'>` rather than duplicating individual props
 - `@xd/button` now also has 19 tests (was 17) — added direct unit tests for its own group-context resolution logic (`ButtonGroupProvider` wired directly, no `button-group` dependency needed)
 - `@xd/button-group` complete — 8 tests, built via TDD: `role="group"` wrapper, `variant`/`size`/`disabled` propagate via context, individual override on all three, `forwardRef`. Group context lives inside `@xd/button` (see Architecture Decisions) to avoid a circular workspace dependency.
+- Storybook set up (v10.5.10, official `init`) with stories for `Button`, `IconButton`, `ButtonGroup` — first real visual verification of Modules 3–5. Fixed a real `@xd/button` packaging gap along the way (CSS unreachable by consumers — see Architecture Decisions).
+- `.github/workflows/deploy-storybook.yml` restored and fixed (was missing/untracked all session, never committed) — needed the same `pnpm build`-before-`test` fix as `test-lint-build.yml`.
 
 **In progress**
-- Module 3 (styling) functionally done but not yet visually verified in a browser — no Storybook/demo app exists yet (that's Module 6).
+- Nothing — Modules 1–6 all functionally complete and merged into `main`.
 
 **Next**
-- Module 6: Storybook. First real chance to visually verify Modules 3–5.
+- Module 7: Build & Publish — verify dist output per package, decide npm publish flow.
 
 ---
 
@@ -94,6 +98,7 @@ Referenced by later phases; do not re-derive.
 - **Compose via `Omit<XProps, '...'> & { ownFields }`, not hand-duplicated props** — `IconButtonProps` extends `Omit<ButtonProps, 'children' | 'startIcon' | 'endIcon' | 'as'>` instead of retyping `variant`/`size`/`disabled`/`onClick` itself. A blocklist of what's disallowed, not an allowlist of what's forwarded — future `Button` props reach `IconButton` with no maintenance here.
 - **`prop ?? group?.x ?? default` precedence** — `Button` resolves `variant`/`size`/`disabled` from its own explicit prop first, then `useButtonGroupContext()`, then a hardcoded default. Test this directly in the package that owns the logic (`@xd/button`), not only through the downstream consumer (`@xd/button-group`) — a regression here would otherwise only surface one package away.
 - **`role="group"` on a `div`, not `<fieldset>`** — Biome's `useSemanticElements` a11y rule suggests `<fieldset>`; suppressed with a `biome-ignore` because `<fieldset>` is for form-control groupings and carries unwanted default browser chrome for a button toolbar. `role="group"` is itself a correct WAI-ARIA pattern here.
+- **Untyped `StoryObj` for render-only compound-demo stories** — `StoryObj<typeof meta>` requires `args` whenever the component has required props (`IconButton.icon`/`label`, `ButtonGroup.children`), even for stories that only use `render` and never touch `args`. Type those specific exports as plain `StoryObj`, keep the meta-bound `Story` alias only for stories that genuinely use `args`.
 
 ---
 
@@ -106,4 +111,4 @@ Referenced by later phases; do not re-derive.
 
 ---
 
-**Updated**: after Module 5
+**Updated**: after Module 6
