@@ -52,7 +52,7 @@ describe('ButtonGroup', () => {
     expect(screen.getByRole('button')).toBeDisabled();
   });
 
-  it('lets an individual button override the group value', () => {
+  it('lets an individual button override the group variant', () => {
     render(
       <ButtonGroup variant="secondary">
         <Button>Keep</Button>
@@ -67,5 +67,23 @@ describe('ButtonGroup', () => {
       'data-variant',
       'destructive',
     );
+  });
+
+  it('lets an individual button override the group size', () => {
+    render(
+      <ButtonGroup size="lg">
+        <Button size="sm">Small override</Button>
+      </ButtonGroup>,
+    );
+    expect(screen.getByRole('button')).toHaveAttribute('data-size', 'sm');
+  });
+
+  it('lets an individual button override the group disabled state', () => {
+    render(
+      <ButtonGroup disabled>
+        <Button disabled={false}>Still enabled</Button>
+      </ButtonGroup>,
+    );
+    expect(screen.getByRole('button')).not.toBeDisabled();
   });
 });
