@@ -1,12 +1,26 @@
-import { Button } from '@xd/button';
+import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
+import { Button, type ButtonProps } from '@xd/button';
 
-export type IconButtonProps = {
-    label: string;
-    icon: React.ReactNode;
-    variant: 'primary' | 'secondary' | 'destructive';
-    size: 'sm' | 'md' | 'lg';
+export type IconButtonProps = Omit<
+  ButtonProps,
+  'children' | 'startIcon' | 'endIcon' | 'as'
+> & {
+  icon: ReactNode;
+  label: string;
 };
 
-export function IconButton({ label, icon, variant, size }: IconButtonProps) {
-    return <Button startIcon={icon} aria-label={label} data-variant={variant} data-size={size} />;
+function IconButtonInner(
+  { icon, label, ...restProps }: IconButtonProps,
+  ref: ForwardedRef<HTMLButtonElement>,
+) {
+  return (
+    <Button
+      ref={ref as ForwardedRef<Element>}
+      startIcon={icon}
+      aria-label={label}
+      {...restProps}
+    />
+  );
 }
+
+export const IconButton = forwardRef(IconButtonInner);

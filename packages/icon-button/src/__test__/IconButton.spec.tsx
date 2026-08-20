@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { describe, it, expect, vi } from 'vitest';
 import { IconButton } from '../components/IconButton';
 
 const MockIcon = () => (
@@ -47,5 +48,26 @@ describe('IconButton', () => {
   it('accepts size prop', () => {
     render(<IconButton icon={<MockIcon />} label="Save" size="lg" />);
     expect(screen.getByRole('button')).toHaveAttribute('data-size', 'lg');
+  });
+
+  it('does not respond to clicks when disabled', async () => {
+    const handleClick = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <IconButton
+        icon={<MockIcon />}
+        label="Save"
+        disabled
+        onClick={handleClick}
+      />,
+    );
+    await user.click(screen.getByRole('button'));
+    expect(handleClick).not.toHaveBeenCalled();
+  });
+
+  it('forwards ref to the underlying button element', () => {
+    const ref = { current: null } as React.RefObject<HTMLButtonElement>;
+    render(<IconButton ref={ref} icon={<MockIcon />} label="Save" />);
+    expect(ref.current).toBeInstanceOf(HTMLButtonElement);
   });
 });
