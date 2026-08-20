@@ -1,3 +1,6 @@
-// Punto de entrada. Por ahora vacío.
-// Cada componente se exportará aquí.
-export {};
+export { UnstyledButton } from './components';
+export type {
+  UnstyledButtonProps,
+  UnstyledButtonOwnProps,
+  UnstyledButtonRenderState,
+} from './components';
