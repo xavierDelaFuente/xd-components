@@ -7,9 +7,7 @@ export interface ButtonGroupContextValue {
   disabled?: boolean;
 }
 
-const ButtonGroupContext = createContext<ButtonGroupContextValue | null>(
-  null,
-);
+const ButtonGroupContext = createContext<ButtonGroupContextValue | null>(null);
 
 export const ButtonGroupProvider = ButtonGroupContext.Provider;
 

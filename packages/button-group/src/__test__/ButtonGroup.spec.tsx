@@ -21,4 +21,51 @@ describe('ButtonGroup', () => {
       screen.getByRole('button', { name: /center/i }),
     );
   });
+
+  it('propagates variant to child buttons via context', () => {
+    render(
+      <ButtonGroup variant="secondary">
+        <Button>Left</Button>
+      </ButtonGroup>,
+    );
+    expect(screen.getByRole('button')).toHaveAttribute(
+      'data-variant',
+      'secondary',
+    );
+  });
+
+  it('propagates size to child buttons via context', () => {
+    render(
+      <ButtonGroup size="lg">
+        <Button>Left</Button>
+      </ButtonGroup>,
+    );
+    expect(screen.getByRole('button')).toHaveAttribute('data-size', 'lg');
+  });
+
+  it('propagates disabled to child buttons via context', () => {
+    render(
+      <ButtonGroup disabled>
+        <Button>Left</Button>
+      </ButtonGroup>,
+    );
+    expect(screen.getByRole('button')).toBeDisabled();
+  });
+
+  it('lets an individual button override the group value', () => {
+    render(
+      <ButtonGroup variant="secondary">
+        <Button>Keep</Button>
+        <Button variant="destructive">Delete</Button>
+      </ButtonGroup>,
+    );
+    expect(screen.getByRole('button', { name: /keep/i })).toHaveAttribute(
+      'data-variant',
+      'secondary',
+    );
+    expect(screen.getByRole('button', { name: /delete/i })).toHaveAttribute(
+      'data-variant',
+      'destructive',
+    );
+  });
 });
