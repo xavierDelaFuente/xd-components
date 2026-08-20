@@ -33,4 +33,19 @@ describe('IconButton', () => {
     render(<IconButton icon={<MockIcon />} label="Save" />);
     expect(screen.getByRole('button').textContent?.trim()).toBe('');
   });
+
+  it('accepts variant prop', () => {
+    render(
+      <IconButton icon={<MockIcon />} label="Delete" variant="destructive" />,
+    );
+    expect(screen.getByRole('button')).toHaveAttribute(
+      'data-variant',
+      'destructive',
+    );
+  });
+
+  it('accepts size prop', () => {
+    render(<IconButton icon={<MockIcon />} label="Save" size="lg" />);
+    expect(screen.getByRole('button')).toHaveAttribute('data-size', 'lg');
+  });
 });
