@@ -121,7 +121,9 @@ describe('Button', () => {
 
   it('resolves variant, size, and disabled from ButtonGroupProvider context', () => {
     render(
-      <ButtonGroupProvider value={{ variant: 'secondary', size: 'lg', disabled: true }}>
+      <ButtonGroupProvider
+        value={{ variant: 'secondary', size: 'lg', disabled: true }}
+      >
         <Button>Grouped</Button>
       </ButtonGroupProvider>,
     );
@@ -133,7 +135,9 @@ describe('Button', () => {
 
   it('lets an explicit prop override the group context value', () => {
     render(
-      <ButtonGroupProvider value={{ variant: 'secondary', size: 'lg', disabled: true }}>
+      <ButtonGroupProvider
+        value={{ variant: 'secondary', size: 'lg', disabled: true }}
+      >
         <Button variant="destructive" size="sm" disabled={false}>
           Overridden
         </Button>
