@@ -8,7 +8,7 @@ import {
   ButtonGroupProvider,
   type ButtonVariant,
   type ButtonSize,
-} from '@xd/button';
+} from '@asnewyla/button';
 
 export type ButtonGroupProps = Omit<ComponentPropsWithoutRef<'div'>, 'role'> & {
   variant?: ButtonVariant;

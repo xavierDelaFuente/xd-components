@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button } from '@xd/button';
+import { Button } from '@asnewyla/button';
 
 const meta = {
   title: 'Components/Button',

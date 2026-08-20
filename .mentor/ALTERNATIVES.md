@@ -38,6 +38,13 @@ Keep entries to five lines. If an entry needs more, it belongs in PROJECT.md.
 **Verdict**: working — full CI gate green, verified real class name ships in `dist/index.js`
 **Generalise**: apply the same pattern to `icon-button`/`button-group`; revisit if the project migrates to `tsdown`
 
+### 2026-08-20 · xd-components · Module 7 — npm scope
+**CODEX said**: n/a — project decision, not a CODEX default. Doc's original spec used `@xd-components`; earlier this session it was shortened to `@xd`.
+**I did**: Renamed all four packages to `@asnewyla/*` (personal npm username scope), not `@xd` or `@xd-components`
+**Because**: `@xd` was already registered by someone else on npm (discovered via the token-creation UI, confirmed by the org lookup returning no valid scope); `@xd-components` was available but would've meant reverting the earlier in-session rename. Personal scope needed zero setup and published immediately.
+**Verdict**: working — all four packages live on the public registry, dependency resolution verified correct end to end
+**Generalise**: check real npm scope/org availability *before* committing to a name across a whole codebase, not after — this is the second full-codebase scope rename this project has done
+
 ---
 
 ## Promotion tracker

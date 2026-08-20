@@ -1,4 +1,4 @@
-# @xd/unstyled-button
+# @asnewyla/unstyled-button
 
 Unstyled, accessible button primitive. Renders click, keyboard, and focus
 behavior — plus hover/press/focus-visible state — without imposing any visual
@@ -7,13 +7,13 @@ styling. The base layer under every styled component in this library.
 ## Install
 
 ```bash
-npm install @xd/unstyled-button
+npm install @asnewyla/unstyled-button
 ```
 
 ## Usage
 
 ```tsx
-import { UnstyledButton } from '@xd/unstyled-button';
+import { UnstyledButton } from '@asnewyla/unstyled-button';
 
 <UnstyledButton onClick={() => {}}>Click me</UnstyledButton>
 
