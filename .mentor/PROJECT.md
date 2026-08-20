@@ -1,7 +1,7 @@
 # PROJECT — xd-components
 
 **Type**: Component library (monorepo, per-component npm packages)
-**Status**: Module 6 of 8 (functionally complete)
+**Status**: Module 7 of 8 (publish-ready, not actually published)
 **Repo**: https://github.com/xavierDelaFuente/xd-components
 **Local**: ~/Repos/2026/xd-components
 
@@ -41,6 +41,8 @@ Versions in `package.json` are the source of truth — check there, not here.
 | CSS distribution | `@xd/button` exports `./styles.css` subpath, `sideEffects: ["*.css"]` | The CSS is a separate file from the JS bundle (tsup doesn't inject at runtime); without an explicit export subpath, `import '@xd/button/styles.css'` 404s under strict `exports` resolution, and `sideEffects: false` would let bundlers tree-shake the import away entirely. Not Storybook-specific — any real consumer hits this. |
 | CI timing | Before first feature commit | Quality gate from commit one |
 | Group context ownership | Lives in `@xd/button`, not `@xd/button-group` | Avoids a circular workspace dependency — the doc's original design had `button` import `useButtonGroup` from `button-group` while `button-group` imports `Button`'s types from `button`. Keeping the context inside `button` (consumed internally, exported for `ButtonGroup` to use as `Provider`) keeps the dependency one-directional. |
+| License | MIT | User's explicit choice (2026-08-20) over Apache-2.0 or staying private. `LICENSE` copied into each package directory — npm only auto-includes a `LICENSE` file in a published tarball when it physically exists inside that package's own directory, not the monorepo root. |
+| Version strategy | Lockstep (all four packages bump together), not independent per-package versions | Packages are tightly coupled (3 of 4 depend on `@xd/button`); library is pre-1.0 with a single contributor. Independent versioning needs real tooling (Changesets) to track cleanly — not worth the overhead yet. Revisit if the library matures and packages start evolving at genuinely different paces. |
 
 ---
 
@@ -61,7 +63,7 @@ Versions in `package.json` are the source of truth — check there, not here.
 - [x] **4 — IconButton** · composition over Button, mandatory `aria-label`
 - [x] **5 — ButtonGroup** · Context prop inheritance with per-child override
 - [x] **6 — Storybook** · centralised stories, a11y addon
-- [ ] **7 — Build & publish** · verify dist output, npm publish flow
+- [x] **7 — Build & publish** · verify dist output, npm publish flow (publish-ready; actual `npm publish` deliberately not run — needs real npm credentials)
 - [ ] **8 — Deploy** · Storybook to GitHub Pages via Actions
 
 ---
@@ -78,12 +80,13 @@ Versions in `package.json` are the source of truth — check there, not here.
 - `@xd/button-group` complete — 8 tests, built via TDD: `role="group"` wrapper, `variant`/`size`/`disabled` propagate via context, individual override on all three, `forwardRef`. Group context lives inside `@xd/button` (see Architecture Decisions) to avoid a circular workspace dependency.
 - Storybook set up (v10.5.10, official `init`) with stories for `Button`, `IconButton`, `ButtonGroup` — first real visual verification of Modules 3–5. Fixed a real `@xd/button` packaging gap along the way (CSS unreachable by consumers — see Architecture Decisions).
 - `.github/workflows/deploy-storybook.yml` restored and fixed (was missing/untracked all session, never committed) — needed the same `pnpm build`-before-`test` fix as `test-lint-build.yml`.
+- Module 7: all four packages verified `npm publish --dry-run` clean (correct tarball contents, no missing files). Added `LICENSE` (MIT, root + copied into each package), per-package `README.md`, `repository`/`license`/`publishConfig.access` fields, and a root `release` script (`pnpm build && pnpm -r publish`). Lockstep versioning decided (see Architecture Decisions). Did not actually run `npm publish` — needs the user's real npm login, a genuinely external/hard-to-reverse action.
 
 **In progress**
-- Nothing — Modules 1–6 all functionally complete and merged into `main`.
+- Nothing — Modules 1–7 all functionally complete. Modules 1–6 merged into `main`; Module 7's changes are uncommitted, sitting in the working tree.
 
 **Next**
-- Module 7: Build & Publish — verify dist output per package, decide npm publish flow.
+- Module 8: Deploy — `deploy-storybook.yml` is already restored and fixed; just needs GitHub Pages enabled (Settings → Pages → Source: GitHub Actions) and a push to `main` to trigger it.
 
 ---
 
@@ -106,9 +109,9 @@ Referenced by later phases; do not re-derive.
 
 - ~~Duplicate `OverridableProps` per package, or extract a `@xd/types` package?~~ Resolved (implicitly): `icon-button` didn't need it at all, so only 2 of 3 packages duplicate it so far. Keep deferring — not worth extracting for one shared type.
 - ~~Does `ButtonGroup` create a circular dependency?~~ Resolved 2026-08-20: group context lives in `@xd/button`, not `@xd/button-group`. See Architecture Decisions.
-- Publish all four packages at v0.1.0 together, or version independently from the start?
-- Is `tsdown` (tsup's actively-maintained successor) worth migrating to? Would likely fix CSS Modules support; touches every package's build config. Not urgent — revisit at Module 7 (Build & Publish) or if tsup's pace keeps slowing.
+- ~~Publish all four packages at v0.1.0 together, or version independently from the start?~~ Resolved 2026-08-20: lockstep. See Architecture Decisions.
+- Is `tsdown` (tsup's actively-maintained successor) worth migrating to? Would likely fix CSS Modules support; touches every package's build config. Not urgent — no longer blocking anything now that Module 7 is done; revisit opportunistically.
 
 ---
 
-**Updated**: after Module 6
+**Updated**: after Module 7

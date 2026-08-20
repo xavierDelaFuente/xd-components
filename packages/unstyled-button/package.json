@@ -2,6 +2,15 @@
   "name": "@xd/unstyled-button",
   "version": "0.1.0",
   "description": "Unstyled button primitive with accessibility",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xavierDelaFuente/xd-components.git",
+    "directory": "packages/unstyled-button"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",

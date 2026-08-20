@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "description": "Modular React component library",
   "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xavierDelaFuente/xd-components.git"
+  },
   "scripts": {
     "build": "pnpm --filter=\"./packages/*\" build",
     "test": "pnpm --filter=\"./packages/*\" test",
@@ -13,7 +18,8 @@
     "format": "biome format --write packages",
     "check": "pnpm lint && pnpm format && pnpm type-check",
     "storybook": "storybook dev -p 6006",
-    "storybook:build": "storybook build -o storybook-static"
+    "storybook:build": "storybook build -o storybook-static",
+    "release": "pnpm build && pnpm -r publish"
   },
   "dependencies": {
     "@xd/unstyled-button": "workspace:*",

@@ -2,6 +2,15 @@
   "name": "@xd/button-group",
   "version": "0.1.0",
   "description": "Groups buttons visually and propagates shared props via context",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xavierDelaFuente/xd-components.git",
+    "directory": "packages/button-group"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
