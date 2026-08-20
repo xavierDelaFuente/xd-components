@@ -19,23 +19,26 @@
     "check": "pnpm lint && pnpm format && pnpm type-check",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build -o storybook-static",
-    "release": "pnpm build && pnpm -r publish"
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm build && changeset publish"
   },
   "dependencies": {
-    "@asnewyla/unstyled-button": "workspace:*",
     "@asnewyla/button": "workspace:*",
+    "@asnewyla/button-group": "workspace:*",
     "@asnewyla/icon-button": "workspace:*",
-    "@asnewyla/button-group": "workspace:*"
+    "@asnewyla/unstyled-button": "workspace:*"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.9",
+    "@changesets/cli": "^3.0.1",
+    "@storybook/addon-a11y": "^10.5.10",
+    "@storybook/addon-docs": "^10.5.10",
+    "@storybook/react-vite": "^10.5.10",
     "@types/node": "^20.0.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
-    "typescript": "^5.5.0",
     "storybook": "^10.5.10",
-    "@storybook/react-vite": "^10.5.10",
-    "@storybook/addon-a11y": "^10.5.10",
-    "@storybook/addon-docs": "^10.5.10"
+    "typescript": "^5.5.0"
   }
 }
