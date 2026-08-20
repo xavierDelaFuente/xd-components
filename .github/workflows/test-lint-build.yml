@@ -23,6 +23,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+      - run: pnpm build
       - run: pnpm test
 
   type-check:
@@ -41,6 +42,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+      - run: pnpm build
       - run: pnpm type-check
 
   lint:

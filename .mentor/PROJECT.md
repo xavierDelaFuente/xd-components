@@ -45,6 +45,7 @@ Versions in `package.json` are the source of truth — check there, not here.
 - Every package must be independently installable and buildable.
 - No cross-package imports except through published entry points.
 - Peer deps on React; never bundle it.
+- Any CI job that runs `test` or `type-check` must run `build` first. Internal `workspace:*` deps resolve through the consumed package's `dist/` (correct — mirrors real publish consumption), and `dist/` is gitignored, so a fresh checkout has none until something builds it. Bit `@xd/button` on 2026-08-20; will hit `icon-button`/`button-group` too.
 
 ---
 
