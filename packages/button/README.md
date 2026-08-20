@@ -1,24 +1,24 @@
-# @xd/button
+# @asnewyla/button
 
-Styled button component built on `@xd/unstyled-button`. Variants, sizes, icon
+Styled button component built on `@asnewyla/unstyled-button`. Variants, sizes, icon
 slots, full keyboard/focus accessibility.
 
 ## Install
 
 ```bash
-npm install @xd/button
+npm install @asnewyla/button
 ```
 
 Import the stylesheet once, anywhere in your app:
 
 ```ts
-import '@xd/button/styles.css';
+import '@asnewyla/button/styles.css';
 ```
 
 ## Usage
 
 ```tsx
-import { Button } from '@xd/button';
+import { Button } from '@asnewyla/button';
 
 <Button variant="primary" size="md">Save changes</Button>
 <Button variant="destructive" onClick={handleDelete}>Delete</Button>
@@ -50,10 +50,10 @@ Override the CSS custom properties — defaults adapt automatically to
 }
 ```
 
-### Inside a `@xd/button-group`
+### Inside a `@asnewyla/button-group`
 
 `variant`, `size`, and `disabled` are inherited from an ancestor `ButtonGroup`
-when not set explicitly — see `@xd/button-group`.
+when not set explicitly — see `@asnewyla/button-group`.
 
 ## License
 

@@ -1,5 +1,5 @@
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
-import { Button, type ButtonProps } from '@xd/button';
+import { Button, type ButtonProps } from '@asnewyla/button';
 
 export type IconButtonProps = Omit<
   ButtonProps,

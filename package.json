@@ -22,10 +22,10 @@
     "release": "pnpm build && pnpm -r publish"
   },
   "dependencies": {
-    "@xd/unstyled-button": "workspace:*",
-    "@xd/button": "workspace:*",
-    "@xd/icon-button": "workspace:*",
-    "@xd/button-group": "workspace:*"
+    "@asnewyla/unstyled-button": "workspace:*",
+    "@asnewyla/button": "workspace:*",
+    "@asnewyla/icon-button": "workspace:*",
+    "@asnewyla/button-group": "workspace:*"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.9",

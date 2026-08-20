@@ -1,20 +1,20 @@
-# @xd/button-group
+# @asnewyla/button-group
 
-Groups `@xd/button` components visually (`role="group"`) and propagates
+Groups `@asnewyla/button` components visually (`role="group"`) and propagates
 `variant`, `size`, and `disabled` to every child via context. Any child can
 override an individual prop.
 
 ## Install
 
 ```bash
-npm install @xd/button-group
+npm install @asnewyla/button-group
 ```
 
 ## Usage
 
 ```tsx
-import { Button } from '@xd/button';
-import { ButtonGroup } from '@xd/button-group';
+import { Button } from '@asnewyla/button';
+import { ButtonGroup } from '@asnewyla/button-group';
 
 <ButtonGroup variant="secondary" aria-label="Text alignment">
   <Button>Left</Button>

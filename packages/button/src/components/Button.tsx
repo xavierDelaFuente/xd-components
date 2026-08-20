@@ -4,7 +4,7 @@ import {
   type ReactNode,
   forwardRef,
 } from 'react';
-import { UnstyledButton } from '@xd/unstyled-button';
+import { UnstyledButton } from '@asnewyla/unstyled-button';
 import type { OverridableProps } from './types';
 import { useButtonGroupContext } from './ButtonGroupContext';
 import './Button.css';

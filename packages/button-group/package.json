@@ -1,5 +1,5 @@
 {
-  "name": "@xd/button-group",
+  "name": "@asnewyla/button-group",
   "version": "0.1.0",
   "description": "Groups buttons visually and propagates shared props via context",
   "license": "MIT",
@@ -36,7 +36,7 @@
     "react-dom": "^18.0.0 || ^19.0.0"
   },
   "dependencies": {
-    "@xd/button": "workspace:*"
+    "@asnewyla/button": "workspace:*"
   },
   "devDependencies": {
     "react": "^18.3.0",
