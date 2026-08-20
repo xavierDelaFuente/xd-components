@@ -1,12 +1,12 @@
 import {
-  ElementType,
+  type ElementType,
   type ForwardedRef,
   forwardRef,
-  ReactNode,
+  type ReactNode,
   useCallback,
   useState,
 } from 'react';
-import { OverridableProps } from './types';
+import type { OverridableProps } from './types';
 
 export interface UnstyledButtonRenderState {
   isHovered: boolean;
