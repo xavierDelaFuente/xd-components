@@ -1,0 +1,54 @@
+/*
+ * asnewyla/tokens -- soft-dependency design tokens.
+ * Importing this file overrides the whole set at once. Every component ships
+ * its own hardcoded fallback (var(--xd-*, value)) matching what is defined
+ * here, so a consumer who imports nothing still gets a working default.
+ * See the Tokens dependency model entry in PROJECT.md.
+ */
+
+:root {
+  /* ─── Color — light mode (default) ─── */
+  --xd-color-primary: #0d9488;
+  --xd-on-primary: #ffffff;
+  --xd-color-secondary: #64748b;
+  --xd-on-secondary: #ffffff;
+  --xd-color-destructive: #dc2626;
+  --xd-on-destructive: #ffffff;
+
+  /* ─── Spacing ─── */
+  --xd-space-xs: 0.25rem;
+  --xd-space-sm: 0.375rem;
+  --xd-space-md: 0.5rem;
+  --xd-space-lg: 0.75rem;
+  --xd-space-xl: 1rem;
+  --xd-space-2xl: 1.5rem;
+
+  /* ─── Radius ─── */
+  --xd-radius-sm: 4px;
+  --xd-radius-md: 6px;
+  --xd-radius-lg: 10px;
+  --xd-radius-full: 9999px;
+
+  /* ─── Typography ─── */
+  --xd-font-size-sm: 0.8125rem;
+  --xd-font-size-md: 0.875rem;
+  --xd-font-size-lg: 1rem;
+  --xd-font-weight-regular: 400;
+  --xd-font-weight-semibold: 600;
+  --xd-line-height-normal: 1.25;
+}
+
+/* --- Color -- dark mode ---
+   Only the color tokens switch; spacing, radius, and typography stay
+   constant across schemes. Matches the existing Button dark-mode
+   fallback values. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --xd-color-primary: #06b6d4;
+    --xd-on-primary: #000000;
+    --xd-color-secondary: #cbd5e1;
+    --xd-on-secondary: #000000;
+    --xd-color-destructive: #f87171;
+    --xd-on-destructive: #000000;
+  }
+}
