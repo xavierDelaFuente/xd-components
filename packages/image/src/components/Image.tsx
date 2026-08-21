@@ -10,14 +10,13 @@ import './Image.css';
 export type ImageFit = 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
 export type ImageRadius = 'sm' | 'md' | 'lg' | 'full';
 
-export interface ImageProps
-  extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'alt'> {
+export type ImageProps = Omit<ImgHTMLAttributes<HTMLImageElement>, 'alt'> & {
   alt: string;
   aspectRatio?: string;
   fit?: ImageFit;
   radius?: ImageRadius;
   fallback?: string;
-}
+};
 
 function ImageInner(
   {
