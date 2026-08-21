@@ -10,7 +10,7 @@
   gap: var(--xd-space-md, 0.5rem);
   white-space: nowrap;
 
-  border-radius: var(--xd-radius-md, 6px);
+  border-radius: var(--xd-radius-md, 0.375rem);
   font-weight: var(--xd-font-weight-semibold, 600);
   line-height: var(--xd-line-height-normal, 1.25);
 
@@ -19,13 +19,14 @@
   --_bg-hover: color-mix(in srgb, var(--_bg) 88%, black);
   --_bg-active: color-mix(in srgb, var(--_bg) 76%, black);
 
-  transition: background-color 120ms ease-out;
+  transition: background-color var(--xd-motion-fast, 120ms ease-out);
   outline: none;
 }
 
 .xd-button:focus-visible {
-  outline: 2px solid var(--xd-color-focus, var(--_bg));
-  outline-offset: 2px;
+  outline: var(--xd-focus-ring-width, 2px) solid
+    var(--xd-color-focus, var(--_bg));
+  outline-offset: var(--xd-focus-ring-offset, 2px);
 }
 
 .xd-button:hover:not([data-disabled="true"]) {
@@ -38,7 +39,7 @@
 }
 
 .xd-button[data-disabled="true"] {
-  opacity: 0.5;
+  opacity: var(--xd-opacity-disabled, 0.5);
   cursor: not-allowed;
   pointer-events: none;
 }
