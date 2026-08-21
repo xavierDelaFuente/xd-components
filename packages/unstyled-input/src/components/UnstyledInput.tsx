@@ -1,4 +1,5 @@
-import { ForwardedRef, forwardRef, useState } from "react";
+import { type ForwardedRef, forwardRef, useState } from 'react';
+
 
 export type UnstyledInputProps = {
     defaultValue?: string;
@@ -6,18 +7,28 @@ export type UnstyledInputProps = {
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     disabled?: boolean;
     invalid?: boolean;
-    placeholder?: string;
-}
-function UnstyledInputInner({ defaultValue, value, onChange, disabled, invalid, placeholder }: UnstyledInputProps, ref: ForwardedRef<HTMLDivElement>,) {
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'defaultValue' | 'value' | 'onChange' | 'disabled' | 'invalid'>;
+
+function UnstyledInputInner(
+    {
+        defaultValue,
+        value,
+        onChange,
+        disabled,
+        invalid,
+        ...rest
+    }: UnstyledInputProps,
+    ref: ForwardedRef<HTMLInputElement>,
+) {
     const [focused, setFocused] = useState(false);
 
     const onFocus = () => {
         setFocused(true);
-    }
+    };
 
     const onBlur = () => {
         setFocused(false);
-    }
+    };
 
     return (
         <input
@@ -32,9 +43,11 @@ function UnstyledInputInner({ defaultValue, value, onChange, disabled, invalid, 
             data-invalid={invalid ? 'true' : undefined}
             aria-invalid={invalid ? 'true' : undefined}
             ref={ref}
-            placeholder={placeholder}
+            {...rest}
         />
     );
 }
 
-export const UnstyledInput = forwardRef<HTMLInputElement, UnstyledInputProps>(UnstyledInputInner);
+export const UnstyledInput = forwardRef<HTMLInputElement, UnstyledInputProps>(
+    UnstyledInputInner,
+);

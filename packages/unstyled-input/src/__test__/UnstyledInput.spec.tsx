@@ -35,6 +35,26 @@ describe('UnstyledInput', () => {
     expect(input).toHaveValue('Jo');
   });
 
+  it('calls onChange with the actual typed value in the event', async () => {
+    const user = userEvent.setup();
+    let value: string | undefined;
+    const handleChange = vi.fn((e: React.ChangeEvent<HTMLInputElement>) => {
+      value = e.target.value;
+    });
+    render(
+      <UnstyledInput aria-label="Name" value="Jo" onChange={handleChange} />,
+    );
+    await user.type(screen.getByRole('textbox'), 'x');
+    expect(value).toBe('Jox');
+  });
+
+  it('is focusable via Tab key', async () => {
+    const user = userEvent.setup();
+    render(<UnstyledInput aria-label="Name" />);
+    await user.tab();
+    expect(screen.getByRole('textbox')).toHaveFocus();
+  });
+
   it('sets data-focused on focus and clears it on blur', () => {
     render(<UnstyledInput aria-label="Name" />);
     const input = screen.getByRole('textbox');
@@ -83,10 +103,13 @@ describe('UnstyledInput', () => {
   });
 
   it('passes through arbitrary native input attributes', () => {
-    render(<UnstyledInput aria-label="Name" placeholder="e.g. Jordan" type="text" />);
+    render(
+      <UnstyledInput aria-label="Name" placeholder="e.g. Jordan" type="text" />,
+    );
     expect(screen.getByRole('textbox')).toHaveAttribute(
       'placeholder',
       'e.g. Jordan',
     );
+    expect(screen.getByRole('textbox')).toHaveAttribute('type', 'text');
   });
 });
