@@ -23,7 +23,18 @@ export interface UnstyledButtonOwnProps<T extends ElementType = ElementType> {
 }
 
 function UnstyledButtonInner<T extends ElementType = 'button'>(
-  { as, children, disabled = false, ...restProps }: UnstyledButtonProps<T>,
+  {
+    as,
+    children,
+    disabled = false,
+    onMouseEnter,
+    onMouseLeave,
+    onMouseDown,
+    onMouseUp,
+    onFocus,
+    onBlur,
+    ...restProps
+  }: UnstyledButtonProps<T>,
   ref: ForwardedRef<Element>,
 ) {
   const Component = (as || 'button') as ElementType;
@@ -33,25 +44,55 @@ function UnstyledButtonInner<T extends ElementType = 'button'>(
   const [isFocused, setIsFocused] = useState(false);
   const [isFocusVisible, setIsFocusVisible] = useState(false);
 
-  const handleMouseEnter = useCallback(() => setIsHovered(true), []);
-  const handleMouseLeave = useCallback(() => {
-    setIsHovered(false);
-    setIsPressed(false);
-  }, []);
-  const handleMouseDown = useCallback(() => setIsPressed(true), []);
-  const handleMouseUp = useCallback(() => setIsPressed(false), []);
+  const handleMouseEnter = useCallback(
+    (e: React.MouseEvent) => {
+      setIsHovered(true);
+      onMouseEnter?.(e);
+    },
+    [onMouseEnter],
+  );
+  const handleMouseLeave = useCallback(
+    (e: React.MouseEvent) => {
+      setIsHovered(false);
+      setIsPressed(false);
+      onMouseLeave?.(e);
+    },
+    [onMouseLeave],
+  );
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      setIsPressed(true);
+      onMouseDown?.(e);
+    },
+    [onMouseDown],
+  );
+  const handleMouseUp = useCallback(
+    (e: React.MouseEvent) => {
+      setIsPressed(false);
+      onMouseUp?.(e);
+    },
+    [onMouseUp],
+  );
 
-  const handleFocus = useCallback((e: React.FocusEvent) => {
-    setIsFocused(true);
-    if (e.target.matches(':focus-visible')) {
-      setIsFocusVisible(true);
-    }
-  }, []);
+  const handleFocus = useCallback(
+    (e: React.FocusEvent) => {
+      setIsFocused(true);
+      if (e.target.matches(':focus-visible')) {
+        setIsFocusVisible(true);
+      }
+      onFocus?.(e);
+    },
+    [onFocus],
+  );
 
-  const handleBlur = useCallback(() => {
-    setIsFocused(false);
-    setIsFocusVisible(false);
-  }, []);
+  const handleBlur = useCallback(
+    (e: React.FocusEvent) => {
+      setIsFocused(false);
+      setIsFocusVisible(false);
+      onBlur?.(e);
+    },
+    [onBlur],
+  );
 
   const state: UnstyledButtonRenderState = {
     isHovered,

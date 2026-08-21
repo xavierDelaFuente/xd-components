@@ -28,6 +28,7 @@ function ImageInner(
     src,
     className,
     style,
+    onError,
     ...restProps
   }: ImageProps,
   ref: ForwardedRef<HTMLImageElement>,
@@ -41,6 +42,11 @@ function ImageInner(
 
   const resolvedSrc = hasErrored && fallback ? fallback : src;
 
+  const handleError: React.ReactEventHandler<HTMLImageElement> = (e) => {
+    setHasErrored(true);
+    onError?.(e);
+  };
+
   return (
     <img
       ref={ref}
@@ -50,7 +56,7 @@ function ImageInner(
       data-radius={radius || undefined}
       className={['xd-image', className].filter(Boolean).join(' ')}
       style={aspectRatio !== undefined ? { aspectRatio, ...style } : style}
-      onError={() => setHasErrored(true)}
+      onError={handleError}
       {...restProps}
     />
   );
