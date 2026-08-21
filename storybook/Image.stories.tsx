@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Image } from '@asnewyla/image';
+import { Group, Stack } from '@asnewyla/layout';
 
 const photo =
   'data:image/svg+xml;utf8,' +
@@ -46,9 +47,9 @@ export const AspectRatioAndRadius: Story = {
 
 export const Fit: StoryObj = {
   render: () => (
-    <div style={{ display: 'flex', gap: '1rem' }}>
+    <Group gap="md">
       {(['cover', 'contain', 'fill'] as const).map((fit) => (
-        <div key={fit} style={{ textAlign: 'center' }}>
+        <Stack key={fit} gap="sm" align="center">
           <div style={{ width: 150, height: 100, border: '1px dashed #94a3b8' }}>
             <Image
               src={photo}
@@ -58,9 +59,9 @@ export const Fit: StoryObj = {
             />
           </div>
           <code>{fit}</code>
-        </div>
+        </Stack>
       ))}
-    </div>
+    </Group>
   ),
 };
 

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { IconButton } from '@asnewyla/icon-button';
+import { Group } from '@asnewyla/layout';
 
 const meta = {
   title: 'Components/IconButton',
@@ -35,21 +36,21 @@ export const Primary: Story = {
 
 export const AllVariants: StoryObj = {
   render: () => (
-    <div style={{ display: 'flex', gap: '1rem' }}>
+    <Group gap="md">
       <IconButton icon={<SaveIcon />} label="Save" variant="primary" />
       <IconButton icon={<SaveIcon />} label="Save" variant="secondary" />
       <IconButton icon={<SaveIcon />} label="Delete" variant="destructive" />
-    </div>
+    </Group>
   ),
 };
 
 export const AllSizes: StoryObj = {
   render: () => (
-    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+    <Group gap="md" align="center">
       <IconButton icon={<SaveIcon />} label="Save" size="sm" />
       <IconButton icon={<SaveIcon />} label="Save" size="md" />
       <IconButton icon={<SaveIcon />} label="Save" size="lg" />
-    </div>
+    </Group>
   ),
 };
 
