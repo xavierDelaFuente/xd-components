@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { UnstyledButton } from '../components/UnstyledButton';
 import userEvent from '@testing-library/user-event';
@@ -130,5 +130,69 @@ describe('UnstyledButton', () => {
   it('sets data-disabled when disabled', () => {
     render(<UnstyledButton disabled>Disabled</UnstyledButton>);
     expect(screen.getByRole('button')).toHaveAttribute('data-disabled', 'true');
+  });
+
+  it('still tracks isHovered when the consumer passes their own onMouseEnter/onMouseLeave', async () => {
+    const handleMouseEnter = vi.fn();
+    const handleMouseLeave = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <UnstyledButton
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        {({ isHovered }) => (
+          <span data-testid="inner">{isHovered ? 'hovered' : 'idle'}</span>
+        )}
+      </UnstyledButton>,
+    );
+
+    await user.hover(screen.getByRole('button'));
+    expect(handleMouseEnter).toHaveBeenCalled();
+    expect(screen.getByTestId('inner')).toHaveTextContent('hovered');
+
+    await user.unhover(screen.getByRole('button'));
+    expect(handleMouseLeave).toHaveBeenCalled();
+    expect(screen.getByTestId('inner')).toHaveTextContent('idle');
+  });
+
+  it('still tracks isPressed when the consumer passes their own onMouseDown/onMouseUp', () => {
+    const handleMouseDown = vi.fn();
+    const handleMouseUp = vi.fn();
+    render(
+      <UnstyledButton onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
+        {({ isPressed }) => (
+          <span data-testid="inner">{isPressed ? 'pressed' : 'idle'}</span>
+        )}
+      </UnstyledButton>,
+    );
+    const button = screen.getByRole('button');
+
+    fireEvent.mouseDown(button);
+    expect(handleMouseDown).toHaveBeenCalled();
+    expect(screen.getByTestId('inner')).toHaveTextContent('pressed');
+
+    fireEvent.mouseUp(button);
+    expect(handleMouseUp).toHaveBeenCalled();
+    expect(screen.getByTestId('inner')).toHaveTextContent('idle');
+  });
+
+  it('still tracks data-focused when the consumer passes their own onFocus/onBlur', () => {
+    const handleFocus = vi.fn();
+    const handleBlur = vi.fn();
+    render(
+      <UnstyledButton onFocus={handleFocus} onBlur={handleBlur}>
+        Focus me
+      </UnstyledButton>,
+    );
+    const button = screen.getByRole('button');
+
+    fireEvent.focus(button);
+    expect(handleFocus).toHaveBeenCalled();
+    expect(button).toHaveAttribute('data-focused', 'true');
+
+    fireEvent.blur(button);
+    expect(handleBlur).toHaveBeenCalled();
+    expect(button).not.toHaveAttribute('data-focused');
   });
 });

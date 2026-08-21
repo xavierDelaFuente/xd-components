@@ -1,6 +1,6 @@
 import { createRef } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { Image } from '../components';
 
 describe('Image', () => {
@@ -44,6 +44,22 @@ describe('Image', () => {
     render(<Image src="/broken.jpg" alt="desc" fallback="/placeholder.jpg" />);
     const img = screen.getByAltText('desc');
     fireEvent.error(img);
+    expect(img).toHaveAttribute('src', '/placeholder.jpg');
+  });
+
+  it('still swaps to the fallback even when the consumer passes their own onError', () => {
+    const handleError = vi.fn();
+    render(
+      <Image
+        src="/broken.jpg"
+        alt="desc"
+        fallback="/placeholder.jpg"
+        onError={handleError}
+      />,
+    );
+    const img = screen.getByAltText('desc');
+    fireEvent.error(img);
+    expect(handleError).toHaveBeenCalled();
     expect(img).toHaveAttribute('src', '/placeholder.jpg');
   });
 
