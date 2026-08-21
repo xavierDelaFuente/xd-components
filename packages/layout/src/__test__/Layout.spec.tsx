@@ -58,10 +58,7 @@ describe('Layout', () => {
           content
         </Layout>,
       );
-      expect(screen.getByTestId('layout')).toHaveAttribute(
-        'data-align',
-        align,
-      );
+      expect(screen.getByTestId('layout')).toHaveAttribute('data-align', align);
     },
   );
 
@@ -98,10 +95,7 @@ describe('Layout', () => {
           content
         </Layout>,
       );
-      expect(screen.getByTestId('layout')).toHaveAttribute(
-        'data-wrap',
-        'true',
-      );
+      expect(screen.getByTestId('layout')).toHaveAttribute('data-wrap', 'true');
     },
   );
 
