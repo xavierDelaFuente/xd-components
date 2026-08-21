@@ -7,6 +7,7 @@ import { UnstyledInput } from '../components';
 describe('UnstyledInput', () => {
   it('renders a text input', () => {
     render(<UnstyledInput aria-label="Name" />);
+
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
@@ -14,8 +15,7 @@ describe('UnstyledInput', () => {
     const user = userEvent.setup();
     render(<UnstyledInput aria-label="Name" defaultValue="Jo" />);
     const input = screen.getByRole('textbox');
-    // Asserted before typing: proves defaultValue is actually forwarded to
-    // the input, not just that a bare <input> accepts keystrokes natively.
+
     expect(input).toHaveValue('Jo');
     await user.type(input, 'rdan');
     expect(input).toHaveValue('Jordan');
@@ -27,11 +27,12 @@ describe('UnstyledInput', () => {
     render(
       <UnstyledInput aria-label="Name" value="Jo" onChange={handleChange} />,
     );
+
     const input = screen.getByRole('textbox');
+
     expect(input).toHaveValue('Jo');
     await user.type(input, 'x');
     expect(handleChange).toHaveBeenCalled();
-    // Controlled: without the consumer updating `value`, the DOM value doesn't change on its own
     expect(input).toHaveValue('Jo');
   });
 
@@ -44,14 +45,18 @@ describe('UnstyledInput', () => {
     render(
       <UnstyledInput aria-label="Name" value="Jo" onChange={handleChange} />,
     );
+
     await user.type(screen.getByRole('textbox'), 'x');
+
     expect(value).toBe('Jox');
   });
 
   it('is focusable via Tab key', async () => {
     const user = userEvent.setup();
     render(<UnstyledInput aria-label="Name" />);
+
     await user.tab();
+
     expect(screen.getByRole('textbox')).toHaveFocus();
   });
 
@@ -68,6 +73,7 @@ describe('UnstyledInput', () => {
 
   it('sets data-disabled when disabled', () => {
     render(<UnstyledInput aria-label="Name" disabled />);
+
     expect(screen.getByRole('textbox')).toHaveAttribute(
       'data-disabled',
       'true',
@@ -77,21 +83,27 @@ describe('UnstyledInput', () => {
   it('is not editable when disabled', async () => {
     const user = userEvent.setup();
     render(<UnstyledInput aria-label="Name" disabled defaultValue="" />);
+
     const input = screen.getByRole('textbox');
     await user.type(input, 'nope');
+
     expect(input).toHaveValue('');
   });
 
   it('sets data-invalid and aria-invalid when invalid', () => {
     render(<UnstyledInput aria-label="Name" invalid />);
+
     const input = screen.getByRole('textbox');
+
     expect(input).toHaveAttribute('data-invalid', 'true');
     expect(input).toHaveAttribute('aria-invalid', 'true');
   });
 
   it('omits data-invalid and aria-invalid when not invalid', () => {
     render(<UnstyledInput aria-label="Name" />);
+
     const input = screen.getByRole('textbox');
+
     expect(input).not.toHaveAttribute('data-invalid');
     expect(input).not.toHaveAttribute('aria-invalid');
   });
@@ -99,6 +111,7 @@ describe('UnstyledInput', () => {
   it('forwards a ref to the underlying input element', () => {
     const ref = createRef<HTMLInputElement>();
     render(<UnstyledInput aria-label="Name" ref={ref} />);
+
     expect(ref.current).toBeInstanceOf(HTMLInputElement);
   });
 
@@ -106,10 +119,34 @@ describe('UnstyledInput', () => {
     render(
       <UnstyledInput aria-label="Name" placeholder="e.g. Jordan" type="text" />,
     );
+
     expect(screen.getByRole('textbox')).toHaveAttribute(
       'placeholder',
       'e.g. Jordan',
     );
     expect(screen.getByRole('textbox')).toHaveAttribute('type', 'text');
+  });
+
+  it('still tracks data-focused even when the consumer passes their own onFocus', () => {
+    const handleFocus = vi.fn();
+    render(<UnstyledInput aria-label="Name" onFocus={handleFocus} />);
+
+    const input = screen.getByRole('textbox');
+    fireEvent.focus(input);
+
+    expect(handleFocus).toHaveBeenCalled();
+    expect(input).toHaveAttribute('data-focused', 'true');
+  });
+
+  it('still tracks data-focused clearing even when the consumer passes their own onBlur', () => {
+    const handleBlur = vi.fn();
+    render(<UnstyledInput aria-label="Name" onBlur={handleBlur} />);
+
+    const input = screen.getByRole('textbox');
+    fireEvent.focus(input);
+    fireEvent.blur(input);
+
+    expect(handleBlur).toHaveBeenCalled();
+    expect(input).not.toHaveAttribute('data-focused');
   });
 });
