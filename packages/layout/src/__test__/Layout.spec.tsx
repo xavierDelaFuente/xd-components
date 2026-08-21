@@ -21,25 +21,28 @@ describe('Layout', () => {
     );
   });
 
-  it('respects an explicit direction prop', () => {
-    render(
-      <Layout data-testid="layout" direction="horizontal">
-        content
-      </Layout>,
-    );
-    expect(screen.getByTestId('layout')).toHaveAttribute(
-      'data-direction',
-      'horizontal',
-    );
-  });
+  it.each(['horizontal', 'vertical'] as const)(
+    'sets data-direction to %s',
+    (direction) => {
+      render(
+        <Layout data-testid="layout" direction={direction}>
+          content
+        </Layout>,
+      );
+      expect(screen.getByTestId('layout')).toHaveAttribute(
+        'data-direction',
+        direction,
+      );
+    },
+  );
 
-  it('sets data-gap when gap is provided', () => {
+  it.each(['sm', 'md', 'lg'] as const)('sets data-gap to %s', (gap) => {
     render(
-      <Layout data-testid="layout" gap="md">
+      <Layout data-testid="layout" gap={gap}>
         content
       </Layout>,
     );
-    expect(screen.getByTestId('layout')).toHaveAttribute('data-gap', 'md');
+    expect(screen.getByTestId('layout')).toHaveAttribute('data-gap', gap);
   });
 
   it('omits data-gap when gap is not provided', () => {
@@ -47,43 +50,72 @@ describe('Layout', () => {
     expect(screen.getByTestId('layout')).not.toHaveAttribute('data-gap');
   });
 
-  it('sets data-align when align is provided', () => {
-    render(
-      <Layout data-testid="layout" align="center">
-        content
-      </Layout>,
-    );
-    expect(screen.getByTestId('layout')).toHaveAttribute(
-      'data-align',
-      'center',
-    );
-  });
+  it.each(['start', 'center', 'end'] as const)(
+    'sets data-align to %s',
+    (align) => {
+      render(
+        <Layout data-testid="layout" align={align}>
+          content
+        </Layout>,
+      );
+      expect(screen.getByTestId('layout')).toHaveAttribute(
+        'data-align',
+        align,
+      );
+    },
+  );
 
-  it('sets data-justify when justify is provided', () => {
-    render(
-      <Layout data-testid="layout" justify="between">
-        content
-      </Layout>,
-    );
-    expect(screen.getByTestId('layout')).toHaveAttribute(
-      'data-justify',
-      'between',
-    );
-  });
-
-  it('sets data-wrap="true" when wrap is true', () => {
-    render(
-      <Layout data-testid="layout" wrap>
-        content
-      </Layout>,
-    );
-    expect(screen.getByTestId('layout')).toHaveAttribute('data-wrap', 'true');
-  });
-
-  it('omits data-wrap when wrap is false or not provided', () => {
+  it('omits data-align when align is not provided', () => {
     render(<Layout data-testid="layout">content</Layout>);
-    expect(screen.getByTestId('layout')).not.toHaveAttribute('data-wrap');
+    expect(screen.getByTestId('layout')).not.toHaveAttribute('data-align');
   });
+
+  it.each(['start', 'center', 'end', 'between', 'around'] as const)(
+    'sets data-justify to %s',
+    (justify) => {
+      render(
+        <Layout data-testid="layout" justify={justify}>
+          content
+        </Layout>,
+      );
+      expect(screen.getByTestId('layout')).toHaveAttribute(
+        'data-justify',
+        justify,
+      );
+    },
+  );
+
+  it('omits data-justify when justify is not provided', () => {
+    render(<Layout data-testid="layout">content</Layout>);
+    expect(screen.getByTestId('layout')).not.toHaveAttribute('data-justify');
+  });
+
+  it.each([true, 'wrap'] as const)(
+    'sets data-wrap="true" when wrap is %s',
+    (wrap) => {
+      render(
+        <Layout data-testid="layout" wrap={wrap}>
+          content
+        </Layout>,
+      );
+      expect(screen.getByTestId('layout')).toHaveAttribute(
+        'data-wrap',
+        'true',
+      );
+    },
+  );
+
+  it.each([false, undefined, 'nowrap'] as const)(
+    'omits data-wrap when wrap is %s',
+    (wrap) => {
+      render(
+        <Layout data-testid="layout" wrap={wrap}>
+          content
+        </Layout>,
+      );
+      expect(screen.getByTestId('layout')).not.toHaveAttribute('data-wrap');
+    },
+  );
 
   it('merges a custom className with the base xd-layout class', () => {
     render(
