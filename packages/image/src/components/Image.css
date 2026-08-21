@@ -1,0 +1,47 @@
+.xd-image {
+  display: block;
+  max-width: 100%;
+}
+
+/* --- Fit --- */
+
+.xd-image[data-fit="cover"] {
+  object-fit: cover;
+}
+
+.xd-image[data-fit="contain"] {
+  object-fit: contain;
+}
+
+.xd-image[data-fit="fill"] {
+  object-fit: fill;
+}
+
+.xd-image[data-fit="none"] {
+  object-fit: none;
+}
+
+.xd-image[data-fit="scale-down"] {
+  object-fit: scale-down;
+}
+
+/* --- Radius ---
+   Fallback values kept in sync with @asnewyla/tokens (soft dependency —
+   see PROJECT.md, Tokens dependency model). No data-radius attribute means
+   no rounding, matching the native <img> default. */
+
+.xd-image[data-radius="sm"] {
+  border-radius: var(--xd-radius-sm, 4px);
+}
+
+.xd-image[data-radius="md"] {
+  border-radius: var(--xd-radius-md, 6px);
+}
+
+.xd-image[data-radius="lg"] {
+  border-radius: var(--xd-radius-lg, 10px);
+}
+
+.xd-image[data-radius="full"] {
+  border-radius: var(--xd-radius-full, 9999px);
+}
