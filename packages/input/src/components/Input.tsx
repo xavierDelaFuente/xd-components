@@ -3,6 +3,7 @@ import {
   type UnstyledInputProps,
 } from '@asnewyla/unstyled-input';
 import { type ForwardedRef, forwardRef, useId } from 'react';
+import './Input.css';
 
 export type InputProps = Omit<UnstyledInputProps, 'invalid'> & {
   label: string;
@@ -10,7 +11,7 @@ export type InputProps = Omit<UnstyledInputProps, 'invalid'> & {
 };
 
 function InputInner(
-  { label, id, error, disabled, ...rest }: InputProps,
+  { label, id, error, disabled, className, ...rest }: InputProps,
   ref: ForwardedRef<HTMLInputElement>,
 ) {
   const generatedId = useId();
@@ -18,18 +19,25 @@ function InputInner(
   const errorId = `${inputId}-error`;
 
   return (
-    <>
-      <label htmlFor={inputId}>{label}</label>
+    <div className="xd-input">
+      <label className="xd-input-label" htmlFor={inputId}>
+        {label}
+      </label>
       <UnstyledInput
         id={inputId}
         {...rest}
         invalid={!!error}
         disabled={disabled}
         aria-describedby={error ? errorId : undefined}
+        className={['xd-input-field', className].filter(Boolean).join(' ')}
         ref={ref}
       />
-      {error && <div id={errorId}>{error}</div>}
-    </>
+      {error && (
+        <div className="xd-input-error" id={errorId}>
+          {error}
+        </div>
+      )}
+    </div>
   );
 }
 

@@ -28,6 +28,7 @@
     "@asnewyla/button-group": "workspace:*",
     "@asnewyla/icon-button": "workspace:*",
     "@asnewyla/image": "workspace:*",
+    "@asnewyla/input": "workspace:*",
     "@asnewyla/layout": "workspace:*",
     "@asnewyla/tokens": "workspace:*",
     "@asnewyla/unstyled-button": "workspace:*"

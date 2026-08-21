@@ -20,6 +20,9 @@ importers:
       '@asnewyla/image':
         specifier: workspace:*
         version: link:packages/image
+      '@asnewyla/input':
+        specifier: workspace:*
+        version: link:packages/input
       '@asnewyla/layout':
         specifier: workspace:*
         version: link:packages/layout
