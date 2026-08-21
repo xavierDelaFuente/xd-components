@@ -7,12 +7,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--xd-space-md, 0.5rem);
   white-space: nowrap;
 
-  border-radius: 6px;
-  font-weight: 600;
-  line-height: 1.25;
+  border-radius: var(--xd-radius-md, 6px);
+  font-weight: var(--xd-font-weight-semibold, 600);
+  line-height: var(--xd-line-height-normal, 1.25);
 
   background-color: var(--_bg);
   color: var(--_fg);
@@ -43,7 +43,11 @@
   pointer-events: none;
 }
 
-/* ─── Variants — light mode (default) ─── */
+/* ─── Variants — light mode (default) ───
+   Fallback values here are kept in sync with @asnewyla/tokens — see that
+   package for the canonical scale. Soft dependency: Button works standalone
+   with these fallbacks; importing @asnewyla/tokens/tokens.css overrides them
+   with the same values by default, or your own if you set the properties. */
 
 .xd-button[data-variant="primary"] {
   --_bg: var(--xd-color-primary, #0d9488);
@@ -89,18 +93,18 @@
 /* ─── Sizes ─── */
 
 .xd-button[data-size="sm"] {
-  padding: 0.375rem 0.75rem;
-  font-size: 0.8125rem;
+  padding: var(--xd-space-sm, 0.375rem) var(--xd-space-lg, 0.75rem);
+  font-size: var(--xd-font-size-sm, 0.8125rem);
 }
 
 .xd-button[data-size="md"] {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+  padding: var(--xd-space-md, 0.5rem) var(--xd-space-xl, 1rem);
+  font-size: var(--xd-font-size-md, 0.875rem);
 }
 
 .xd-button[data-size="lg"] {
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
+  padding: var(--xd-space-lg, 0.75rem) var(--xd-space-2xl, 1.5rem);
+  font-size: var(--xd-font-size-lg, 1rem);
 }
 
 /* ─── Icon slots ─── */

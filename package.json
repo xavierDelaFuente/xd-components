@@ -27,6 +27,7 @@
     "@asnewyla/button": "workspace:*",
     "@asnewyla/button-group": "workspace:*",
     "@asnewyla/icon-button": "workspace:*",
+    "@asnewyla/tokens": "workspace:*",
     "@asnewyla/unstyled-button": "workspace:*"
   },
   "devDependencies": {

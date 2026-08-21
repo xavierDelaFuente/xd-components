@@ -1,0 +1,33 @@
+{
+  "name": "@asnewyla/tokens",
+  "version": "0.1.0",
+  "description": "Design tokens (color, spacing, typography, radius) as CSS custom properties",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xavierDelaFuente/xd-components.git",
+    "directory": "packages/tokens"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    "./tokens.css": "./dist/tokens.css"
+  },
+  "files": ["dist"],
+  "sideEffects": ["*.css"],
+  "keywords": ["css", "design-tokens", "theming"],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^2.0.0",
+    "tsup": "^8.1.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  }
+}
