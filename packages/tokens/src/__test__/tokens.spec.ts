@@ -35,11 +35,22 @@ describe('@asnewyla/tokens', () => {
     expect(css).toContain('--xd-space-2xl: 1.5rem;');
   });
 
-  it("defines a radius scale including Button's current 6px default", () => {
-    expect(css).toContain('--xd-radius-sm: 4px;');
-    expect(css).toContain('--xd-radius-md: 6px;');
-    expect(css).toContain('--xd-radius-lg: 10px;');
+  it('defines a radius scale in rem, consistent with the spacing/typography scales', () => {
+    expect(css).toContain('--xd-radius-sm: 0.25rem;');
+    expect(css).toContain('--xd-radius-md: 0.375rem;');
+    expect(css).toContain('--xd-radius-lg: 0.625rem;');
+
     expect(css).toContain('--xd-radius-full: 9999px;');
+  });
+
+  it('defines a border color token, light mode and dark mode', () => {
+    expect(css).toContain('--xd-color-border: #cbd5e1;');
+    const darkBlock = css.split('prefers-color-scheme: dark')[1] ?? '';
+    expect(darkBlock).toContain('--xd-color-border: #475569;');
+  });
+
+  it('defines a border-width token in px, deliberately not rem', () => {
+    expect(css).toContain('--xd-border-width-thin: 1px;');
   });
 
   it("defines a typography scale matching Button's current font values", () => {
@@ -48,5 +59,18 @@ describe('@asnewyla/tokens', () => {
     expect(css).toContain('--xd-font-size-lg: 1rem;');
     expect(css).toContain('--xd-font-weight-semibold: 600;');
     expect(css).toContain('--xd-line-height-normal: 1.25;');
+  });
+
+  it('defines a focus ring width/offset, matching what Button and Input both hardcoded identically', () => {
+    expect(css).toContain('--xd-focus-ring-width: 2px;');
+    expect(css).toContain('--xd-focus-ring-offset: 2px;');
+  });
+
+  it('defines a disabled-state opacity, matching what Button and Input both hardcoded identically', () => {
+    expect(css).toContain('--xd-opacity-disabled: 0.5;');
+  });
+
+  it('defines a motion token, matching what Button and Input both hardcoded identically', () => {
+    expect(css).toContain('--xd-motion-fast: 120ms ease-out;');
   });
 });
