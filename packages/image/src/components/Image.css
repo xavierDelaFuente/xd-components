@@ -31,15 +31,15 @@
    no rounding, matching the native <img> default. */
 
 .xd-image[data-radius="sm"] {
-  border-radius: var(--xd-radius-sm, 4px);
+  border-radius: var(--xd-radius-sm, 0.25rem);
 }
 
 .xd-image[data-radius="md"] {
-  border-radius: var(--xd-radius-md, 6px);
+  border-radius: var(--xd-radius-md, 0.375rem);
 }
 
 .xd-image[data-radius="lg"] {
-  border-radius: var(--xd-radius-lg, 10px);
+  border-radius: var(--xd-radius-lg, 0.625rem);
 }
 
 .xd-image[data-radius="full"] {

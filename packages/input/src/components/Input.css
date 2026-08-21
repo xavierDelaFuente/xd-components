@@ -1,0 +1,51 @@
+.xd-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--xd-space-xs, 0.25rem);
+}
+
+.xd-input-label {
+  font-size: var(--xd-font-size-sm, 0.8125rem);
+  font-weight: var(--xd-font-weight-semibold, 600);
+}
+
+.xd-input-field {
+  border: var(--xd-border-width-thin, 1px) solid var(--xd-color-border, #cbd5e1);
+  border-radius: var(--xd-radius-sm, 0.25rem);
+  padding: var(--xd-space-sm, 0.375rem) var(--xd-space-md, 0.5rem);
+  font-family: inherit;
+  font-size: var(--xd-font-size-md, 0.875rem);
+  color: inherit;
+  background-color: transparent;
+  transition:
+    border-color var(--xd-motion-fast, 120ms ease-out),
+    outline-color var(--xd-motion-fast, 120ms ease-out);
+}
+
+.xd-input-field:focus-visible {
+  outline: var(--xd-focus-ring-width, 2px) solid
+    var(--xd-color-focus, var(--xd-color-primary, #0d9488));
+  outline-offset: var(--xd-focus-ring-offset, 2px);
+}
+
+/* --- Invalid --- */
+
+.xd-input-field[data-invalid="true"] {
+  border-color: var(--xd-color-destructive, #dc2626);
+}
+
+.xd-input-field[data-invalid="true"]:focus-visible {
+  outline-color: var(--xd-color-destructive, #dc2626);
+}
+
+.xd-input-error {
+  font-size: var(--xd-font-size-sm, 0.8125rem);
+  color: var(--xd-color-destructive, #dc2626);
+}
+
+/* --- Disabled --- */
+
+.xd-input-field:disabled {
+  opacity: var(--xd-opacity-disabled, 0.5);
+  cursor: not-allowed;
+}

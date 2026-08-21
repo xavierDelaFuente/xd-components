@@ -24,9 +24,11 @@
   --xd-space-2xl: 1.5rem;
 
   /* ─── Radius ─── */
-  --xd-radius-sm: 4px;
-  --xd-radius-md: 6px;
-  --xd-radius-lg: 10px;
+  --xd-radius-sm: 0.25rem;
+  --xd-radius-md: 0.375rem;
+  --xd-radius-lg: 0.625rem;
+  /* Not on the rem scale on purpose — this is a "force pill/circle" trick
+     value (bigger than any element will ever be), not a real size. */
   --xd-radius-full: 9999px;
 
   /* ─── Typography ─── */
@@ -36,6 +38,26 @@
   --xd-font-weight-regular: 400;
   --xd-font-weight-semibold: 600;
   --xd-line-height-normal: 1.25;
+
+  /* ─── Border ─── */
+  --xd-color-border: #cbd5e1;
+  /* Stays in px, not rem, on purpose: a hairline border should render as
+     exactly one device pixel at any text-zoom level. In rem it would scale
+     with the user's font-size preference and could round to a blurry
+     sub-pixel or a visibly thicker line. */
+  --xd-border-width-thin: 1px;
+
+  /* ─── Focus ring ───
+     Same px-not-rem reasoning as border-width — a focus ring is a fixed
+     visual indicator, not something that should grow with text size. */
+  --xd-focus-ring-width: 2px;
+  --xd-focus-ring-offset: 2px;
+
+  /* ─── State ─── */
+  --xd-opacity-disabled: 0.5;
+
+  /* ─── Motion ─── */
+  --xd-motion-fast: 120ms ease-out;
 }
 
 /* --- Color -- dark mode ---
@@ -50,5 +72,6 @@
     --xd-on-secondary: #000000;
     --xd-color-destructive: #f87171;
     --xd-on-destructive: #000000;
+    --xd-color-border: #475569;
   }
 }

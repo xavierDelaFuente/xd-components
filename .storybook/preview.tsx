@@ -3,6 +3,7 @@ import '@asnewyla/tokens/tokens.css';
 import '@asnewyla/button/styles.css';
 import '@asnewyla/image/styles.css';
 import '@asnewyla/layout/styles.css';
+import '@asnewyla/input/styles.css';
 
 const preview: Preview = {
   parameters: {
