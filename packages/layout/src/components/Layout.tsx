@@ -1,4 +1,5 @@
 import { type ForwardedRef, forwardRef, type HTMLAttributes } from 'react';
+import './Layout.css';
 
 export type LayoutProps = {
   className?: string;

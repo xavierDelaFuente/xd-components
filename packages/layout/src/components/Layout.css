@@ -1,0 +1,71 @@
+.xd-layout {
+  display: flex;
+}
+
+/* --- Direction --- */
+
+.xd-layout[data-direction="vertical"] {
+  flex-direction: column;
+}
+
+.xd-layout[data-direction="horizontal"] {
+  flex-direction: row;
+}
+
+/* --- Gap ---
+   Fallback values kept in sync with @asnewyla/tokens (soft dependency —
+   see PROJECT.md, Tokens dependency model). */
+
+.xd-layout[data-gap="sm"] {
+  gap: var(--xd-space-sm, 0.375rem);
+}
+
+.xd-layout[data-gap="md"] {
+  gap: var(--xd-space-md, 0.5rem);
+}
+
+.xd-layout[data-gap="lg"] {
+  gap: var(--xd-space-lg, 0.75rem);
+}
+
+/* --- Align (cross axis) --- */
+
+.xd-layout[data-align="start"] {
+  align-items: flex-start;
+}
+
+.xd-layout[data-align="center"] {
+  align-items: center;
+}
+
+.xd-layout[data-align="end"] {
+  align-items: flex-end;
+}
+
+/* --- Justify (main axis) --- */
+
+.xd-layout[data-justify="start"] {
+  justify-content: flex-start;
+}
+
+.xd-layout[data-justify="center"] {
+  justify-content: center;
+}
+
+.xd-layout[data-justify="end"] {
+  justify-content: flex-end;
+}
+
+.xd-layout[data-justify="between"] {
+  justify-content: space-between;
+}
+
+.xd-layout[data-justify="around"] {
+  justify-content: space-around;
+}
+
+/* --- Wrap --- */
+
+.xd-layout[data-wrap="true"] {
+  flex-wrap: wrap;
+}

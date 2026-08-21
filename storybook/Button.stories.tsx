@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button } from '@asnewyla/button';
+import { Group } from '@asnewyla/layout';
 
 const meta = {
   title: 'Components/Button',
@@ -46,20 +47,20 @@ export const Destructive: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+    <Group gap="md" align="center">
       <Button size="sm">Small</Button>
       <Button size="md">Medium</Button>
       <Button size="lg">Large</Button>
-    </div>
+    </Group>
   ),
 };
 
 export const WithIcons: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '1rem' }}>
+    <Group gap="md">
       <Button startIcon={<span aria-hidden="true">💾</span>}>Save</Button>
       <Button endIcon={<span aria-hidden="true">→</span>}>Next</Button>
-    </div>
+    </Group>
   ),
 };
 

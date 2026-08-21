@@ -20,6 +20,9 @@ importers:
       '@asnewyla/image':
         specifier: workspace:*
         version: link:packages/image
+      '@asnewyla/layout':
+        specifier: workspace:*
+        version: link:packages/layout
       '@asnewyla/tokens':
         specifier: workspace:*
         version: link:packages/tokens
