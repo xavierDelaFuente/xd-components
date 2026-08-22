@@ -1,47 +1,102 @@
 import { FormFieldProvider } from '@asnewyla/input';
-import { useMemo, useRef } from 'react';
-import { useFieldRegistry } from './useFieldRegistry';
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import { type InvalidField, useFieldRegistry } from './useFieldRegistry';
 
 export type FormProps = {
-  children: React.ReactNode;
-  onSubmit: (values: Record<string, string>) => void;
+    children: React.ReactNode;
+    onSubmit: (values: Record<string, string>) => void;
 };
 
 export function Form({ children, onSubmit }: FormProps) {
-  const formRef = useRef<HTMLFormElement>(null);
-  const { errors, registerField, unregisterField, validateField, fieldNames } =
-    useFieldRegistry(formRef);
+    const formRef = useRef<HTMLFormElement>(null);
+    const summaryRef = useRef<HTMLDivElement>(null);
+    const {
+        errors,
+        registerField,
+        unregisterField,
+        validateField,
+        fieldNames,
+        invalidFields,
+    } = useFieldRegistry(formRef);
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+    // Counts submit attempts rather than a boolean — the error summary must
+    // re-focus on every failed submit, not just the first one, and a boolean
+    // flipped to `true` twice in a row wouldn't re-trigger the focus effect
+    // below (its dependency wouldn't have changed).
+    const [submitAttempts, setSubmitAttempts] = useState(0);
 
-    let hasError = false;
-    for (const name of fieldNames()) {
-      if (validateField(name)) hasError = true;
+    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+
+        let hasError = false;
+        for (const name of fieldNames()) {
+            if (validateField(name)) hasError = true;
+        }
+        setSubmitAttempts((n) => n + 1);
+        if (hasError) return;
+
+        const values: Record<string, string> = {};
+        for (const [key, value] of new FormData(event.currentTarget).entries()) {
+            values[key] = String(value);
+        }
+        onSubmit(values);
     }
-    if (hasError) return;
 
-    const values: Record<string, string> = {};
-    for (const [key, value] of new FormData(event.currentTarget).entries()) {
-      values[key] = String(value);
-    }
-    onSubmit(values);
-  }
+    const invalid: InvalidField[] = submitAttempts > 0 ? invalidFields() : [];
 
-  // Memoized so this object's identity only changes when `errors` actually
-  // changes — registerField/unregisterField/validateField are already
-  // stable via useCallback (inside useFieldRegistry). Without this, Input's
-  // registration effect (which depends on this whole object) would re-fire
-  // on every render, unregistering and re-registering the field on every
-  // validation.
-  const contextValue = useMemo(
-    () => ({ registerField, unregisterField, validateField, errors }),
-    [registerField, unregisterField, validateField, errors],
-  );
+    useEffect(() => {
+        if (submitAttempts > 0 && invalid.length > 0) {
+            summaryRef.current?.focus();
+        }
+    }, [submitAttempts]);
 
-  return (
-    <form ref={formRef} onSubmit={handleSubmit}>
-      <FormFieldProvider value={contextValue}>{children}</FormFieldProvider>
-    </form>
-  );
+    // Memoized so this object's identity only changes when `errors` actually
+    // changes 
+    const contextValue = useMemo(
+        () => ({ registerField, unregisterField, validateField, errors }),
+        [registerField, unregisterField, validateField, errors],
+    );
+
+    return (
+        <form ref={formRef} onSubmit={handleSubmit} noValidate>
+            {invalid.length > 0 && (
+                <ErrorSummary ref={summaryRef} invalidFields={invalid} />
+            )}
+            <FormFieldProvider value={contextValue}>{children}</FormFieldProvider>
+        </form>
+    );
 }
+
+type ErrorSummaryProps = {
+    invalidFields: InvalidField[];
+};
+
+const ErrorSummary = forwardRef<HTMLDivElement, ErrorSummaryProps>(
+    function ErrorSummary({ invalidFields }, ref) {
+        return (
+            <div
+                className="xd-form-error-summary"
+                role="alert"
+                tabIndex={-1}
+                ref={ref}
+            >
+                <p className="xd-form-error-summary-heading">There is a problem</p>
+                <ul>
+                    {invalidFields.map(({ name, id, message }) => (
+                        <li key={name}>
+                            <a
+                                href={`#${id}`}
+                                onClick={(event) => {
+                                    event.preventDefault();
+                                    document.getElementById(id)?.focus();
+                                }}
+                            >
+                                {message}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        );
+    },
+);

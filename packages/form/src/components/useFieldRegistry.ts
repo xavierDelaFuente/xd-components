@@ -1,35 +1,31 @@
-import type { ValidationRules } from '@asnewyla/input';
+import type { FieldRegistration } from '@asnewyla/input';
 import { type RefObject, useCallback, useRef, useState } from 'react';
 import { validateValue } from './validation';
 
-interface FieldEntry {
-  rules?: ValidationRules;
+export interface InvalidField {
+  name: string;
+  id: string;
+  message: string;
 }
 
 export interface FieldRegistry {
   errors: Record<string, string | undefined>;
-  registerField: (
-    name: string,
-    registration: { rules?: ValidationRules },
-  ) => void;
+  registerField: (name: string, registration: FieldRegistration) => void;
   unregisterField: (name: string) => void;
   validateField: (name: string) => string | undefined;
   fieldNames: () => string[];
+  invalidFields: () => InvalidField[];
 }
 
-// Owns everything about tracking and validating fields — registration,
-// error state, and reading a field's current value off the DOM. Form.tsx
-// only needs to consume this and handle submit-specific orchestration
-// (looping fields, gathering FormData for onSubmit).
 export function useFieldRegistry(
   formRef: RefObject<HTMLFormElement>,
 ): FieldRegistry {
-  const fieldsRef = useRef<Map<string, FieldEntry>>(new Map());
+  const fieldsRef = useRef<Map<string, FieldRegistration>>(new Map());
   const [errors, setErrors] = useState<Record<string, string | undefined>>({});
 
   const registerField = useCallback(
-    (name: string, registration: { rules?: ValidationRules }) => {
-      fieldsRef.current.set(name, { rules: registration.rules });
+    (name: string, registration: FieldRegistration) => {
+      fieldsRef.current.set(name, registration);
     },
     [],
   );
@@ -44,9 +40,6 @@ export function useFieldRegistry(
     });
   }, []);
 
-  // Reads straight off the DOM via FormData rather than tracking value in
-  // state — Input already sets a native `name` attribute, so there's no
-  // need to duplicate that as React state here.
   const getFieldValue = useCallback(
     (name: string): string => {
       if (!formRef.current) return '';
@@ -70,11 +63,23 @@ export function useFieldRegistry(
     [],
   );
 
+  const invalidFields = useCallback((): InvalidField[] => {
+    const result: InvalidField[] = [];
+    for (const [name, message] of Object.entries(errors)) {
+      if (!message) continue;
+      const id = fieldsRef.current.get(name)?.ref.current?.id;
+      if (!id) continue;
+      result.push({ name, id, message });
+    }
+    return result;
+  }, [errors]);
+
   return {
     errors,
     registerField,
     unregisterField,
     validateField,
     fieldNames,
+    invalidFields,
   };
 }
