@@ -1,8 +1,8 @@
 # PROJECT — xd-components
 
 **Type**: Component library (monorepo, per-component npm packages)
-**Status**: Modules 1–16 complete (Button family, `tokens`, `image`, `layout`, `unstyled-input`, `input`, `form`, `card`, `Grid` folded into `@asnewyla/layout`). No further modules currently planned.
-**Live packages**: all 11 published on the public npm registry — `unstyled-button`/`button`/`icon-button`/`button-group` at their `0.2.0`/`0.1.1` bumps; `tokens`/`image`/`layout`/`unstyled-input`/`input`/`form` live at `0.2.0`; `card` live for the first time at `0.2.0` (2026-08-22). Verified via a direct `npm publish` retry (rejected with "cannot publish over previously published version") — see the `npm view` read-path-lag Pattern.
+**Status**: Modules 1–16 complete (Button family, `tokens`, `image`, `layout`, `unstyled-input`, `input`, `form`, `card`, `Grid` folded into `@asnewyla/layout`). See Next for the prioritized roadmap of planned modules.
+**Live packages**: all 11 published on the public npm registry — `unstyled-button`/`button` at `0.2.0`, `icon-button`/`button-group` at `0.1.1`; `tokens`/`image`/`unstyled-input`/`input` at `0.2.0`; `layout` at `0.3.0` (Grid); `form` at `0.2.1` (error summary styles); `card` at `0.2.0`. Verified via a direct `npm publish` retry (rejected with "cannot publish over previously published version") — see the `npm view` read-path-lag Pattern.
 **Live docs**: https://xavierdelafuente.github.io/xd-components/
 **Repo**: https://github.com/xavierDelaFuente/xd-components
 **Local**: ~/Repos/2026/xd-components
@@ -107,8 +107,33 @@ All 11 packages have `LICENSE`, `README.md`, a verified dry-run tarball, Storybo
 
 ## Next
 
-- A changeset for `@asnewyla/layout`'s `Grid` addition (`minor` — new export, no breaking change), then the usual `changeset version` + `changeset publish` flow.
-- No further modules currently planned — revisit the Open Questions below (tsdown migration, `changesets/action` in CI) or scope something new when there's a real need.
+### Planned modules, by priority
+
+**Tier 1**
+
+- **Theme** (multi-brand theming, distinct from light/dark) — `[data-theme="x"]`-scoped `--xd-*` custom-property overrides layered on top of the existing soft-dependency token architecture; no component CSS changes needed, since every component already reads colors exclusively through `var(--xd-*, fallback)`. A `ThemeProvider` sets `data-theme` on `document.documentElement`, not a wrapping `<div>` — critical so the attribute cascades to portal-rendered content (Dialog, Select) that mounts outside the React tree's DOM position. Proposed as its own small package (`@asnewyla/theme` or similar) rather than folding into `@asnewyla/tokens`, since `tokens` is deliberately CSS-only today (no JS/React entry point at all) and a provider component would break that for consumers who only want the default stylesheet. Consumer-authored theme files follow `tokens.css`'s existing `--xd-*` contract; the repo ships 1-2 example themes as Storybook-only fixtures, not published brand-specific CSS. Architecture proposed, not yet confirmed.
+- **Light/dark mode** — related but orthogonal axis to Theme (color-scheme vs. brand identity), composes with the same attribute-scoping mechanism rather than a separate system. Today only exists as an implicit `@media (prefers-color-scheme: dark)` override in `tokens.css`, with no explicit user-facing toggle.
+- **Checkbox / Radio** — real gap in `@asnewyla/form`'s own scope: `FormFieldInput`'s rule-based validation currently has no consumer for boolean/choice fields, only text-like `Input`.
+- **Select / Dropdown** — explicit top user priority; needs search/prefilter for large option lists and a listbox/combobox a11y pattern. Likely portal-based, which is why it's sequenced after the Theme provider's portal-cascade decision above.
+
+**Tier 2**
+
+- **Table** — sortable/filterable, explicit user priority; largest scope in this batch, likely composed from `Layout`/`Grid` primitives rather than a fully custom layout.
+- **Dialog** — consolidates the user's separate Dialog/Modal/Prompt requests into one portal-based primitive with presentational presets, matching the `Layout`→`Stack`/`Group` "one primitive, thin variants" precedent instead of three parallel components.
+- **Switch** — same interactive-primitive shape as Checkbox; natural to build alongside it.
+- **Textarea** — same primitive/styled split as `Input`; fills a real multi-line-text gap in `@asnewyla/form`.
+- **Tabs**
+- **Tooltip**
+
+**Tier 3**
+
+- **Collapsible**
+- **Alert / Badge** — small, low-risk, mostly presentational (same category as `Card`).
+- **Spinner / Skeleton** — loading-state gap noticed during this roadmap review; not in the user's original list but a common design-system need once async data (Table, Select) exists.
+- **NavBar** — reconsider as a Storybook recipe built from existing `Layout`/`Group` rather than a new component, unless a real nav-specific behavior (active-route state, mobile collapse) turns up.
+- **Calendar, Carousel** — most complex/scope-heavy of the list; defer until there's a real consumer need.
+
+Revisit the Open Questions below (tsdown migration, `changesets/action` in CI) alongside this roadmap, not instead of it.
 
 ---
 
