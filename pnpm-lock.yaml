@@ -14,6 +14,9 @@ importers:
       '@asnewyla/button-group':
         specifier: workspace:*
         version: link:packages/button-group
+      '@asnewyla/card':
+        specifier: workspace:*
+        version: link:packages/card
       '@asnewyla/form':
         specifier: workspace:*
         version: link:packages/form

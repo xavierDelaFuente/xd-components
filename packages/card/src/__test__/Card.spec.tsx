@@ -119,6 +119,29 @@ describe('Card', () => {
     });
   });
 
+  it('merges a consumer className with the base xd-card class', () => {
+    const ref = createRef<HTMLDivElement>();
+    render(
+      <Card ref={ref} className="my-card">
+        Content
+      </Card>,
+    );
+
+    expect(ref.current).toHaveClass('xd-card', 'my-card');
+  });
+
+  it('spreads other native div props (e.g. id, aria-label) through to the root', () => {
+    const ref = createRef<HTMLDivElement>();
+    render(
+      <Card ref={ref} id="pricing-card" aria-label="Pricing">
+        Content
+      </Card>,
+    );
+
+    expect(ref.current).toHaveAttribute('id', 'pricing-card');
+    expect(ref.current).toHaveAttribute('aria-label', 'Pricing');
+  });
+
   it('renders the image before the children — full-bleed at the top', () => {
     render(
       <Card image={{ src: '/photo.jpg', alt: 'A mountain' }}>
