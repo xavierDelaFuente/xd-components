@@ -1,6 +1,7 @@
 import { FormFieldProvider } from '@asnewyla/input';
-import { forwardRef, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
+import { FormErrorSummary } from './FormErrorSummary';
 import { type InvalidField, useFieldRegistry } from './useFieldRegistry';
 
 export type FormProps = {
@@ -56,43 +57,9 @@ export function Form({ children, onSubmit }: FormProps) {
   return (
     <form ref={formRef} onSubmit={handleSubmit} noValidate>
       {invalid.length > 0 && (
-        <ErrorSummary ref={summaryRef} invalidFields={invalid} />
+        <FormErrorSummary ref={summaryRef} invalidFields={invalid} />
       )}
       <FormFieldProvider value={contextValue}>{children}</FormFieldProvider>
     </form>
   );
 }
-
-type ErrorSummaryProps = {
-  invalidFields: InvalidField[];
-};
-
-const ErrorSummary = forwardRef<HTMLDivElement, ErrorSummaryProps>(
-  function ErrorSummary({ invalidFields }, ref) {
-    return (
-      <div
-        className="xd-form-error-summary"
-        role="alert"
-        tabIndex={-1}
-        ref={ref}
-      >
-        <p className="xd-form-error-summary-heading">There is a problem</p>
-        <ul>
-          {invalidFields.map(({ name, id, message }) => (
-            <li key={name}>
-              <a
-                href={`#${id}`}
-                onClick={(event) => {
-                  event.preventDefault();
-                  document.getElementById(id)?.focus();
-                }}
-              >
-                {message}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
-  },
-);

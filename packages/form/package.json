@@ -19,9 +19,11 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
-    }
+    },
+    "./styles.css": "./dist/index.css"
   },
   "files": ["dist"],
+  "sideEffects": ["*.css"],
   "keywords": ["react", "form", "validation", "accessible"],
   "scripts": {
     "build": "tsup",

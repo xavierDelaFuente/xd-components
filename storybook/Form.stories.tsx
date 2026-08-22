@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Button } from '@asnewyla/button';
 import { Form, FormFieldInput } from '@asnewyla/form';
 import { Input } from '@asnewyla/input';
 import { Stack } from '@asnewyla/layout';
@@ -22,7 +23,7 @@ export const Default: StoryObj = {
           required
           pattern="^\S+@\S+$"
         />
-        <button type="submit">Submit</button>
+        <Button type="submit">Submit</Button>
       </Stack>
     </Form>
   ),
@@ -49,7 +50,7 @@ export const ValidationRules: StoryObj = {
               : undefined
           }
         />
-        <button type="submit">Submit</button>
+        <Button type="submit">Submit</Button>
       </Stack>
     </Form>
   ),
@@ -70,7 +71,7 @@ export const ErrorSummaryOnFailedSubmit: StoryObj = {
           pattern="^\S+@\S+$"
           defaultValue="not-an-email"
         />
-        <button type="submit">Submit</button>
+        <Button type="submit">Submit</Button>
       </Stack>
     </Form>
   ),
@@ -85,7 +86,7 @@ export const UnregisteredFieldInsideForm: StoryObj = {
       <Stack gap="md" style={{ width: 320 }}>
         <FormFieldInput label="Name" name="name" required />
         <Input label="Referral code (not validated)" name="referral" />
-        <button type="submit">Submit</button>
+        <Button type="submit">Submit</Button>
       </Stack>
     </Form>
   ),
