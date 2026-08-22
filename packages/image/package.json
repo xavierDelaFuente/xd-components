@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/image",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Image display with org styling, aspect ratio, and load-error fallback",
   "license": "MIT",
   "repository": {
