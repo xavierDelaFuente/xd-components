@@ -201,7 +201,12 @@ describe('Form', () => {
     const user = userEvent.setup();
     render(
       <Form onSubmit={vi.fn()}>
-        <FormFieldInput label="Quantity" name="quantity" type="number" min={5} />
+        <FormFieldInput
+          label="Quantity"
+          name="quantity"
+          type="number"
+          min={5}
+        />
       </Form>,
     );
     const input = screen.getByRole('spinbutton', { name: 'Quantity' });
@@ -217,7 +222,12 @@ describe('Form', () => {
     const user = userEvent.setup();
     render(
       <Form onSubmit={vi.fn()}>
-        <FormFieldInput label="Quantity" name="quantity" type="number" max={5} />
+        <FormFieldInput
+          label="Quantity"
+          name="quantity"
+          type="number"
+          max={5}
+        />
       </Form>,
     );
     const input = screen.getByRole('spinbutton', { name: 'Quantity' });
@@ -244,9 +254,7 @@ describe('Form', () => {
     await user.tab();
 
     expect(input).toHaveAttribute('aria-invalid', 'true');
-    expect(
-      screen.getByText('That username is reserved'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('That username is reserved')).toBeInTheDocument();
   });
 
   it('does not call onSubmit when a non-required rule (pattern) fails on submit, not just on blur', async () => {

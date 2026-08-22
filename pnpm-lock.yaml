@@ -14,6 +14,9 @@ importers:
       '@asnewyla/button-group':
         specifier: workspace:*
         version: link:packages/button-group
+      '@asnewyla/form':
+        specifier: workspace:*
+        version: link:packages/form
       '@asnewyla/icon-button':
         specifier: workspace:*
         version: link:packages/icon-button
