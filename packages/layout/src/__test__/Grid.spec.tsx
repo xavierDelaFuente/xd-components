@@ -107,14 +107,18 @@ describe('Grid', () => {
   });
 
   it('passes through arbitrary native div attributes', () => {
+    // Uses `id`, not an aria-*/data-* attribute — those bypass TypeScript's
+    // prop-type checking on any JSX element regardless of the component's
+    // declared props, so they wouldn't actually prove GridProps forwards
+    // arbitrary native attributes rather than just special-cased ones.
     render(
-      <Grid data-testid="grid" aria-label="Product grid">
+      <Grid data-testid="grid" id="product-grid">
         content
       </Grid>,
     );
     expect(screen.getByTestId('grid')).toHaveAttribute(
-      'aria-label',
-      'Product grid',
+      'id',
+      'product-grid',
     );
   });
 

@@ -1,46 +1,51 @@
-import { type ForwardedRef, forwardRef } from 'react';
+import {
+    type ForwardedRef,
+    forwardRef,
+    type HTMLAttributes,
+} from 'react';
+import './Grid.css';
 
 export type GridProps = {
-  children?: React.ReactNode;
-  columns?: number | string;
-  style?: React.CSSProperties;
-  'data-testid'?: string;
-  gap?: 'sm' | 'md' | 'lg';
-  align?: 'start' | 'center' | 'end';
-  justify?: 'start' | 'center' | 'end';
-  className?: string;
-};
-function GridInner(
-  {
-    children,
-    columns,
-    style,
-    'data-testid': dataTestId,
-    gap,
-    align,
-    justify,
-    className,
-    ...rest
-  }: GridProps,
-  ref: ForwardedRef<HTMLDivElement>,
-) {
-  const columnsStyle =
-    typeof columns === 'number' ? `repeat(${columns}, 1fr)` : columns;
+    className?: string;
+    children?: React.ReactNode;
+    'data-testid'?: string;
+    columns?: number | string;
+    gap?: 'sm' | 'md' | 'lg';
+    align?: 'start' | 'center' | 'end';
+    justify?: 'start' | 'center' | 'end';
+} & Omit<HTMLAttributes<HTMLDivElement>, 'className' | 'children'>;
 
-  return (
-    <div
-      data-testid={dataTestId}
-      data-gap={gap}
-      data-align={align}
-      data-justify={justify}
-      className={className ? `xd-grid ${className}` : 'xd-grid'}
-      ref={ref}
-      style={{ display: 'grid', gridTemplateColumns: columnsStyle, ...style }}
-      {...rest}
-    >
-      {children}
-    </div>
-  );
+function GridInner(
+    {
+        children,
+        columns,
+        style,
+        'data-testid': dataTestId = 'grid',
+        gap,
+        align,
+        justify,
+        className,
+        ...rest
+    }: GridProps,
+    ref: ForwardedRef<HTMLDivElement>,
+) {
+    const columnsStyle =
+        typeof columns === 'number' ? `repeat(${columns}, 1fr)` : columns;
+
+    return (
+        <div
+            ref={ref}
+            {...rest}
+            data-testid={dataTestId}
+            data-gap={gap}
+            data-align={align}
+            data-justify={justify}
+            className={className ? `xd-grid ${className}` : 'xd-grid'}
+            style={{ gridTemplateColumns: columnsStyle, ...style }}
+        >
+            {children}
+        </div>
+    );
 }
 
 export const Grid = forwardRef<HTMLDivElement, GridProps>(GridInner);
