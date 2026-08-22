@@ -80,17 +80,33 @@ Versions in `package.json` are the source of truth.
 
 **`@asnewyla/unstyled-input` + `@asnewyla/input`** — Uncontrolled by default. State exposed via `data-focused`/`data-invalid`/`data-disabled`, not render props (void element, no children slot). `InputProps` derives from `UnstyledInputProps`, not raw `InputHTMLAttributes`. `invalid` is derived from `!!error`, not a separate prop. `@asnewyla/input` also exports `FormFieldContext`/`FormFieldProvider`/`useFormFieldContext` (see Cross-family context ownership) — `Input` itself has zero knowledge of `Form`.
 
-**`@asnewyla/form`** — `Form` (renders `<form>`, owns validation, provides `FormFieldContext`; internals split into `validation.ts` — pure `validateValue`, no React — and `useFieldRegistry.ts` — the field `Map`/`errors` state and register/unregister/validate) and `FormFieldInput` (wraps `Input`: `name` + rule props + registration effect + ref-merging + blur-triggered validation; no-ops gracefully with no `FormFieldProvider` ancestor — native attributes like `required`/`pattern` still reach the DOM either way). See Form value collection and `FormFieldInput` package decisions.
-Open: the error-summary UI (see Error display), Storybook stories, release-readiness files (`LICENSE`/`README`/dry-run tarball).
+**`@asnewyla/form`** — `Form` (renders `<form>`, owns validation, provides `FormFieldContext`; internals split into `validation.ts` — pure `validateValue`, no React — and `useFieldRegistry.ts` — the field `Map`/`errors` state and register/unregister/validate) and `FormFieldInput` (wraps `Input`: `name` + rule props + registration effect + ref-merging + blur-triggered validation; no-ops gracefully with no `FormFieldProvider` ancestor — native attributes like `required`/`pattern` still reach the DOM either way). Ships no CSS of its own — all rendering comes from `@asnewyla/input`'s stylesheet, which a `Form` consumer already needs. See Form value collection and `FormFieldInput` package decisions. Not release-ready yet — see Release readiness below.
 
 **Planned** — `@asnewyla/card` (media+body surface, wraps `@asnewyla/image`; boundary and prop shape open until kickoff). Grid (CSS-Grid layout primitive complementary to `Layout`; package placement — inside `@asnewyla/layout` vs. standalone — open until `Card` exists as a concrete consumer).
 
 ---
 
+## Release Readiness
+
+**`@asnewyla/form` — not release-ready.** Missing, in order a consumer would hit them:
+- No error-summary UI — `Form` validates and blocks submit, but there's no `role="alert"` summary, no per-field links, no focus-moved-to-summary on failed submit (see Error display Architecture Decision). RED tests already written (`FormErrorSummary.spec.tsx`, 9 failing on purpose) encoding the exact contract: summary appears only once a submit attempt has failed (not from blur-driven errors alone), one link per invalid field pointing at that field's real DOM `id`, focus moves to the summary on every failed submit, a summary link's click handler explicitly moves focus to its field, and the summary stays reactive to `errors` afterward (including via blur) until none remain. Implementation still open.
+- No Storybook stories for `Form` or `FormFieldInput` — every other shipped package has at least one `.stories.tsx` file; `form` has none.
+- No `LICENSE`/`README.md` in `packages/form/` — every other package has both; `npm`/`pnpm publish` only includes a `LICENSE` file in the tarball when it physically exists in that package's own directory, so this package's tarball currently ships with neither.
+- No changeset yet for `@asnewyla/form`'s first publish (the other five pending changesets in `.changeset/` cover `tokens`, `image`, `layout`, `unstyled-input`, `button`, `unstyled-button`, and `input` — none mention `form`).
+- Found and fixed this session: `package.json` declared a `./styles.css` export pointing at `./dist/index.css`, copied from `@asnewyla/input`'s package.json — but `form` has no CSS of its own (confirmed: no `.css` file anywhere in `src/`, no `.css` in a real `tsup` build output), so that subpath would 404 for any consumer who tried to import it. Removed the export and the now-inapplicable `sideEffects: ["*.css"]` field.
+- `package.json`'s `description` ("Form wrapper with real validation and an accessible error summary") describes the error summary as already built — worth revisiting once that feature actually exists, or before first publish if it ships without one.
+
+**Every other shipped package** (`unstyled-button`, `button`, `icon-button`, `button-group`, `tokens`, `image`, `layout`, `unstyled-input`, `input`) has `LICENSE`, `README.md`, a verified dry-run tarball, and Storybook stories. `unstyled-button`/`image` (restProps fix) and `tokens`/`button` (new token categories) are already covered by existing pending changesets and just need `changeset version` + `changeset publish` to actually ship the version bump.
+
+---
+
 ## Next
 
-- Changeset covering: `@asnewyla/input`, `@asnewyla/form`, `@asnewyla/unstyled-input` (first publish, all three); `patch` for `unstyled-button`/`image` (restProps-ordering fix); `minor` for `@asnewyla/tokens` (new token categories, radius `px`→`rem`); `patch` for `@asnewyla/button` (now consumes the new tokens).
-- `@asnewyla/form`: error summary, Storybook stories, release-readiness files.
+- Implement the `Form` error summary against the RED tests in `FormErrorSummary.spec.tsx` (9 failing on purpose — see Release Readiness).
+- Storybook stories for `Form`/`FormFieldInput`.
+- `LICENSE`/`README.md` for `@asnewyla/form`, then a dry-run tarball check.
+- A changeset for `@asnewyla/form`'s first publish.
+- Run `changeset version` + `changeset publish` to actually ship the version bumps the existing pending changesets describe.
 - `Card` (15) / Grid (16) — not started.
 
 ---

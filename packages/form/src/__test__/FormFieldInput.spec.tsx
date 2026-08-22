@@ -174,4 +174,44 @@ describe('FormFieldInput', () => {
     expect(() => fireEvent.blur(input)).not.toThrow();
     expect(input).not.toHaveAttribute('aria-invalid');
   });
+
+  it('re-registers under the new name when the name prop changes, unregistering the old one', () => {
+    const { rerender } = render(
+      <FormFieldProvider value={contextValue}>
+        <FormFieldInput label="Field" name="first" />
+      </FormFieldProvider>,
+    );
+
+    expect(contextValue.registerField).toHaveBeenCalledWith(
+      'first',
+      expect.anything(),
+    );
+
+    rerender(
+      <FormFieldProvider value={contextValue}>
+        <FormFieldInput label="Field" name="second" />
+      </FormFieldProvider>,
+    );
+
+    expect(contextValue.unregisterField).toHaveBeenCalledWith('first');
+    expect(contextValue.registerField).toHaveBeenCalledWith(
+      'second',
+      expect.anything(),
+    );
+  });
+
+  it('supports a ref callback function, in addition to a ref object', () => {
+    let receivedNode: HTMLInputElement | null = null;
+    render(
+      <FormFieldInput
+        label="Email"
+        name="email"
+        ref={(node) => {
+          receivedNode = node;
+        }}
+      />,
+    );
+
+    expect(receivedNode).toBe(screen.getByRole('textbox', { name: 'Email' }));
+  });
 });

@@ -1,8 +1,31 @@
 import { Input } from '@asnewyla/input';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type ChangeEvent, useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { Form, FormFieldInput } from '../components';
+
+function ControlledEmailForm({
+  onSubmit,
+}: {
+  onSubmit: (values: Record<string, string>) => void;
+}) {
+  const [value, setValue] = useState('');
+  return (
+    <Form onSubmit={onSubmit}>
+      <FormFieldInput
+        label="Email"
+        name="email"
+        required
+        value={value}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          setValue(event.target.value)
+        }
+      />
+      <button type="submit">Save</button>
+    </Form>
+  );
+}
 
 describe('Form', () => {
   it('renders a form element with its children', () => {
@@ -243,6 +266,17 @@ describe('Form', () => {
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
     expect(handleSubmit).not.toHaveBeenCalled();
+  });
+
+  it('works with a controlled FormFieldInput (value + onChange), reading the live DOM value at validation time', async () => {
+    const user = userEvent.setup();
+    const handleSubmit = vi.fn();
+    render(<ControlledEmailForm onSubmit={handleSubmit} />);
+
+    await user.type(screen.getByRole('textbox', { name: 'Email' }), 'a@b.com');
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(handleSubmit).toHaveBeenCalledWith({ email: 'a@b.com' });
   });
 
   it('a plain Input (not FormFieldInput) inside a Form is never treated as a field', () => {
