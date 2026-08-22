@@ -95,6 +95,15 @@ describe('Input', () => {
     expect(screen.getByRole('textbox', { name: 'Name' })).toBeDisabled();
   });
 
+  it('merges a consumer className with the base xd-input-field class', () => {
+    render(<Input label="Name" className="my-input" />);
+
+    expect(screen.getByRole('textbox', { name: 'Name' })).toHaveClass(
+      'xd-input-field',
+      'my-input',
+    );
+  });
+
   it('forwards a ref to the underlying input element', () => {
     const ref = createRef<HTMLInputElement>();
     render(<Input label="Name" ref={ref} />);

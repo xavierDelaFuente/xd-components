@@ -10,14 +10,13 @@ npm install @asnewyla/form @asnewyla/input
 ```
 
 `FormFieldInput` renders `@asnewyla/input`'s `Input` under the hood, so its
-stylesheet also needs importing once, anywhere in your app:
+stylesheet also needs importing once, alongside `@asnewyla/form`'s own
+(which styles the error summary):
 
 ```ts
+import '@asnewyla/form/styles.css';
 import '@asnewyla/input/styles.css';
 ```
-
-`@asnewyla/form` ships no CSS of its own — every field's appearance comes
-from `@asnewyla/input`.
 
 ## Usage
 

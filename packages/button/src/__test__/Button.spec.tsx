@@ -113,6 +113,11 @@ describe('Button', () => {
     expect(link).toHaveAttribute('href', '/profile');
   });
 
+  it('merges a consumer className with the base xd-button class', () => {
+    render(<Button className="my-button">Save</Button>);
+    expect(screen.getByRole('button')).toHaveClass('xd-button', 'my-button');
+  });
+
   it('forwards ref to the underlying DOM element', () => {
     const ref = { current: null } as React.RefObject<HTMLButtonElement>;
     render(<Button ref={ref}>Ref test</Button>);

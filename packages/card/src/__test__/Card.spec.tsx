@@ -142,6 +142,24 @@ describe('Card', () => {
     expect(ref.current).toHaveAttribute('aria-label', 'Pricing');
   });
 
+  it('radius applies to the card root even when an image is present, and the image gets no radius of its own', () => {
+    const ref = createRef<HTMLDivElement>();
+    render(
+      <Card
+        ref={ref}
+        radius="lg"
+        image={{ src: '/photo.jpg', alt: 'A mountain' }}
+      >
+        Content
+      </Card>,
+    );
+
+    expect(ref.current).toHaveAttribute('data-radius', 'lg');
+    expect(screen.getByAltText('A mountain')).not.toHaveAttribute(
+      'data-radius',
+    );
+  });
+
   it('renders the image before the children — full-bleed at the top', () => {
     render(
       <Card image={{ src: '/photo.jpg', alt: 'A mountain' }}>
