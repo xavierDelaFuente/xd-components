@@ -51,6 +51,34 @@ prop. Setting `error` sets `aria-invalid` on the input and links it via
 `aria-describedby` to the rendered error message; there's no way to end up
 with one without the other.
 
+### Inside a `@asnewyla/form`
+
+`Input` itself has no knowledge of `Form` at all. For any field you want
+`Form` to register, validate, and collect on submit, use `FormFieldInput`
+from `@asnewyla/form` instead:
+
+```tsx
+import { Form, FormFieldInput } from '@asnewyla/form';
+
+<Form onSubmit={(values) => console.log(values)}>
+  <FormFieldInput label="Email" name="email" required pattern="^\S+@\S+$" />
+  <FormFieldInput label="Password" name="password" required minLength={8} />
+  <button type="submit">Submit</button>
+</Form>
+```
+
+`FormFieldInput` accepts every `Input` prop plus a required `name` and the
+validation-rule props (`required`, `pattern`, `minLength`, `maxLength`,
+`min`, `max`, `validate`). Used outside a `Form`, it still renders correctly
+— `name`/`required`/`pattern`/etc. still reach the native `<input>` as
+ordinary HTML attributes — it just has nothing to register with.
+
+A plain `Input` with a `name` placed inside a `Form` is never registered or
+validated, but its value is still collected into `onSubmit`'s payload —
+`Form` reads submitted values via native `FormData`, which picks up any
+named form control regardless of registration. This is intentional, native
+`<form>` behavior, not a gap `FormFieldInput` is meant to close.
+
 ### Theming
 
 Override the CSS custom properties — defaults adapt automatically to

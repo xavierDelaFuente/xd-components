@@ -26,6 +26,7 @@
   "dependencies": {
     "@asnewyla/button": "workspace:*",
     "@asnewyla/button-group": "workspace:*",
+    "@asnewyla/form": "workspace:*",
     "@asnewyla/icon-button": "workspace:*",
     "@asnewyla/image": "workspace:*",
     "@asnewyla/input": "workspace:*",
