@@ -1,11 +1,8 @@
+import { type FormFieldContextValue, FormFieldProvider } from '@asnewyla/input';
 import { createRef } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  type FormFieldContextValue,
-  FormFieldProvider,
-  Input,
-} from '../components';
+import { FormFieldInput } from '../components';
 
 const contextValue: FormFieldContextValue = {
   registerField: vi.fn(),
@@ -19,27 +16,17 @@ beforeEach(() => {
   contextValue.errors = {};
 });
 
-describe('Input — Form field registration', () => {
-  it('does not register when there is no FormFieldProvider ancestor', () => {
-    render(<Input label="Name" name="name" />);
+describe('FormFieldInput', () => {
+  it('renders as a normal Input when there is no FormFieldProvider ancestor', () => {
+    render(<FormFieldInput label="Name" name="name" />);
 
     expect(screen.getByRole('textbox', { name: 'Name' })).toBeInTheDocument();
   });
 
-  it('does not register when no name prop is given, even inside a FormFieldProvider', () => {
+  it('registers itself on mount when inside a FormFieldProvider', () => {
     render(
       <FormFieldProvider value={contextValue}>
-        <Input label="Name" />
-      </FormFieldProvider>,
-    );
-
-    expect(contextValue.registerField).not.toHaveBeenCalled();
-  });
-
-  it('registers itself on mount when inside a FormFieldProvider with a name', () => {
-    render(
-      <FormFieldProvider value={contextValue}>
-        <Input label="Email" name="email" />
+        <FormFieldInput label="Email" name="email" />
       </FormFieldProvider>,
     );
 
@@ -52,7 +39,7 @@ describe('Input — Form field registration', () => {
   it("the registered ref points at the actual underlying input's DOM node", () => {
     render(
       <FormFieldProvider value={contextValue}>
-        <Input label="Email" name="email" />
+        <FormFieldInput label="Email" name="email" />
       </FormFieldProvider>,
     );
 
@@ -68,7 +55,7 @@ describe('Input — Form field registration', () => {
     const ref = createRef<HTMLInputElement>();
     render(
       <FormFieldProvider value={contextValue}>
-        <Input label="Email" name="email" ref={ref} />
+        <FormFieldInput label="Email" name="email" ref={ref} />
       </FormFieldProvider>,
     );
 
@@ -79,7 +66,7 @@ describe('Input — Form field registration', () => {
     const validate = () => undefined;
     render(
       <FormFieldProvider value={contextValue}>
-        <Input
+        <FormFieldInput
           label="Password"
           name="password"
           required
@@ -101,7 +88,7 @@ describe('Input — Form field registration', () => {
   it('unregisters on unmount', () => {
     const { unmount } = render(
       <FormFieldProvider value={contextValue}>
-        <Input label="Email" name="email" />
+        <FormFieldInput label="Email" name="email" />
       </FormFieldProvider>,
     );
 
@@ -113,7 +100,7 @@ describe('Input — Form field registration', () => {
   it('calls validateField(name) on blur', () => {
     render(
       <FormFieldProvider value={contextValue}>
-        <Input label="Email" name="email" />
+        <FormFieldInput label="Email" name="email" />
       </FormFieldProvider>,
     );
 
@@ -126,7 +113,7 @@ describe('Input — Form field registration', () => {
     const handleBlur = vi.fn();
     render(
       <FormFieldProvider value={contextValue}>
-        <Input label="Email" name="email" onBlur={handleBlur} />
+        <FormFieldInput label="Email" name="email" onBlur={handleBlur} />
       </FormFieldProvider>,
     );
 
@@ -140,13 +127,11 @@ describe('Input — Form field registration', () => {
     contextValue.errors = { email: 'Enter a valid email address' };
     render(
       <FormFieldProvider value={contextValue}>
-        <Input label="Email" name="email" />
+        <FormFieldInput label="Email" name="email" />
       </FormFieldProvider>,
     );
 
-    expect(
-      screen.getByText('Enter a valid email address'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('Enter a valid email address')).toBeInTheDocument();
     expect(screen.getByRole('textbox', { name: 'Email' })).toHaveAttribute(
       'aria-invalid',
       'true',
@@ -157,11 +142,36 @@ describe('Input — Form field registration', () => {
     contextValue.errors = { email: 'Context error loses' };
     render(
       <FormFieldProvider value={contextValue}>
-        <Input label="Email" name="email" error="Local error wins" />
+        <FormFieldInput label="Email" name="email" error="Local error wins" />
       </FormFieldProvider>,
     );
 
     expect(screen.getByText('Local error wins')).toBeInTheDocument();
     expect(screen.queryByText('Context error loses')).not.toBeInTheDocument();
+  });
+
+  it('outside a Form, native HTML validation attributes still reach the underlying input', () => {
+    render(
+      <FormFieldInput
+        label="Email"
+        name="email"
+        required
+        pattern="^\S+@\S+$"
+        minLength={5}
+      />,
+    );
+
+    const input = screen.getByRole('textbox', { name: 'Email' });
+    expect(input).toHaveAttribute('required');
+    expect(input).toHaveAttribute('pattern', '^\\S+@\\S+$');
+    expect(input).toHaveAttribute('minLength', '5');
+  });
+
+  it('outside a Form, blur does not throw and does not mark the field invalid on its own', () => {
+    render(<FormFieldInput label="Email" name="email" required />);
+    const input = screen.getByRole('textbox', { name: 'Email' });
+
+    expect(() => fireEvent.blur(input)).not.toThrow();
+    expect(input).not.toHaveAttribute('aria-invalid');
   });
 });
