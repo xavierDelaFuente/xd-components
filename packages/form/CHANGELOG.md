@@ -1,5 +1,11 @@
 # @asnewyla/form
 
+## 0.2.1
+
+### Patch Changes
+
+- 07f7f66: add missing styles for the error summary (role="alert" box, heading, links) and export them via ./styles.css
+
 ## 0.2.0
 
 ### Minor Changes
