@@ -35,7 +35,7 @@ function LayoutInner(
       data-align={align}
       data-justify={justify}
       data-wrap={wrap === true || wrap === 'wrap' ? 'true' : undefined}
-      className={['xd-layout', className].filter(Boolean).join(' ')}
+      className={className ? `xd-layout ${className}` : 'xd-layout'}
       {...restProps}
     >
       {children}

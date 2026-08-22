@@ -32,7 +32,7 @@ function CardInner(
     <div
       ref={ref}
       {...restProps}
-      className={['xd-card', className].filter(Boolean).join(' ')}
+      className={className ? `xd-card ${className}` : 'xd-card'}
       data-padding={padding}
       data-radius={radius}
     >
