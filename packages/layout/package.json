@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/layout",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Flex-based layout primitives (Layout, Stack, Group) with token-based spacing",
   "license": "MIT",
   "repository": {

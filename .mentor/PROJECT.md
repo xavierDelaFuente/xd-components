@@ -89,24 +89,19 @@ Versions in `package.json` are the source of truth.
 
 ## Release Readiness
 
-**`@asnewyla/form` — one step from release-ready.** Only remaining gap:
-- No changeset yet for `@asnewyla/form`'s first publish (the other five pending changesets in `.changeset/` cover `tokens`, `image`, `layout`, `unstyled-input`, `button`, `unstyled-button`, and `input` — none mention `form`).
+**`@asnewyla/form` — release-ready.** Error-summary UI complete (12 `FormErrorSummary.spec.tsx` tests: `role="alert"`, one `<a href="#fieldId">` link per invalid field, focus moved to the summary on every failed submit, a link's click handler explicitly refocuses its field, reactive to `errors` afterward via blur, and a field's inline error and summary entry both show at once, not either). `LICENSE`/`README.md`/Storybook stories in place, dry-run tarball verified, changeset added (`@asnewyla/form` + `@asnewyla/input`, both `minor`). Merged into `main` via PR #21.
 
-**Done this session**:
-- The error-summary UI: all 12 `FormErrorSummary.spec.tsx` tests pass (`role="alert"`, one `<a href="#fieldId">` link per invalid field, focus moved to the summary on every failed submit, a link's click handler explicitly refocuses its field, reactive to `errors` afterward via blur, and — the one integration gap closed after implementation — a field's inline error and its summary entry both show at once, not either). Implementing it surfaced a real, previously-unexercised bug: `<form>` needs `noValidate`, or the browser's native constraint validation (triggered by the real `required`/`pattern`/etc. attributes `FormFieldInput` sets) silently blocks the `submit` event before `handleSubmit` ever runs — jsdom 24 replicates this. Every prior test asserting `onSubmit` wasn't called on an invalid required field had been passing vacuously for this reason. See the Patterns below (also one on preferring `flushSync` over a narrowed-dependency `useEffect` for this kind of "focus something that just rendered" case).
-- `LICENSE`/`README.md` added, dry-run tarball verified (`LICENSE`, `README.md`, `dist/*`, `package.json` — 9 files).
-- Found and fixed: `package.json` declared a `./styles.css` export pointing at `./dist/index.css`, copied from `@asnewyla/input`'s package.json — but `form` has no CSS of its own, so that subpath would 404 for any consumer who tried to import it. Removed the export and the now-inapplicable `sideEffects: ["*.css"]` field.
-- Storybook stories (`storybook/Form.stories.tsx`) — `Default`, `ValidationRules`, `ErrorSummaryOnFailedSubmit` (fields start invalid so the summary is visible without typing), `UnregisteredFieldInsideForm` (demonstrates the accepted `FormData`-collects-unregistered-fields behavior). Added `@asnewyla/form` to the root `package.json`'s dependencies so Storybook can resolve it — every other component package was already there; `form` was the one gap. `pnpm storybook:build` verified clean.
+Implementing the summary surfaced a real bug: `<form>` needed `noValidate`, or the browser's native constraint validation (from the real `required`/`pattern`/etc. attributes `FormFieldInput` sets) silently blocked the `submit` event before `handleSubmit` ever ran — jsdom 24 replicates this, and every prior test asserting `onSubmit` wasn't called had been passing vacuously for that reason, not because `Form`'s own logic ran. See Patterns below (also one on preferring `flushSync` over a narrowed-dependency `useEffect` for "focus something that just rendered").
 
-**Every other shipped package** (`unstyled-button`, `button`, `icon-button`, `button-group`, `tokens`, `image`, `layout`, `unstyled-input`, `input`) has `LICENSE`, `README.md`, a verified dry-run tarball, and Storybook stories. `unstyled-button`/`image` (restProps fix) and `tokens`/`button` (new token categories) are already covered by existing pending changesets and just need `changeset version` + `changeset publish` to actually ship the version bump.
+**All nine shipped packages** (`unstyled-button`, `button`, `icon-button`, `button-group`, `tokens`, `image`, `layout`, `unstyled-input`, `input`, `form`) now have `LICENSE`, `README.md`, a verified dry-run tarball, and Storybook stories. Six changesets are pending in `.changeset/` — every package with unshipped changes is covered. Nothing left to write; only `changeset version` + `changeset publish` remain to actually cut the versions.
 
 ---
 
 ## Next
 
-- A changeset for `@asnewyla/form`'s first publish.
-- Run `changeset version` + `changeset publish` to actually ship the version bumps the existing pending changesets describe.
-- `Card` (15) / Grid (16) — not started.
+- Run `changeset version` (bumps versions, writes changelogs from the six pending changesets) then `pnpm release` (`pnpm build && changeset publish`) to actually ship: first publish for `@asnewyla/form`, `@asnewyla/input`, `@asnewyla/unstyled-input`; `patch` for `unstyled-button`/`image` (restProps fix); `minor` for `@asnewyla/tokens`; `patch` for `@asnewyla/button` (new tokens). Verify each package post-publish via `npm view`, same as Module 7.
+- Module 15 (`@asnewyla/card`) kickoff — see Phases for the open questions to settle first (package boundary, how much of `Image`'s API to re-expose).
+- Module 16 (Grid) — deliberately deferred until `Card` exists as a concrete grid consumer.
 
 ---
 
