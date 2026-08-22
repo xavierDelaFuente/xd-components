@@ -1,0 +1,45 @@
+.xd-grid {
+  display: grid;
+}
+
+/* --- Gap ---  */
+
+.xd-grid[data-gap="sm"] {
+  gap: var(--xd-space-sm, 0.375rem);
+}
+
+.xd-grid[data-gap="md"] {
+  gap: var(--xd-space-md, 0.5rem);
+}
+
+.xd-grid[data-gap="lg"] {
+  gap: var(--xd-space-lg, 0.75rem);
+}
+
+/* --- Align (per-item vertical position within its cell) --- */
+
+.xd-grid[data-align="start"] {
+  align-items: start;
+}
+
+.xd-grid[data-align="center"] {
+  align-items: center;
+}
+
+.xd-grid[data-align="end"] {
+  align-items: end;
+}
+
+/* --- Justify (per-item horizontal position within its cell) --- */
+
+.xd-grid[data-justify="start"] {
+  justify-items: start;
+}
+
+.xd-grid[data-justify="center"] {
+  justify-items: center;
+}
+
+.xd-grid[data-justify="end"] {
+  justify-items: end;
+}

@@ -54,7 +54,7 @@ function ImageInner(
       alt={alt}
       data-fit={fit}
       data-radius={radius || undefined}
-      className={['xd-image', className].filter(Boolean).join(' ')}
+      className={className ? `xd-image ${className}` : 'xd-image'}
       style={aspectRatio !== undefined ? { aspectRatio, ...style } : style}
       onError={handleError}
       {...restProps}

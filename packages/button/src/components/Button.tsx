@@ -54,7 +54,7 @@ function ButtonInner<T extends ElementType = 'button'>(
       disabled={disabled}
       data-variant={variant}
       data-size={size}
-      className={['xd-button', className].filter(Boolean).join(' ')}
+      className={className ? `xd-button ${className}` : 'xd-button'}
       {...(restProps as Record<string, unknown>)}
     >
       {startIcon && (

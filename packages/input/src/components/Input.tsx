@@ -29,7 +29,7 @@ function InputInner(
         invalid={!!error}
         disabled={disabled}
         aria-describedby={error ? errorId : undefined}
-        className={['xd-input-field', className].filter(Boolean).join(' ')}
+        className={className ? `xd-input-field ${className}` : 'xd-input-field'}
         ref={ref}
       />
       {error && (

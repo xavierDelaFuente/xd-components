@@ -1,7 +1,7 @@
 {
   "name": "@asnewyla/layout",
   "version": "0.2.0",
-  "description": "Flex-based layout primitives (Layout, Stack, Group) with token-based spacing",
+  "description": "Layout primitives with token-based spacing — flex-based Layout/Stack/Group and CSS-Grid-based Grid",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
   },
   "files": ["dist"],
   "sideEffects": ["*.css"],
-  "keywords": ["react", "layout", "stack", "group", "flexbox"],
+  "keywords": ["react", "layout", "stack", "group", "grid", "flexbox", "css-grid"],
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
