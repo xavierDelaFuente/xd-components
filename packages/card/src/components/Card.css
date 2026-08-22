@@ -1,0 +1,51 @@
+.xd-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: var(--xd-border-width-thin, 1px) solid var(--xd-color-border, #cbd5e1);
+}
+
+/* --- Padding --- */
+
+.xd-card[data-padding="sm"] {
+  --_padding: var(--xd-space-sm, 0.375rem);
+}
+
+.xd-card[data-padding="md"] {
+  --_padding: var(--xd-space-md, 0.5rem);
+}
+
+.xd-card[data-padding="lg"] {
+  --_padding: var(--xd-space-lg, 0.75rem);
+}
+
+.xd-card {
+  padding: var(--_padding);
+}
+
+/* The image is pulled back out to the card's edges via a negative margin
+   matching --_padding, then re-clipped to the card's own border-radius by
+   `overflow: hidden` above — no separate image radius needed. */
+.xd-card > .xd-image {
+  margin: calc(var(--_padding) * -1) calc(var(--_padding) * -1) var(--_padding);
+  width: calc(100% + var(--_padding) * 2);
+  max-width: none;
+}
+
+/* --- Radius --- */
+
+.xd-card[data-radius="sm"] {
+  border-radius: var(--xd-radius-sm, 0.25rem);
+}
+
+.xd-card[data-radius="md"] {
+  border-radius: var(--xd-radius-md, 0.375rem);
+}
+
+.xd-card[data-radius="lg"] {
+  border-radius: var(--xd-radius-lg, 0.625rem);
+}
+
+.xd-card[data-radius="full"] {
+  border-radius: var(--xd-radius-full, 9999px);
+}
