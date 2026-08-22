@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/layout",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Layout primitives with token-based spacing — flex-based Layout/Stack/Group and CSS-Grid-based Grid",
   "license": "MIT",
   "repository": {
