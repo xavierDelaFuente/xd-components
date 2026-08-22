@@ -85,7 +85,7 @@ Versions in `package.json` are the source of truth.
 
 **`@asnewyla/form`** — `Form` (renders `<form noValidate>`, owns validation, provides `FormFieldContext`, renders the error summary; internals split into `validation.ts` — pure `validateValue`, no React — and `useFieldRegistry.ts` — the field `Map`/`errors` state, register/unregister/validate, and `invalidFields()` for the summary) and `FormFieldInput` (wraps `Input`: `name` + rule props + registration effect + ref-merging + blur-triggered validation; no-ops gracefully with no `FormFieldProvider` ancestor — native attributes like `required`/`pattern` still reach the DOM either way). Ships no CSS of its own — all rendering comes from `@asnewyla/input`'s stylesheet, which a `Form` consumer already needs. See Form value collection, `FormFieldInput` package, and native validation vs. custom validation decisions. `LICENSE`/`README.md`/Storybook stories now in place — see Release readiness below for what's still open.
 
-**`@asnewyla/card`** — In progress. Own package, non-interactive, no primitive split (same category as `Image`/`Layout`). `CardProps`: `children` (required), `image?: Omit<ImageProps, 'radius'>` (rendered via `@asnewyla/image` internally, before `children`, full-bleed at the top — `radius` excluded so `Card`'s own `radius` alone governs the outer shape, no separately-configurable image radius to conflict with it), `padding?: 'sm' | 'md' | 'lg'` (defaults `'md'`), `radius?: 'sm' | 'md' | 'lg' | 'full'` (no default, square corners — matches `Image`'s convention). No `variant`/border-vs-shadow prop for v0.x — a single fixed surface treatment (border, no shadow) until a second real use case demands more, same "wait for the second consumer" bar Module 10 used for tokens. RED tests written (`Card.spec.tsx`, package scaffolded, `Card.tsx` itself not yet written) — see Patterns for why the mentor writes tests, not implementation, for new component logic.
+**`@asnewyla/card`** — In progress, core component implemented (10/10 tests, build/type-check/lint clean). Own package, non-interactive, no primitive split (same category as `Image`/`Layout`). `CardProps`: `children` (required), `image?: Omit<ImageProps, 'radius'>` (rendered via `@asnewyla/image` internally, before `children`, full-bleed at the top — `radius` excluded so `Card`'s own `radius` alone governs the outer shape), `padding?: 'sm' | 'md' | 'lg'` (defaults `'md'`), `radius?: 'sm' | 'md' | 'lg' | 'full'` (no default, square corners — matches `Image`'s convention). No `variant`/border-vs-shadow prop for v0.x — a single fixed surface treatment until a second real use case demands more, same "wait for the second consumer" bar Module 10 used for tokens. First implementation pass had `padding` typed required despite a runtime default, a hand-rolled `image` shape instead of `Omit<ImageProps, 'radius'>`, and a `radius` union missing `'full'` — all pass `vitest` (which doesn't type-check) but failed `tsc`/`tsup`'s dts step; fixed to match the agreed contract. Still open: `Card.css` (no styling yet — tests only assert structure/attributes, not appearance), Storybook stories, release-readiness files.
 
 **Planned** — Grid (CSS-Grid layout primitive complementary to `Layout`; package placement — inside `@asnewyla/layout` vs. standalone — open until `Card` exists as a concrete consumer, which it now does).
 
@@ -97,14 +97,14 @@ Versions in `package.json` are the source of truth.
 
 Implementing the summary surfaced a real bug: `<form>` needed `noValidate`, or the browser's native constraint validation (from the real `required`/`pattern`/etc. attributes `FormFieldInput` sets) silently blocked the `submit` event before `handleSubmit` ever ran — jsdom 24 replicates this, and every prior test asserting `onSubmit` wasn't called had been passing vacuously for that reason, not because `Form`'s own logic ran. See Patterns below (also one on preferring `flushSync` over a narrowed-dependency `useEffect` for "focus something that just rendered").
 
-**All nine shipped packages** (`unstyled-button`, `button`, `icon-button`, `button-group`, `tokens`, `image`, `layout`, `unstyled-input`, `input`, `form`) now have `LICENSE`, `README.md`, a verified dry-run tarball, and Storybook stories. Six changesets are pending in `.changeset/` — every package with unshipped changes is covered. Nothing left to write; only `changeset version` + `changeset publish` remain to actually cut the versions.
+**All nine pre-`card` packages** (`unstyled-button`, `button`, `icon-button`, `button-group`, `tokens`, `image`, `layout`, `unstyled-input`, `input`, `form`) have `LICENSE`, `README.md`, a verified dry-run tarball, Storybook stories, and are published live on npm — see Live packages above.
 
 ---
 
 ## Next
 
-- Module 15 (`@asnewyla/card`) kickoff — see Phases for the open questions to settle first (package boundary, how much of `Image`'s API to re-expose).
-- Module 16 (Grid) — deliberately deferred until `Card` exists as a concrete grid consumer.
+- `@asnewyla/card`: `Card.css` (no styling yet), Storybook stories, release-readiness files (`LICENSE`/`README`/dry-run tarball), a changeset.
+- Module 16 (Grid) — deliberately deferred until `Card` is fully done as a concrete grid consumer.
 
 ---
 

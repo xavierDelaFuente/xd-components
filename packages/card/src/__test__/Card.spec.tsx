@@ -31,15 +31,20 @@ describe('Card', () => {
     expect(ref.current).toHaveAttribute('data-padding', 'md');
   });
 
-  it('respects an explicit padding prop', () => {
+  it.each`
+    padding
+    ${'sm'}
+    ${'md'}
+    ${'lg'}
+  `('sets data-padding to $padding', ({ padding }) => {
     const ref = createRef<HTMLDivElement>();
     render(
-      <Card ref={ref} padding="lg">
+      <Card ref={ref} padding={padding}>
         Content
       </Card>,
     );
 
-    expect(ref.current).toHaveAttribute('data-padding', 'lg');
+    expect(ref.current).toHaveAttribute('data-padding', padding);
   });
 
   it('omits data-radius when radius is not provided (square corners by default)', () => {
@@ -49,15 +54,21 @@ describe('Card', () => {
     expect(ref.current).not.toHaveAttribute('data-radius');
   });
 
-  it('sets data-radius when radius is provided', () => {
+  it.each`
+    radius
+    ${'sm'}
+    ${'md'}
+    ${'lg'}
+    ${'full'}
+  `('sets data-radius to $radius', ({ radius }) => {
     const ref = createRef<HTMLDivElement>();
     render(
-      <Card ref={ref} radius="lg">
+      <Card ref={ref} radius={radius}>
         Content
       </Card>,
     );
 
-    expect(ref.current).toHaveAttribute('data-radius', 'lg');
+    expect(ref.current).toHaveAttribute('data-radius', radius);
   });
 
   it('does not render an image when the image prop is omitted', () => {
@@ -77,23 +88,35 @@ describe('Card', () => {
     expect(image).toHaveAttribute('src', '/photo.jpg');
   });
 
-  it('passes Image-specific props (fit, aspectRatio) through to the internal Image', () => {
+  it.each`
+    fit
+    ${'cover'}
+    ${'contain'}
+    ${'fill'}
+    ${'none'}
+    ${'scale-down'}
+  `('passes image.fit=$fit through to the internal Image', ({ fit }) => {
+    render(
+      <Card image={{ src: '/photo.jpg', alt: 'A mountain', fit }}>
+        Content
+      </Card>,
+    );
+
+    expect(screen.getByAltText('A mountain')).toHaveAttribute('data-fit', fit);
+  });
+
+  it('passes image.aspectRatio through to the internal Image', () => {
     render(
       <Card
-        image={{
-          src: '/photo.jpg',
-          alt: 'A mountain',
-          fit: 'contain',
-          aspectRatio: '16 / 9',
-        }}
+        image={{ src: '/photo.jpg', alt: 'A mountain', aspectRatio: '16 / 9' }}
       >
         Content
       </Card>,
     );
 
-    const image = screen.getByAltText('A mountain');
-    expect(image).toHaveAttribute('data-fit', 'contain');
-    expect(image).toHaveStyle({ aspectRatio: '16 / 9' });
+    expect(screen.getByAltText('A mountain')).toHaveStyle({
+      aspectRatio: '16 / 9',
+    });
   });
 
   it('renders the image before the children — full-bleed at the top', () => {
