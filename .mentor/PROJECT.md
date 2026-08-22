@@ -1,7 +1,7 @@
 # PROJECT — xd-components
 
 **Type**: Component library (monorepo, per-component npm packages)
-**Status**: Modules 1–15 complete (Button family, `tokens`, `image`, `layout`, `unstyled-input`, `input`, `form`, `card`). A CSS-Grid primitive (16) planned, deliberately unspecified until kickoff.
+**Status**: Modules 1–15 complete (Button family, `tokens`, `image`, `layout`, `unstyled-input`, `input`, `form`, `card`). Module 16 (`Grid`, folded into `@asnewyla/layout`) kicked off — RED tests written, implementation open.
 **Live packages**: all 11 published on the public npm registry — `unstyled-button`/`button`/`icon-button`/`button-group` at their `0.2.0`/`0.1.1` bumps; `tokens`/`image`/`layout`/`unstyled-input`/`input`/`form` live at `0.2.0`; `card` live for the first time at `0.2.0` (2026-08-22). Verified via a direct `npm publish` retry (rejected with "cannot publish over previously published version") — see the `npm view` read-path-lag Pattern.
 **Live docs**: https://xavierdelafuente.github.io/xd-components/
 **Repo**: https://github.com/xavierDelaFuente/xd-components
@@ -91,7 +91,7 @@ Versions in `package.json` are the source of truth.
 
 Two implementation gaps found and fixed along the way: (1) first pass had `padding` typed required despite a runtime default, a hand-rolled `image` shape instead of `Omit<ImageProps, 'radius'>`, and a `radius` union missing `'full'` — all passed `vitest` (which doesn't type-check) but failed `tsc`/`tsup`'s dts step. (2) `CardProps` didn't accept `style`/`className`/any native div attributes at all, unlike every other non-polymorphic component in this codebase — fixed via the same `ComponentPropsWithoutRef<'div'>` composition every sibling package already uses. Storybook stories (`storybook/Card.stories.tsx`: `Default`, `WithImage`, `PaddingSizes`, `RadiusSizes`) use inline SVG data URIs for the demo image, not a network URL — matches `Image.stories.tsx`'s existing convention and is why the first `WithImage` screenshot came back blank (an external `picsum.photos` URL, no network access in this environment). `LICENSE`/`README.md` added, dry-run tarball verified (11 files), changeset added. Release-ready — just needs merging and shipping through the normal `changeset version` + `changeset publish` flow.
 
-**Planned** — Grid (CSS-Grid layout primitive complementary to `Layout`; package placement — inside `@asnewyla/layout` vs. standalone — open until `Card` exists as a concrete consumer, which it now does).
+**Grid** — In progress, RED tests only (`Grid.spec.tsx`, package barrel already re-exports `Grid`/`GridProps` from a `./Grid` that doesn't exist yet — this cascades red across `Layout`/`Stack`/`Group`'s existing specs too, since all four share one barrel; expected and temporary, resolves the moment `Grid.tsx` exists). Folds into `@asnewyla/layout` as a fourth export, not a standalone package — matches the `Stack`/`Group` precedent (closely related "arrange these children" primitives sharing one package, same soft dependency on the gap token scale) over a literal reading of "one package per component," which was written to avoid forcing unwanted deps, not to split apart things this closely related. `GridProps`: `columns?: number | string` (a number renders `repeat(N, 1fr)`; a string passes straight through as `grid-template-columns` — a freeform escape hatch via inline `style`, same pattern as `Image`'s `aspectRatio`, not a `data-*` attribute since the value space isn't a finite enum), `gap?: 'sm'|'md'|'lg'` (reuses `Layout`'s existing gap scale/tokens exactly), `align?`/`justify?: 'start'|'center'|'end'` (map to `align-items`/`justify-items`, not `align-content`/`justify-content` — track-distribution alignment deferred until a real need shows up). `data-testid` defaults to `'grid'`, matching `Layout`/`Stack`/`Group`'s per-component defaults.
 
 ---
 
@@ -105,7 +105,7 @@ All 11 packages have `LICENSE`, `README.md`, a verified dry-run tarball, Storybo
 
 ## Next
 
-- Module 16 (Grid) — CSS-Grid layout primitive complementary to `Layout`; package placement (inside `@asnewyla/layout` vs. standalone) was left open until `Card` existed as a concrete grid consumer, which it now does. Kickoff not started.
+- Implement `Grid.tsx`/`Grid.css` in `@asnewyla/layout` against the RED tests in `Grid.spec.tsx` (see the `@asnewyla/layout` entry above for the settled prop shape).
 
 ---
 
