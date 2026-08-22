@@ -64,6 +64,7 @@ Versions in `package.json` are the source of truth.
 - Any CI job running `test`, `type-check`, or `storybook:build` must run `build` first — `workspace:*` deps resolve through the consumed package's `dist/`, which is gitignored.
 - Every component module ships its own Storybook stories as part of that module's scope, not a later catch-up pass.
 - Any PR that changes a published package's behavior includes a changeset (`pnpm changeset`) before merge.
+- Whenever an implementation's behavior in an edge case is uncertain and gets accepted rather than changed (a native HTML attribute silently blocking an action, a framework default overriding an expectation, etc.), add a dedicated test that locks in that exact behavior — not just a comment explaining it inside another test. The test suite is the contract for what the library actually does, quirks included, not only its intended features.
 
 ---
 
