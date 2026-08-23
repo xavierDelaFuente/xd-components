@@ -6,6 +6,7 @@ import '@asnewyla/layout/styles.css';
 import '@asnewyla/input/styles.css';
 import '@asnewyla/form/styles.css';
 import '@asnewyla/card/styles.css';
+import '@asnewyla/checkbox/styles.css';
 
 const preview: Preview = {
   parameters: {

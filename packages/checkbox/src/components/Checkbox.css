@@ -1,0 +1,90 @@
+.xd-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--xd-space-sm, 0.375rem);
+  flex-wrap: wrap;
+}
+
+.xd-checkbox-input {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  position: relative;
+  border: var(--xd-border-width-thin, 1px) solid var(--xd-color-border, #cbd5e1);
+  border-radius: var(--xd-radius-sm, 0.25rem);
+  background-color: transparent;
+  cursor: pointer;
+  transition:
+    background-color var(--xd-motion-fast, 120ms ease-out),
+    border-color var(--xd-motion-fast, 120ms ease-out);
+}
+
+.xd-checkbox-input[data-checked="true"],
+.xd-checkbox-input[data-indeterminate="true"] {
+  background-color: var(--xd-color-primary, #0d9488);
+  border-color: var(--xd-color-primary, #0d9488);
+}
+
+.xd-checkbox-input[data-checked="true"]::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 0;
+  width: 4px;
+  height: 8px;
+  border: solid var(--xd-on-primary, #ffffff);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.xd-checkbox-input[data-indeterminate="true"]::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 6px;
+  width: 8px;
+  height: 2px;
+  background-color: var(--xd-on-primary, #ffffff);
+}
+
+.xd-checkbox-input:focus-visible {
+  outline: var(--xd-focus-ring-width, 2px) solid
+    var(--xd-color-focus, var(--xd-color-primary, #0d9488));
+  outline-offset: var(--xd-focus-ring-offset, 2px);
+}
+
+.xd-checkbox-label {
+  font-size: var(--xd-font-size-md, 0.875rem);
+  cursor: pointer;
+}
+
+/* --- Invalid --- */
+
+.xd-checkbox-input[data-invalid="true"] {
+  border-color: var(--xd-color-destructive, #dc2626);
+}
+
+.xd-checkbox-input[data-invalid="true"]:focus-visible {
+  outline-color: var(--xd-color-destructive, #dc2626);
+}
+
+.xd-checkbox-error {
+  flex-basis: 100%;
+  font-size: var(--xd-font-size-sm, 0.8125rem);
+  color: var(--xd-color-destructive, #dc2626);
+}
+
+/* --- Disabled --- */
+
+.xd-checkbox-input:disabled {
+  opacity: var(--xd-opacity-disabled, 0.5);
+  cursor: not-allowed;
+}
+
+.xd-checkbox-input:disabled + .xd-checkbox-label {
+  opacity: var(--xd-opacity-disabled, 0.5);
+  cursor: not-allowed;
+}
