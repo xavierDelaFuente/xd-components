@@ -108,9 +108,11 @@ describe('theme files — configurable via [data-theme]', () => {
   ] as const;
 
   it.each(themes)(
-    '$file exposes a [data-theme="$name"] selector alongside :root, for the standalone-import case',
+    '$file exposes a [data-theme="$name"] selector alongside a :root:not([data-theme]) fallback',
     ({ file, name }) => {
-      expect(files[file]).toContain(`:root,\n[data-theme="${name}"] {`);
+      expect(files[file]).toContain(
+        `:root:not([data-theme]),\n[data-theme="${name}"] {`,
+      );
     },
   );
 
@@ -173,6 +175,38 @@ describe('theme files — configurable via [data-theme]', () => {
     ({ file }) => {
       expect(files[file]).toContain('--xd-color-secondary: #64748b;');
       expect(files[file]).toContain('--xd-on-secondary: #ffffff;');
+    },
+  );
+
+  it.each(themes)(
+    "$file's dark-mode blocks also guard their bare :root fallback with :not([data-theme])",
+    ({ file, name }) => {
+      const css = files[file];
+      expect(css).toContain(
+        `:root:not([data-theme]):not([data-mode="light"]),\n  [data-theme="${name}"]:not([data-mode="light"]) {`,
+      );
+      expect(css).toContain(
+        `:root:not([data-theme])[data-mode="dark"],\n[data-theme="${name}"][data-mode="dark"] {`,
+      );
+    },
+  );
+
+  it.each(themes)(
+    "$file's bare :root fallback never regresses to the unguarded, order-dependent form",
+    ({ file, name }) => {
+      // Regression guard for the bug:
+      // unguarded `:root` has the same specificity as [data-theme="x"], so
+      // whichever theme file is imported last silently wins on every
+      // element -- including one with an explicitly *different*
+      // data-theme set -- regardless of which theme is actually active.
+      const css = files[file];
+      expect(css).not.toContain(`:root,\n[data-theme="${name}"] {`);
+      expect(css).not.toContain(
+        `:root:not([data-mode="light"]),\n  [data-theme="${name}"]:not([data-mode="light"]) {`,
+      );
+      expect(css).not.toContain(
+        `:root[data-mode="dark"],\n[data-theme="${name}"][data-mode="dark"] {`,
+      );
     },
   );
 });

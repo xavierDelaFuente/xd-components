@@ -1,2 +1,2 @@
-export { ThemeProvider } from './components';
 export type { ThemeProviderProps } from './components';
+export { ThemeProvider } from './components';

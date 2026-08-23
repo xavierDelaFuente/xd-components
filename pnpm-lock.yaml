@@ -32,6 +32,9 @@ importers:
       '@asnewyla/layout':
         specifier: workspace:*
         version: link:packages/layout
+      '@asnewyla/theme':
+        specifier: workspace:*
+        version: link:packages/theme
       '@asnewyla/tokens':
         specifier: workspace:*
         version: link:packages/tokens

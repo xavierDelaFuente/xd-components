@@ -29,9 +29,12 @@
  * --xd-muted / --xd-border-strong, --xd-shadow*, --xd-font / --xd-font-mono
  * / --xd-tracking / --xd-weight / --xd-press. secondary was never defined
  * by the draft, so it's left at the shared default rather than guessed.
+ *
+ * See theme-paper.css for why the fallback selector below is
+ * `:root:not([data-theme])` rather than plain `:root`.
  */
 
-:root,
+:root:not([data-theme]),
 [data-theme="lavender"] {
   color-scheme: light;
 
@@ -89,7 +92,7 @@
 /* ===== dark · follows system ================================== */
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-mode="light"]),
+  :root:not([data-theme]):not([data-mode="light"]),
   [data-theme="lavender"]:not([data-mode="light"]) {
     color-scheme: dark;
 
@@ -105,7 +108,7 @@
 
 /* ===== dark · explicit override =============================== */
 
-:root[data-mode="dark"],
+:root:not([data-theme])[data-mode="dark"],
 [data-theme="lavender"][data-mode="dark"] {
   color-scheme: dark;
 

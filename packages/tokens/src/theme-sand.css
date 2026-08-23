@@ -21,10 +21,12 @@
  * scale-based vocabulary existed (--xd-color-primary, --xd-radius-sm/md/lg,
  * --xd-space-*, ...). Only the values that genuinely diverge per theme are
  * re-derived below; see the inline notes for what changed and why. See
- * theme-paper.css for the sibling theme this was adapted alongside.
+ * theme-paper.css for the sibling theme this was adapted alongside, and
+ * for why the fallback selector below is `:root:not([data-theme])`
+ * rather than plain `:root`.
  */
 
-:root,
+:root:not([data-theme]),
 [data-theme="sand"] {
   color-scheme: light;
 
@@ -93,7 +95,7 @@
 /* ===== dark · follows system ================================== */
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-mode="light"]),
+  :root:not([data-theme]):not([data-mode="light"]),
   [data-theme="sand"]:not([data-mode="light"]) {
     color-scheme: dark;
 
@@ -109,7 +111,7 @@
 
 /* ===== dark · explicit override =============================== */
 
-:root[data-mode="dark"],
+:root:not([data-theme])[data-mode="dark"],
 [data-theme="sand"][data-mode="dark"] {
   color-scheme: dark;
 

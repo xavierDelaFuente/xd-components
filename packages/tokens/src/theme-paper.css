@@ -21,9 +21,18 @@
  * scale-based vocabulary existed (--xd-color-primary, --xd-radius-sm/md/lg,
  * --xd-space-*, ...). Only the values that genuinely diverge per theme are
  * re-derived below; see the inline notes for what changed and why.
+ *
+ * The bare fallback selector is `:root:not([data-theme])`, not plain
+ * `:root` -- with several theme files imported together (the whole point
+ * of ThemeProvider), a plain `:root` block has the *same* specificity as
+ * `[data-theme="paper"]`, so whichever file happens to be imported last
+ * would silently win on every element, including one with an explicitly
+ * different data-theme set. :not([data-theme]) makes this block apply
+ * only when no theme attribute is present at all, so it can never
+ * out-rank an explicitly active theme regardless of import order.
  */
 
-:root,
+:root:not([data-theme]),
 [data-theme="paper"] {
   color-scheme: light;
 
@@ -92,7 +101,7 @@
 /* ===== dark · follows system ================================== */
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-mode="light"]),
+  :root:not([data-theme]):not([data-mode="light"]),
   [data-theme="paper"]:not([data-mode="light"]) {
     color-scheme: dark;
 
@@ -108,7 +117,7 @@
 
 /* ===== dark · explicit override =============================== */
 
-:root[data-mode="dark"],
+:root:not([data-theme])[data-mode="dark"],
 [data-theme="paper"][data-mode="dark"] {
   color-scheme: dark;
 
