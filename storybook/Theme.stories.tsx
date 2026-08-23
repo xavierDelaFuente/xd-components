@@ -41,6 +41,10 @@ const meta = {
       control: 'select',
       options: themeNames,
     },
+    mode: {
+      control: 'select',
+      options: [undefined, 'light', 'dark'],
+    },
   },
 } satisfies Meta<typeof ThemeProvider>;
 
@@ -53,7 +57,25 @@ export const LiveSwitcher: Story = {
     children: <ThemedDemo />,
   },
   render: (args) => (
-    <ThemeProvider theme={args.theme}>{args.children}</ThemeProvider>
+    <ThemeProvider theme={args.theme} mode={args.mode}>
+      {args.children}
+    </ThemeProvider>
+  ),
+};
+
+export const LightAndDark: StoryObj = {
+  render: () => (
+    // Same reasoning as AllThemes below: two <ThemeProvider>s can't be
+    // active on the shared document root at once, so this comparison view
+    // sets [data-theme]/[data-mode] directly on each wrapper instead.
+    <Group gap="lg" align="start">
+      <div data-theme="sand" data-mode="light">
+        <ThemedDemo />
+      </div>
+      <div data-theme="sand" data-mode="dark">
+        <ThemedDemo />
+      </div>
+    </Group>
   ),
 };
 

@@ -44,6 +44,29 @@ describe('ThemeProvider', () => {
     unmount();
     expect(document.documentElement).not.toHaveAttribute('data-theme');
   });
+
+  it('does not set data-theme on the document root when theme is not provided', () => {
+    render(
+      <ThemeProvider>
+        <span>content</span>
+      </ThemeProvider>,
+    );
+    expect(document.documentElement).not.toHaveAttribute('data-theme');
+  });
+
+  it('removes data-theme from the document root when theme changes from set to unset', () => {
+    const { rerender } = render(
+      <ThemeProvider theme="theme1">
+        <span>content</span>
+      </ThemeProvider>,
+    );
+    rerender(
+      <ThemeProvider>
+        <span>content</span>
+      </ThemeProvider>,
+    );
+    expect(document.documentElement).not.toHaveAttribute('data-theme');
+  });
 });
 
 describe('ThemeProvider — mode', () => {

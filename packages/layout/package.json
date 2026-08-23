@@ -24,7 +24,15 @@
   },
   "files": ["dist"],
   "sideEffects": ["*.css"],
-  "keywords": ["react", "layout", "stack", "group", "grid", "flexbox", "css-grid"],
+  "keywords": [
+    "react",
+    "layout",
+    "stack",
+    "group",
+    "grid",
+    "flexbox",
+    "css-grid"
+  ],
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
