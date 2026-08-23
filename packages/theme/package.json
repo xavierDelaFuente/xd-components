@@ -1,12 +1,12 @@
 {
-  "name": "@asnewyla/layout",
-  "version": "0.3.0",
-  "description": "Layout primitives with token-based spacing — flex-based Layout/Stack/Group and CSS-Grid-based Grid",
+  "name": "@asnewyla/theme",
+  "version": "0.1.0",
+  "description": "Multi-brand theming — a ThemeProvider that scopes @asnewyla/tokens' CSS custom properties via a data-theme attribute on the document root",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/xavierDelaFuente/xd-components.git",
-    "directory": "packages/layout"
+    "directory": "packages/theme"
   },
   "publishConfig": {
     "access": "public"
@@ -19,20 +19,11 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
-    },
-    "./styles.css": "./dist/index.css"
+    }
   },
   "files": ["dist"],
-  "sideEffects": ["*.css"],
-  "keywords": [
-    "react",
-    "layout",
-    "stack",
-    "group",
-    "grid",
-    "flexbox",
-    "css-grid"
-  ],
+  "sideEffects": false,
+  "keywords": ["react", "theme", "theming", "design-tokens"],
   "scripts": {
     "build": "tsup",
     "test": "vitest run",

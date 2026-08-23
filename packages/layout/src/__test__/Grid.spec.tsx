@@ -116,10 +116,7 @@ describe('Grid', () => {
         content
       </Grid>,
     );
-    expect(screen.getByTestId('grid')).toHaveAttribute(
-      'id',
-      'product-grid',
-    );
+    expect(screen.getByTestId('grid')).toHaveAttribute('id', 'product-grid');
   });
 
   it('preserves a consumer-provided style alongside the columns-derived one', () => {

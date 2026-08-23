@@ -56,6 +56,42 @@ device pixel at any zoom level — in `rem` it would scale with font-size and
 could round to a blurry sub-pixel or a visibly thicker line. This isn't
 inconsistency — it's picking the unit that matches what each token means.
 
+## Themes
+
+Beyond the default palette, this package ships complete alternative token
+sets, each scoped under a `[data-theme="..."]` attribute as well as bare
+`:root`:
+
+```ts
+import '@asnewyla/tokens/theme-paper.css';
+import '@asnewyla/tokens/theme-sand.css';
+import '@asnewyla/tokens/theme-lavender.css';
+```
+
+| Theme | Feel |
+|---|---|
+| `paper` | Warm cream surfaces, terracotta primary, 10px radius, 180ms motion |
+| `sand` | Warm neutral surfaces, clay primary, 16px radius, 200ms motion |
+| `lavender` | Lowest-chroma, cool violet-blue primary, 20px radius, 260ms motion |
+
+Each theme file is a **complete, standalone** token set (every `--xd-*`
+token this package defines, not just the ones that diverge from the
+default), so importing just one theme file works with no other import —
+matching the soft-dependency model above. Import several and set
+`data-theme="paper"` (etc.) on `<html>` to pick one at runtime — see
+`@asnewyla/theme`'s `ThemeProvider`, which does exactly that.
+
+Every theme also supports the same `data-mode="light"|"dark"` override as
+an explicit third state, independent of `prefers-color-scheme`, on top of
+whichever theme is active — e.g. `[data-theme="sand"][data-mode="dark"]`.
+
+Each theme only overrides the tokens its own design draft actually
+specified (color, radius, border, motion); anything it doesn't touch —
+`--xd-color-secondary`, spacing, typography, focus ring, disabled opacity —
+stays at the shared default. See the comments at the top of each theme
+file for exactly what was mapped, and what was deliberately left out
+because it has no current token to hold it (e.g. font-family, box-shadow).
+
 ## License
 
 MIT

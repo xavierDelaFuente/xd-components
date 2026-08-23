@@ -1,0 +1,122 @@
+/*
+ * asnewyla/tokens -- theme-lavender.css
+ *
+ * Lavender: lowest-chroma theme in the set, cool violet-blue primary
+ * (deliberately "more blue, less brown" than paper/sand), large radius,
+ * unhurried motion. See theme-paper.css for the full explanation of the
+ * adaptation approach -- only the summary of this theme's own choices is
+ * repeated here.
+ *
+ * Adapted from a design draft (data-theme="calm-lavender" in the source
+ * palette tool) using the same --xd-primary/--xd-radius/--xd-dur-style
+ * vocabulary as the paper/sand drafts. Renamed to the flat "lavender" id
+ * to match the paper/sand naming convention already in use -- the
+ * source tool's Paper/Calm/Structure "family" grouping isn't reflected
+ * anywhere else in this system, so keeping the family prefix here would
+ * start a taxonomy this package doesn't otherwise have.
+ *
+ * Supersedes an earlier, incomplete adaptation of this theme: the first
+ * draft handed over didn't include --xd-on-danger or any dark-mode
+ * values, both filled in now from the complete draft (which also
+ * corrected --xd-primary/--xd-danger/--xd-accent/--xd-muted's light-mode
+ * lightness after the original values failed WCAG AA against their own
+ * labels -- dark mode was unaffected).
+ *
+ * Dropped, not invented -- no current token to map onto: --xd-primary-h /
+ * --xd-danger-h (hover shades are already derived per-component via
+ * color-mix() from the base color, see the --_bg-hover pattern in
+ * PROJECT.md), --xd-accent, --xd-surface / --xd-surface-2 / --xd-text /
+ * --xd-muted / --xd-border-strong, --xd-shadow*, --xd-font / --xd-font-mono
+ * / --xd-tracking / --xd-weight / --xd-press. secondary was never defined
+ * by the draft, so it's left at the shared default rather than guessed.
+ *
+ * See theme-paper.css for why the fallback selector below is
+ * `:root:not([data-theme])` rather than plain `:root`.
+ */
+
+:root:not([data-theme]),
+[data-theme="lavender"] {
+  color-scheme: light;
+
+  /* ─── Color — light mode (default) ─── */
+  --xd-color-primary: oklch(56% 0.115 295);
+  --xd-on-primary: oklch(99% 0 0);
+  --xd-color-secondary: #64748b;
+  --xd-on-secondary: #ffffff;
+  --xd-color-destructive: oklch(58% 0.16 10);
+  --xd-on-destructive: oklch(99% 0 0);
+
+  /* ─── Spacing — unchanged from the default scale ─── */
+  --xd-space-xs: 0.25rem;
+  --xd-space-sm: 0.375rem;
+  --xd-space-md: 0.5rem;
+  --xd-space-lg: 0.75rem;
+  --xd-space-xl: 1rem;
+  --xd-space-2xl: 1.5rem;
+
+  /* ─── Radius — the draft gave one value (20px, the largest of the
+     three) for this theme's overall corner feel; sm/lg re-derived from
+     it with the same +/-offsets as the default scale. full stays the
+     fixed pill-trick value, same across every theme. */
+  --xd-radius-sm: 1.125rem;
+  --xd-radius-md: 1.25rem;
+  --xd-radius-lg: 1.5rem;
+  --xd-radius-full: 9999px;
+
+  /* ─── Typography — unchanged from the default scale ─── */
+  --xd-font-size-sm: 0.8125rem;
+  --xd-font-size-md: 0.875rem;
+  --xd-font-size-lg: 1rem;
+  --xd-font-weight-regular: 400;
+  --xd-font-weight-semibold: 600;
+  --xd-line-height-normal: 1.25;
+
+  /* ─── Border ─── */
+  --xd-color-border: oklch(91% 0.016 300);
+  --xd-border-width-thin: 1px;
+
+  /* ─── Focus ring — unchanged; the draft didn't define this at all ─── */
+  --xd-focus-ring-width: 2px;
+  --xd-focus-ring-offset: 2px;
+
+  /* ─── State — unchanged ─── */
+  --xd-opacity-disabled: 0.5;
+
+  /* ─── Motion — the draft's --xd-dur (260ms, the slowest of the three)
+     combines with its own --xd-ease into the single combined
+     --xd-motion-fast token, matching how tokens.css already expresses
+     motion. */
+  --xd-motion-fast: 260ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* ===== dark · follows system ================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]):not([data-mode="light"]),
+  [data-theme="lavender"]:not([data-mode="light"]) {
+    color-scheme: dark;
+
+    --xd-color-primary: oklch(73% 0.1 295);
+    --xd-on-primary: oklch(19% 0.02 295);
+    --xd-color-secondary: #cbd5e1;
+    --xd-on-secondary: #000000;
+    --xd-color-destructive: oklch(69% 0.12 10);
+    --xd-on-destructive: oklch(19% 0.02 295);
+    --xd-color-border: oklch(32% 0.028 295);
+  }
+}
+
+/* ===== dark · explicit override =============================== */
+
+:root:not([data-theme])[data-mode="dark"],
+[data-theme="lavender"][data-mode="dark"] {
+  color-scheme: dark;
+
+  --xd-color-primary: oklch(73% 0.1 295);
+  --xd-on-primary: oklch(19% 0.02 295);
+  --xd-color-secondary: #cbd5e1;
+  --xd-on-secondary: #000000;
+  --xd-color-destructive: oklch(69% 0.12 10);
+  --xd-on-destructive: oklch(19% 0.02 295);
+  --xd-color-border: oklch(32% 0.028 295);
+}

@@ -1,0 +1,125 @@
+/*
+ * asnewyla/tokens -- theme-sand.css
+ *
+ * Sand: warm neutral surfaces, clay primary, larger radius, unhurried
+ * motion. A complete, standalone alternative to tokens.css's default
+ * palette -- every --xd-* token the library defines is set here too, so
+ * importing only this file (no tokens.css) still gives every component a
+ * full, working set of fallback values.
+ *
+ * Usage:
+ *   Single fixed theme, no ThemeProvider:
+ *     import '@asnewyla/tokens/theme-sand.css';
+ *   Selectable alongside other themes via @asnewyla/theme's ThemeProvider:
+ *     import '@asnewyla/tokens/theme-sand.css';
+ *     <ThemeProvider theme="sand">...
+ *   Light/dark: follows prefers-color-scheme by default; override with
+ *   data-mode="light" | "dark" on <html> to drive an explicit toggle,
+ *   independent of which --xd-* theme is active.
+ *
+ * Adapted from an earlier draft written before tokens.css's current
+ * scale-based vocabulary existed (--xd-color-primary, --xd-radius-sm/md/lg,
+ * --xd-space-*, ...). Only the values that genuinely diverge per theme are
+ * re-derived below; see the inline notes for what changed and why. See
+ * theme-paper.css for the sibling theme this was adapted alongside, and
+ * for why the fallback selector below is `:root:not([data-theme])`
+ * rather than plain `:root`.
+ */
+
+:root:not([data-theme]),
+[data-theme="sand"] {
+  color-scheme: light;
+
+  /* ─── Color — light mode (default) ───
+     Only primary/on-primary, destructive/on-destructive, and border diverge
+     from tokens.css's default palette; secondary was never defined by the
+     original design draft, so it's left at the shared default rather than
+     guessed. */
+  --xd-color-primary: oklch(55% 0.115 50);
+  --xd-on-primary: oklch(99% 0.006 75);
+  --xd-color-secondary: #64748b;
+  --xd-on-secondary: #ffffff;
+  --xd-color-destructive: oklch(58% 0.16 25);
+  --xd-on-destructive: oklch(99% 0 0);
+
+  /* ─── Spacing — unchanged from the default scale ─── */
+  --xd-space-xs: 0.25rem;
+  --xd-space-sm: 0.375rem;
+  --xd-space-md: 0.5rem;
+  --xd-space-lg: 0.75rem;
+  --xd-space-xl: 1rem;
+  --xd-space-2xl: 1.5rem;
+
+  /* ─── Radius — the draft gave one value (16px) for this theme's overall
+     corner feel, larger than paper's; sm/lg are re-derived from it using
+     the same +/-offsets as the default scale (md-0.125rem / md+0.25rem),
+     not copied from the draft (which had no scale at all). full stays the
+     fixed pill-trick value, same across every theme. */
+  --xd-radius-sm: 0.875rem;
+  --xd-radius-md: 1rem;
+  --xd-radius-lg: 1.25rem;
+  --xd-radius-full: 9999px;
+
+  /* ─── Typography — unchanged from the default scale; the draft's single
+     --xd-size (0.875rem) already matched --xd-font-size-md exactly, so
+     there was nothing to diverge. Draft-only concepts with no home in the
+     current schema (--xd-font family, --xd-tracking) are dropped, not
+     guessed at -- see the file header. */
+  --xd-font-size-sm: 0.8125rem;
+  --xd-font-size-md: 0.875rem;
+  --xd-font-size-lg: 1rem;
+  --xd-font-weight-regular: 400;
+  --xd-font-weight-semibold: 600;
+  --xd-line-height-normal: 1.25;
+
+  /* ─── Border ───
+     The draft's second, stronger border tier (--xd-border-strong) has no
+     current token to map onto -- dropped, not invented. */
+  --xd-color-border: oklch(89% 0.016 70);
+  --xd-border-width-thin: 1px;
+
+  /* ─── Focus ring — unchanged; the draft didn't define this at all ─── */
+  --xd-focus-ring-width: 2px;
+  --xd-focus-ring-offset: 2px;
+
+  /* ─── State — unchanged ─── */
+  --xd-opacity-disabled: 0.5;
+
+  /* ─── Motion — the draft's --xd-dur/--xd-ease pair collapses onto the
+     single combined --xd-motion-fast token the same way tokens.css already
+     expresses it. --xd-press (a pressed-state transform) has no existing
+     token to hold it -- dropped, not invented. */
+  --xd-motion-fast: 200ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* ===== dark · follows system ================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]):not([data-mode="light"]),
+  [data-theme="sand"]:not([data-mode="light"]) {
+    color-scheme: dark;
+
+    --xd-color-primary: oklch(72% 0.11 50);
+    --xd-on-primary: oklch(19% 0.014 60);
+    --xd-color-secondary: #cbd5e1;
+    --xd-on-secondary: #000000;
+    --xd-color-destructive: oklch(68% 0.15 25);
+    --xd-on-destructive: oklch(19% 0 0);
+    --xd-color-border: oklch(32% 0.02 62);
+  }
+}
+
+/* ===== dark · explicit override =============================== */
+
+:root:not([data-theme])[data-mode="dark"],
+[data-theme="sand"][data-mode="dark"] {
+  color-scheme: dark;
+
+  --xd-color-primary: oklch(72% 0.11 50);
+  --xd-on-primary: oklch(19% 0.014 60);
+  --xd-color-secondary: #cbd5e1;
+  --xd-on-secondary: #000000;
+  --xd-color-destructive: oklch(68% 0.15 25);
+  --xd-on-destructive: oklch(19% 0 0);
+  --xd-color-border: oklch(32% 0.02 62);
+}
