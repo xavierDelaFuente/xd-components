@@ -7,6 +7,7 @@ import '@asnewyla/input/styles.css';
 import '@asnewyla/form/styles.css';
 import '@asnewyla/card/styles.css';
 import '@asnewyla/checkbox/styles.css';
+import '@asnewyla/radio/styles.css';
 
 const preview: Preview = {
   parameters: {
