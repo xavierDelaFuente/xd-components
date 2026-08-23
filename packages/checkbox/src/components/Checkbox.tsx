@@ -3,6 +3,7 @@ import {
   type UnstyledCheckboxProps,
 } from '@asnewyla/unstyled-checkbox';
 import { type ForwardedRef, forwardRef, useId } from 'react';
+import './Checkbox.css';
 
 export type CheckboxProps = Omit<UnstyledCheckboxProps, 'invalid'> & {
   label: string;

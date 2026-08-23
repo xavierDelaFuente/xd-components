@@ -17,6 +17,9 @@ importers:
       '@asnewyla/card':
         specifier: workspace:*
         version: link:packages/card
+      '@asnewyla/checkbox':
+        specifier: workspace:*
+        version: link:packages/checkbox
       '@asnewyla/form':
         specifier: workspace:*
         version: link:packages/form

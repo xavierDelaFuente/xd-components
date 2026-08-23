@@ -27,6 +27,7 @@
     "@asnewyla/button": "workspace:*",
     "@asnewyla/button-group": "workspace:*",
     "@asnewyla/card": "workspace:*",
+    "@asnewyla/checkbox": "workspace:*",
     "@asnewyla/form": "workspace:*",
     "@asnewyla/icon-button": "workspace:*",
     "@asnewyla/image": "workspace:*",
