@@ -3,6 +3,7 @@ import {
   type UnstyledRadioProps,
 } from '@asnewyla/unstyled-radio';
 import { type ForwardedRef, forwardRef, useId } from 'react';
+import './Radio.css';
 
 export type RadioProps = Omit<UnstyledRadioProps, 'invalid'> & {
   label: string;

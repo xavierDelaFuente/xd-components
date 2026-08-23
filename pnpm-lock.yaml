@@ -35,6 +35,9 @@ importers:
       '@asnewyla/layout':
         specifier: workspace:*
         version: link:packages/layout
+      '@asnewyla/radio':
+        specifier: workspace:*
+        version: link:packages/radio
       '@asnewyla/theme':
         specifier: workspace:*
         version: link:packages/theme
