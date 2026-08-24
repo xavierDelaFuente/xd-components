@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/radio",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Styled radio with label, validation error display, and accessibility",
   "license": "MIT",
   "repository": {

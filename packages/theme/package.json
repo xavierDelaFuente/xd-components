@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/theme",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Multi-brand theming — a ThemeProvider that scopes @asnewyla/tokens' CSS custom properties via a data-theme attribute on the document root",
   "license": "MIT",
   "repository": {
