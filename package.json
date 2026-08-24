@@ -34,6 +34,7 @@
     "@asnewyla/input": "workspace:*",
     "@asnewyla/layout": "workspace:*",
     "@asnewyla/radio": "workspace:*",
+    "@asnewyla/radio-group": "workspace:*",
     "@asnewyla/theme": "workspace:*",
     "@asnewyla/tokens": "workspace:*",
     "@asnewyla/unstyled-button": "workspace:*"
