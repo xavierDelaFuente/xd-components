@@ -1,10 +1,6 @@
-import {
-  type ForwardedRef,
-  forwardRef,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { type ForwardedRef, forwardRef } from 'react';
+import { useSelectOpenState } from './useSelectOpenState';
+import { useSelectValue } from './useSelectValue';
 
 export interface SelectOption {
   value: string;
@@ -12,17 +8,31 @@ export interface SelectOption {
   disabled?: boolean;
 }
 
-export type UnstyledSelectProps = {
-  options: SelectOption[];
+type SingleSelectValueProps = {
+  multiple?: false;
   value?: string;
   defaultValue?: string;
   onChange?: (value: string) => void;
+};
+
+type MultiSelectValueProps = {
+  multiple: true;
+  value?: string[];
+  defaultValue?: string[];
+  onChange?: (value: string[]) => void;
+};
+
+export type UnstyledSelectProps = (
+  | SingleSelectValueProps
+  | MultiSelectValueProps
+) & {
+  options: SelectOption[];
   placeholder?: string;
   disabled?: boolean;
 } & Omit<
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  'value' | 'defaultValue' | 'onChange' | 'disabled' | 'type'
->;
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    'value' | 'defaultValue' | 'onChange' | 'disabled' | 'type'
+  >;
 
 function booleanToString(value: boolean | undefined): string | undefined {
   return value ? 'true' : undefined;
@@ -37,60 +47,31 @@ function UnstyledSelectInner(
     placeholder,
     disabled,
     onClick,
+    multiple,
     ...rest
   }: UnstyledSelectProps,
   ref: ForwardedRef<HTMLButtonElement>,
 ) {
-  const isControlled = value !== undefined;
-  const [internalValue, setInternalValue] = useState(defaultValue);
-  const selectedValue = isControlled ? value : internalValue;
-  const selectedOption = options.find(
-    (option) => option.value === selectedValue,
-  );
+  const { selectedValues, selectedLabels, selectOption } = useSelectValue({
+    options,
+    multiple,
+    value,
+    defaultValue,
+    onChange,
+  });
 
-  const [open, setOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (!open) return;
-
-    function handlePointerDown(e: MouseEvent) {
-      if (
-        containerRef.current &&
-        e.target instanceof Node &&
-        !containerRef.current.contains(e.target)
-      ) {
-        setOpen(false);
-      }
-    }
-
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
-        setOpen(false);
-      }
-    }
-
-    document.addEventListener('mousedown', handlePointerDown);
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('mousedown', handlePointerDown);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [open]);
+  const { open, containerRef, toggle, close } = useSelectOpenState();
 
   const handleTriggerClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     onClick?.(e);
     if (disabled) return;
-    setOpen((prev) => !prev);
+    toggle();
   };
 
   const handleOptionClick = (option: SelectOption) => {
     if (option.disabled) return;
-    if (!isControlled) {
-      setInternalValue(option.value);
-    }
-    onChange?.(option.value);
-    setOpen(false);
+    selectOption(option);
+    if (!multiple) close();
   };
 
   return (
@@ -108,12 +89,15 @@ function UnstyledSelectInner(
         data-open={booleanToString(open)}
         onClick={handleTriggerClick}
       >
-        {selectedOption ? selectedOption.label : placeholder}
+        {selectedLabels.length > 0 ? selectedLabels.join(', ') : placeholder}
       </button>
       {open && (
-        <div role="listbox">
+        <div
+          role="listbox"
+          aria-multiselectable={multiple ? 'true' : undefined}
+        >
           {options.map((option) => {
-            const isSelected = option.value === selectedValue;
+            const isSelected = selectedValues.includes(option.value);
             return (
               <button
                 key={option.value}
