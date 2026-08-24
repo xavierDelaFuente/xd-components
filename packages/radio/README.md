@@ -57,11 +57,27 @@ for free — clicking one genuinely unchecks the other at the DOM level.
 That's enough for a *display-only* group, or one you fully control
 yourself via `checked`/`onChange` on every member. For a group where you
 want React to own "which value is selected" as shared state, use
-`RadioGroup` instead of wiring several `Radio`s up by hand — see
-`@asnewyla/unstyled-radio`'s README for the underlying limitation
-`RadioGroup` exists to fix (an uncontrolled radio's own state can go
-stale when a sibling is selected instead, since browsers don't fire a
-change event on the deselected radio).
+`RadioGroup` from `@asnewyla/radio-group` instead of wiring several
+`Radio`s up by hand:
+
+```tsx
+import { RadioGroup } from '@asnewyla/radio-group';
+import { Radio } from '@asnewyla/radio';
+
+<RadioGroup name="size" defaultValue="md">
+  <Radio label="Small" value="sm" />
+  <Radio label="Medium" value="md" />
+  <Radio label="Large" value="lg" />
+</RadioGroup>
+```
+
+`Radio` exports `RadioGroupProvider`/`useRadioGroupContext` itself (that's
+how it consumes an ancestor group), but you'd only reach for those
+directly if you were building something like `RadioGroup` yourself — see
+`@asnewyla/radio-group`'s README for the underlying limitation it exists
+to fix (an uncontrolled radio's own state can go stale when a sibling is
+selected instead, since browsers don't fire a change event on the
+deselected radio).
 
 ### Theming
 

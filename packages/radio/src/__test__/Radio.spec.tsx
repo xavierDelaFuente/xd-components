@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { Radio } from '../components';
+import { Radio, RadioGroupProvider } from '../components';
 
 describe('Radio', () => {
   it('renders the label text', () => {
@@ -129,5 +129,107 @@ describe('Radio', () => {
 
     expect(handleFocus).toHaveBeenCalled();
     expect(radio).toHaveAttribute('data-focused', 'true');
+  });
+});
+
+describe('Radio — inside a RadioGroupProvider', () => {
+  it("is checked when its own value matches the group's value", () => {
+    render(
+      <RadioGroupProvider
+        value={{ name: 'size', value: 'md', onChange: () => {} }}
+      >
+        <Radio label="Medium" value="md" />
+      </RadioGroupProvider>,
+    );
+
+    expect(screen.getByRole('radio', { name: 'Medium' })).toBeChecked();
+  });
+
+  it("is not checked when its own value does not match the group's value", () => {
+    render(
+      <RadioGroupProvider
+        value={{ name: 'size', value: 'md', onChange: () => {} }}
+      >
+        <Radio label="Large" value="lg" />
+      </RadioGroupProvider>,
+    );
+
+    expect(screen.getByRole('radio', { name: 'Large' })).not.toBeChecked();
+  });
+
+  it("uses the group's name so member radios share native grouping", () => {
+    render(
+      <RadioGroupProvider
+        value={{ name: 'size', value: 'md', onChange: () => {} }}
+      >
+        <Radio label="Large" value="lg" />
+      </RadioGroupProvider>,
+    );
+
+    expect(screen.getByRole('radio', { name: 'Large' })).toHaveAttribute(
+      'name',
+      'size',
+    );
+  });
+
+  it('calls the group onChange with its own value when selected', async () => {
+    const user = userEvent.setup();
+    const handleGroupChange = vi.fn();
+    render(
+      <RadioGroupProvider
+        value={{ name: 'size', value: 'md', onChange: handleGroupChange }}
+      >
+        <Radio label="Large" value="lg" />
+      </RadioGroupProvider>,
+    );
+
+    await user.click(screen.getByRole('radio', { name: 'Large' }));
+
+    expect(handleGroupChange).toHaveBeenCalledWith('lg');
+  });
+
+  it('still calls its own onChange alongside the group onChange', async () => {
+    const user = userEvent.setup();
+    const handleOwnChange = vi.fn();
+    render(
+      <RadioGroupProvider
+        value={{ name: 'size', value: 'md', onChange: () => {} }}
+      >
+        <Radio label="Large" value="lg" onChange={handleOwnChange} />
+      </RadioGroupProvider>,
+    );
+
+    await user.click(screen.getByRole('radio', { name: 'Large' }));
+
+    expect(handleOwnChange).toHaveBeenCalled();
+  });
+
+  it('lets an explicit own checked prop override the group', () => {
+    render(
+      <RadioGroupProvider
+        value={{ name: 'size', value: 'md', onChange: () => {} }}
+      >
+        <Radio label="Large" value="lg" checked />
+      </RadioGroupProvider>,
+    );
+
+    // group.value ("md") does not match "lg", but the explicit checked
+    // prop wins anyway — same prop ?? group?.x precedence Button already
+    // uses for ButtonGroupContext.
+    expect(screen.getByRole('radio', { name: 'Large' })).toBeChecked();
+  });
+
+  it('resolving two radios against the same group only checks the one whose value matches', () => {
+    render(
+      <RadioGroupProvider
+        value={{ name: 'size', value: 'md', onChange: () => {} }}
+      >
+        <Radio label="Medium" value="md" />
+        <Radio label="Large" value="lg" />
+      </RadioGroupProvider>,
+    );
+
+    expect(screen.getByRole('radio', { name: 'Medium' })).toBeChecked();
+    expect(screen.getByRole('radio', { name: 'Large' })).not.toBeChecked();
   });
 });
