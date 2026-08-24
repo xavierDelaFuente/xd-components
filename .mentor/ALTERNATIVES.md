@@ -52,6 +52,13 @@ Keep entries to five lines. If an entry needs more, it belongs in PROJECT.md.
 **Verdict**: working — 21 `Radio` tests + 8 `RadioGroup` tests pass, full gate clean, fix verified live in Storybook (the exact sibling-desync bug from an earlier screenshot no longer reproduces)
 **Generalise**: one-off, same as the `ThemeProvider` entry — still ask/write-RED-only by default; only skip to full implementation on an explicit "implement X" ask
 
+### 2026-08-24 · xd-components · UnstyledSelect block 1
+**CODEX said**: TDD tests-only — write RED tests for new component logic, stop, let the user implement GREEN
+**I did**: Implemented `UnstyledSelect` (single-select core: trigger/listbox, click-to-select, click-outside/Escape-to-close) directly, same block the RED tests already covered
+**Because**: Explicit, direct instruction ("implement the code"), same class of override as `ThemeProvider`/`RadioGroup` — not a standing change
+**Verdict**: working — all 14 tests passed on the first implementation run; one real gap found via `pnpm lint`, not the tests: option elements were non-interactive `div`s with only `onClick`, unreachable by keyboard — fixed structurally by rendering options as native `<button>`s (free focusability + Enter/Space activation) rather than adding a `biome-ignore`
+**Generalise**: one-off, same as prior entries — still ask/write-RED-only by default; only skip to full implementation on an explicit "implement X" ask. Also reconfirms [[feedback_avoid_lint_suppression]]: `pnpm lint` caught a real a11y gap tests hadn't exercised yet (keyboard reachability), fixed by restructuring (div→button) rather than suppressing
+
 ---
 
 ## Promotion tracker
