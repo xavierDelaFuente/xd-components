@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Radio } from '@asnewyla/radio';
+import { RadioGroup } from '@asnewyla/radio-group';
 import { Stack } from '@asnewyla/layout';
-import { useState } from 'react';
 
 const meta = {
   title: 'Components/Radio',
@@ -47,39 +47,14 @@ export const DisabledChecked: Story = {
   },
 };
 
-function ControlledGroupDemo() {
-  // Controlled, not several bare uncontrolled Radios sharing `name` — an
-  // uncontrolled sibling's own data-checked can go stale when another
-  // radio in its group is selected instead, since browsers don't fire a
-  // change event on the deselected radio. Controlling `checked` here
-  // sidesteps that entirely; see @asnewyla/unstyled-radio's README for
-  // the underlying limitation RadioGroup (planned) exists to fix.
-  const [size, setSize] = useState<'sm' | 'md' | 'lg'>('sm');
-
-  return (
-    <Stack gap="sm" style={{ width: 260 }}>
-      <Radio
-        label="Small"
-        name="size-demo"
-        checked={size === 'sm'}
-        onChange={() => setSize('sm')}
-      />
-      <Radio
-        label="Medium"
-        name="size-demo"
-        checked={size === 'md'}
-        onChange={() => setSize('md')}
-      />
-      <Radio
-        label="Large"
-        name="size-demo"
-        checked={size === 'lg'}
-        onChange={() => setSize('lg')}
-      />
-    </Stack>
-  );
-}
-
-export const InAStack: StoryObj = {
-  render: () => <ControlledGroupDemo />,
+export const InAGroup: StoryObj = {
+  render: () => (
+    <RadioGroup name="size-demo" defaultValue="sm">
+      <Stack gap="sm" style={{ width: 260 }}>
+        <Radio label="Small" value="sm" />
+        <Radio label="Medium" value="md" />
+        <Radio label="Large" value="lg" />
+      </Stack>
+    </RadioGroup>
+  ),
 };
