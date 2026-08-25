@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/unstyled-select",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Unstyled select/combobox primitive with single and multi-select, accessibility",
   "license": "MIT",
   "repository": {
