@@ -1,6 +1,9 @@
 import {
   type ChangeEvent,
   type ForwardedRef,
+  type KeyboardEvent,
+  type MouseEvent,
+  type ReactNode,
   forwardRef,
   useCallback,
   useMemo,
@@ -14,6 +17,10 @@ export interface SelectOption {
   value: string;
   label: string;
   disabled?: boolean;
+}
+
+export interface UnstyledSelectRenderValueHelpers {
+  removeOption: (option: SelectOption) => void;
 }
 
 type SingleSelectValueProps = {
@@ -37,10 +44,12 @@ export type UnstyledSelectProps = (
   options: SelectOption[];
   placeholder?: string;
   disabled?: boolean;
-} & Omit<
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
-    'value' | 'defaultValue' | 'onChange' | 'disabled' | 'type'
-  >;
+  invalid?: boolean;
+  renderValue?: (
+    selectedOptions: SelectOption[],
+    helpers: UnstyledSelectRenderValueHelpers,
+  ) => ReactNode;
+} & React.HTMLAttributes<HTMLDivElement>;
 
 function booleanToString(value: boolean | undefined): string | undefined {
   return value ? 'true' : undefined;
@@ -54,11 +63,14 @@ function UnstyledSelectInner(
     onChange,
     placeholder,
     disabled,
+    invalid,
     onClick,
+    onKeyDown,
     multiple,
+    renderValue,
     ...rest
   }: UnstyledSelectProps,
-  ref: ForwardedRef<HTMLButtonElement>,
+  ref: ForwardedRef<HTMLDivElement>,
 ) {
   const [searchValue, setSearchValue] = useState('');
 
@@ -70,13 +82,8 @@ function UnstyledSelectInner(
     );
   }, [options, searchValue]);
 
-  const { selectedValues, selectedLabels, selectOption } = useSelectValue({
-    options,
-    multiple,
-    value,
-    defaultValue,
-    onChange,
-  });
+  const { selectedValues, selectedOptions, selectedLabels, selectOption } =
+    useSelectValue({ options, multiple, value, defaultValue, onChange });
 
   const {
     setTriggerRef,
@@ -96,7 +103,7 @@ function UnstyledSelectInner(
     onEscape: handleEscape,
   });
 
-  const setRefs = (node: HTMLButtonElement | null) => {
+  const setRefs = (node: HTMLDivElement | null) => {
     setTriggerRef(node);
     if (typeof ref === 'function') {
       ref(node);
@@ -105,9 +112,18 @@ function UnstyledSelectInner(
     }
   };
 
-  const handleTriggerClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleTriggerClick = (e: MouseEvent<HTMLDivElement>) => {
     onClick?.(e);
     if (disabled) return;
+    const nextOpen = toggle();
+    if (nextOpen) focusSearchInput();
+  };
+
+  const handleTriggerKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    onKeyDown?.(e);
+    if (disabled) return;
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
     const nextOpen = toggle();
     if (nextOpen) focusSearchInput();
   };
@@ -128,21 +144,27 @@ function UnstyledSelectInner(
 
   return (
     <div ref={containerRef}>
-      <button
+      <div
         ref={setRefs}
         {...rest}
-        type="button"
         role="combobox"
         aria-haspopup="listbox"
         aria-expanded={open}
-        disabled={disabled}
         aria-disabled={disabled ? 'true' : undefined}
+        aria-invalid={invalid ? 'true' : undefined}
         data-disabled={booleanToString(disabled)}
+        data-invalid={booleanToString(invalid)}
         data-open={booleanToString(open)}
+        tabIndex={disabled ? -1 : 0}
         onClick={handleTriggerClick}
+        onKeyDown={handleTriggerKeyDown}
       >
-        {selectedLabels.length > 0 ? selectedLabels.join(', ') : placeholder}
-      </button>
+        {renderValue
+          ? renderValue(selectedOptions, { removeOption: selectOption })
+          : selectedLabels.length > 0
+            ? selectedLabels.join(', ')
+            : placeholder}
+      </div>
       {open && (
         <div
           role="listbox"
@@ -181,7 +203,6 @@ function UnstyledSelectInner(
   );
 }
 
-export const UnstyledSelect = forwardRef<
-  HTMLButtonElement,
-  UnstyledSelectProps
->(UnstyledSelectInner);
+export const UnstyledSelect = forwardRef<HTMLDivElement, UnstyledSelectProps>(
+  UnstyledSelectInner,
+);

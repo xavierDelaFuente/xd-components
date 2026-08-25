@@ -57,6 +57,8 @@ const fruitOptions = [
 | `onChange` | `(value: string) => void` (single) or `(value: string[]) => void` (`multiple`) | — |
 | `placeholder` | `string` | — |
 | `disabled` | `boolean` | `false` |
+| `invalid` | `boolean` | `false` |
+| `renderValue` | `(selectedOptions: SelectOption[], helpers: { removeOption: (option: SelectOption) => void }) => ReactNode` | — |
 
 `multiple` gates which shape `value`/`defaultValue`/`onChange` accept —
 this is enforced at the type level (a discriminated union), not just at
@@ -68,10 +70,19 @@ Single-select closes the listbox and returns focus to the trigger on
 selection; multi-select keeps the listbox open so more options can be
 toggled.
 
+By default the trigger shows the selected option's label (or every
+selected label, comma-joined, for `multiple`), falling back to
+`placeholder` when nothing's selected. Pass `renderValue` to replace that
+with your own rendering — e.g. removable chips for `multiple` — using the
+`selectedOptions` (real `SelectOption` objects, not just their values) and
+a `removeOption` helper that deselects one of them (calls `onChange` with
+the option removed, same as clicking it again in the listbox would).
+
 ### Accessibility
 
-Implements the WAI-ARIA listbox pattern: the trigger is `role="combobox"`
-with `aria-expanded`/`aria-haspopup`, the popup is `role="listbox"`
+Implements the WAI-ARIA listbox pattern: the trigger is a `<div
+role="combobox">` with `aria-expanded`/`aria-haspopup` (not a `<button>` —
+see "Trigger element" below), the popup is `role="listbox"`
 (`aria-multiselectable` when `multiple`), and each option is
 `role="option"` with `aria-selected`. State is also mirrored via
 `data-*` attributes (`data-open`, `data-selected`, `data-disabled`) for
@@ -94,10 +105,21 @@ Keyboard support:
 
 Opening the listbox renders a search `<input>` (`aria-label="Search
 options"`) as the first child of the popup, above the option list — the
-trigger itself stays a `<button role="combobox">`, it does not become an
-editable input. Typing filters `options` client-side by a case-insensitive
-substring match on `label`; there's no async/remote search. Selecting an
-option or closing the listbox (`Escape`, click outside) clears the query.
+trigger itself does not become an editable input. Typing filters `options`
+client-side by a case-insensitive substring match on `label`; there's no
+async/remote search. Selecting an option or closing the listbox (`Escape`,
+click outside) clears the query.
+
+### Trigger element
+
+The trigger renders as a `<div role="combobox" tabIndex={0}>`, not a
+`<button>`. A real `<button>` can't contain other interactive elements
+(nested buttons are invalid HTML), which `renderValue` needs to be able to
+do — chip-style multi-select values need a real, focusable remove button
+per chip. Native `<button>` semantics (Enter/Space activates, disabled
+removes it from the tab order) are reimplemented by hand for the div:
+`Enter`/`Space` open the listbox, and a `disabled` trigger gets
+`tabIndex={-1}` instead of the native `disabled` attribute.
 
 ### Not yet supported
 
@@ -107,8 +129,6 @@ This primitive is still growing. Not implemented yet:
   `FormData` the way `@asnewyla/form`'s `FormFieldInput` expects.
 - **Portal rendering** — the listbox renders inline, so it can be
   visually clipped by an `overflow: hidden` or scrolling ancestor.
-- An `invalid` prop, unlike every other input-shaped primitive in this
-  library.
 
 ## License
 

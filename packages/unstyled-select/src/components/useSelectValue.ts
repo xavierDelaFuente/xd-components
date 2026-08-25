@@ -11,6 +11,7 @@ interface UseSelectValueParams {
 
 export interface UseSelectValueResult {
   selectedValues: string[];
+  selectedOptions: SelectOption[];
   selectedLabels: string[];
   selectOption: (option: SelectOption) => void;
 }
@@ -36,9 +37,10 @@ export function useSelectValue({
       ? [currentValue as string]
       : [];
 
-  const selectedLabels = options
-    .filter((option) => selectedValues.includes(option.value))
-    .map((option) => option.label);
+  const selectedOptions = options.filter((option) =>
+    selectedValues.includes(option.value),
+  );
+  const selectedLabels = selectedOptions.map((option) => option.label);
 
   const selectOption = (option: SelectOption) => {
     if (multiple) {
@@ -58,5 +60,5 @@ export function useSelectValue({
     (onChange as ((value: string) => void) | undefined)?.(option.value);
   };
 
-  return { selectedValues, selectedLabels, selectOption };
+  return { selectedValues, selectedOptions, selectedLabels, selectOption };
 }
