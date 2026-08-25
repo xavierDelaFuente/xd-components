@@ -1,4 +1,11 @@
-import { type ForwardedRef, forwardRef } from 'react';
+import {
+  type ChangeEvent,
+  type ForwardedRef,
+  forwardRef,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import { useRovingFocus } from './useRovingFocus';
 import { useSelectOpenState } from './useSelectOpenState';
 import { useSelectValue } from './useSelectValue';
@@ -53,6 +60,16 @@ function UnstyledSelectInner(
   }: UnstyledSelectProps,
   ref: ForwardedRef<HTMLButtonElement>,
 ) {
+  const [searchValue, setSearchValue] = useState('');
+
+  const filteredOptions = useMemo(() => {
+    const query = searchValue.toLowerCase();
+    if (!query) return options;
+    return options.filter((option) =>
+      option.label.toLowerCase().includes(query),
+    );
+  }, [options, searchValue]);
+
   const { selectedValues, selectedLabels, selectOption } = useSelectValue({
     options,
     multiple,
@@ -63,13 +80,20 @@ function UnstyledSelectInner(
 
   const {
     setTriggerRef,
+    setSearchInputRef,
     getOptionRef,
     focusTrigger,
-    focusInitialOption,
+    focusSearchInput,
     handleListboxKeyDown,
-  } = useRovingFocus({ options });
+  } = useRovingFocus({ options: filteredOptions });
+
+  const handleEscape = useCallback(() => {
+    setSearchValue('');
+    focusTrigger();
+  }, [focusTrigger]);
+
   const { open, containerRef, toggle, close } = useSelectOpenState({
-    onEscape: focusTrigger,
+    onEscape: handleEscape,
   });
 
   const setRefs = (node: HTMLButtonElement | null) => {
@@ -85,16 +109,21 @@ function UnstyledSelectInner(
     onClick?.(e);
     if (disabled) return;
     const nextOpen = toggle();
-    if (nextOpen) focusInitialOption(selectedValues);
+    if (nextOpen) focusSearchInput();
   };
 
   const handleOptionClick = (option: SelectOption) => {
     if (option.disabled) return;
     selectOption(option);
+    setSearchValue('');
     if (!multiple) {
       close();
       focusTrigger();
     }
+  };
+
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
   };
 
   return (
@@ -120,7 +149,15 @@ function UnstyledSelectInner(
           aria-multiselectable={multiple ? 'true' : undefined}
           onKeyDown={handleListboxKeyDown}
         >
-          {options.map((option) => {
+          <div>
+            <input
+              ref={setSearchInputRef}
+              aria-label="Search options"
+              value={searchValue}
+              onChange={handleSearchChange}
+            />
+          </div>
+          {filteredOptions.map((option) => {
             const isSelected = selectedValues.includes(option.value);
             return (
               <button

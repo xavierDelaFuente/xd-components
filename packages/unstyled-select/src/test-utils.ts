@@ -17,8 +17,16 @@ export function getOptions(): HTMLElement[] {
   return within(getListbox()).getAllByRole('option');
 }
 
+export function queryOptions(): HTMLElement[] {
+  return within(getListbox()).queryAllByRole('option');
+}
+
 export function getOptionLabels(): (string | null)[] {
   return getOptions().map((option) => option.textContent);
+}
+
+export function queryOptionLabels(): (string | null)[] {
+  return queryOptions().map((option) => option.textContent);
 }
 
 export function getOption(name: string): HTMLElement {
@@ -31,4 +39,12 @@ export function openSelect(user: UserEvent): Promise<void> {
 
 export function clickOption(user: UserEvent, name: string): Promise<void> {
   return user.click(getOption(name));
+}
+
+export function getSearchInput(): HTMLElement {
+  return screen.getByRole('textbox', { name: 'Search options' });
+}
+
+export function typeQuery(user: UserEvent, text: string): Promise<void> {
+  return user.type(getSearchInput(), text);
 }

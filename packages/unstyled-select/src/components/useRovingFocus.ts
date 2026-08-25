@@ -7,9 +7,10 @@ interface UseRovingFocusParams {
 
 interface UseRovingFocusResult {
   setTriggerRef: (node: HTMLButtonElement | null) => void;
+  setSearchInputRef: (node: HTMLInputElement | null) => void;
   getOptionRef: (value: string) => (node: HTMLButtonElement | null) => void;
   focusTrigger: () => void;
-  focusInitialOption: (selectedValues: string[]) => void;
+  focusSearchInput: () => void;
   handleListboxKeyDown: (e: KeyboardEvent<HTMLDivElement>) => void;
 }
 
@@ -17,10 +18,15 @@ export function useRovingFocus({
   options,
 }: UseRovingFocusParams): UseRovingFocusResult {
   const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
   const optionRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
   const setTriggerRef = (node: HTMLButtonElement | null) => {
     triggerRef.current = node;
+  };
+
+  const setSearchInputRef = (node: HTMLInputElement | null) => {
+    searchInputRef.current = node;
   };
 
   const getOptionRef = (value: string) => (node: HTMLButtonElement | null) => {
@@ -38,16 +44,12 @@ export function useRovingFocus({
     triggerRef.current?.focus();
   }, []);
 
+  const focusSearchInput = useCallback(() => {
+    searchInputRef.current?.focus();
+  }, []);
+
   const focusOption = (value: string) => {
     optionRefs.current.get(value)?.focus();
-  };
-
-  const focusInitialOption = (selectedValues: string[]) => {
-    const selected = options.find(
-      (option) => !option.disabled && selectedValues.includes(option.value),
-    );
-    const target = selected ?? options.find((option) => !option.disabled);
-    if (target) focusOption(target.value);
   };
 
   const getCurrentIndex = (): number => {
@@ -61,9 +63,6 @@ export function useRovingFocus({
   };
 
   const handleListboxKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    const enabled = options.filter((option) => !option.disabled);
-    if (enabled.length === 0) return;
-
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       const currentIndex = getCurrentIndex();
@@ -80,27 +79,34 @@ export function useRovingFocus({
       const before =
         currentIndex === -1 ? options : options.slice(0, currentIndex);
       const prev = [...before].reverse().find((option) => !option.disabled);
-      if (prev) focusOption(prev.value);
+      if (prev) {
+        focusOption(prev.value);
+      } else {
+        focusSearchInput();
+      }
       return;
     }
 
     if (e.key === 'Home') {
       e.preventDefault();
-      focusOption(enabled[0].value);
+      const first = options.find((option) => !option.disabled);
+      if (first) focusOption(first.value);
       return;
     }
 
     if (e.key === 'End') {
       e.preventDefault();
-      focusOption(enabled[enabled.length - 1].value);
+      const enabled = options.filter((option) => !option.disabled);
+      if (enabled.length > 0) focusOption(enabled[enabled.length - 1].value);
     }
   };
 
   return {
     setTriggerRef,
+    setSearchInputRef,
     getOptionRef,
     focusTrigger,
-    focusInitialOption,
+    focusSearchInput,
     handleListboxKeyDown,
   };
 }
