@@ -1,6 +1,7 @@
 import { createRef } from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import { getImage } from '@asnewyla/image/test-utils';
 import { Card } from '../components';
 
 describe('Card', () => {
@@ -84,7 +85,7 @@ describe('Card', () => {
       </Card>,
     );
 
-    const image = screen.getByAltText('A mountain at sunset');
+    const image = getImage('A mountain at sunset');
     expect(image).toHaveAttribute('src', '/photo.jpg');
   });
 
@@ -102,7 +103,7 @@ describe('Card', () => {
       </Card>,
     );
 
-    expect(screen.getByAltText('A mountain')).toHaveAttribute('data-fit', fit);
+    expect(getImage('A mountain')).toHaveAttribute('data-fit', fit);
   });
 
   it('passes image.aspectRatio through to the internal Image', () => {
@@ -114,7 +115,7 @@ describe('Card', () => {
       </Card>,
     );
 
-    expect(screen.getByAltText('A mountain')).toHaveStyle({
+    expect(getImage('A mountain')).toHaveStyle({
       aspectRatio: '16 / 9',
     });
   });
@@ -155,9 +156,7 @@ describe('Card', () => {
     );
 
     expect(ref.current).toHaveAttribute('data-radius', 'lg');
-    expect(screen.getByAltText('A mountain')).not.toHaveAttribute(
-      'data-radius',
-    );
+    expect(getImage('A mountain')).not.toHaveAttribute('data-radius');
   });
 
   it('renders the image before the children — full-bleed at the top', () => {
@@ -167,7 +166,7 @@ describe('Card', () => {
       </Card>,
     );
 
-    const image = screen.getByAltText('A mountain');
+    const image = getImage('A mountain');
     const body = screen.getByText('Body');
 
     expect(

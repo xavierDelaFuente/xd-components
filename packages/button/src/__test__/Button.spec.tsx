@@ -1,67 +1,63 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi } from 'vitest';
+import userEvent, { type UserEvent } from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Button } from '../components/Button';
 import { ButtonGroupProvider } from '../components/ButtonGroupContext';
+import { clickButton, getButton } from '../test-utils';
+
+let user: UserEvent;
+
+beforeEach(() => {
+  user = userEvent.setup();
+});
 
 describe('Button', () => {
   it('renders with text content', () => {
     render(<Button>Save</Button>);
-    expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument();
+    expect(getButton(/save/i)).toBeInTheDocument();
   });
 
   it('applies primary variant by default', () => {
     render(<Button>Primary</Button>);
-    expect(screen.getByRole('button')).toHaveAttribute(
-      'data-variant',
-      'primary',
-    );
+    expect(getButton()).toHaveAttribute('data-variant', 'primary');
   });
 
   it('applies secondary variant when specified', () => {
     render(<Button variant="secondary">Secondary</Button>);
-    expect(screen.getByRole('button')).toHaveAttribute(
-      'data-variant',
-      'secondary',
-    );
+    expect(getButton()).toHaveAttribute('data-variant', 'secondary');
   });
 
   it('applies destructive variant when specified', () => {
     render(<Button variant="destructive">Delete</Button>);
-    expect(screen.getByRole('button')).toHaveAttribute(
-      'data-variant',
-      'destructive',
-    );
+    expect(getButton()).toHaveAttribute('data-variant', 'destructive');
   });
 
   it('applies md size by default', () => {
     render(<Button>Medium</Button>);
-    expect(screen.getByRole('button')).toHaveAttribute('data-size', 'md');
+    expect(getButton()).toHaveAttribute('data-size', 'md');
   });
 
   const sizes = ['sm', 'md', 'lg'] as const;
   it.each(sizes)('applies %s size when specified', (size) => {
     render(<Button size={size}>text</Button>);
-    expect(screen.getByRole('button')).toHaveAttribute('data-size', size);
+    expect(getButton()).toHaveAttribute('data-size', size);
   });
 
   it('calls onClick when clicked', async () => {
     const handleClick = vi.fn();
-    const user = userEvent.setup();
     render(<Button onClick={handleClick}>Click</Button>);
-    await user.click(screen.getByRole('button'));
+    await clickButton(user);
     expect(handleClick).toHaveBeenCalledOnce();
   });
 
   it('does not call onClick when disabled', async () => {
     const handleClick = vi.fn();
-    const user = userEvent.setup();
     render(
       <Button disabled onClick={handleClick}>
         Disabled
       </Button>,
     );
-    await user.click(screen.getByRole('button'));
+    await clickButton(user);
     expect(handleClick).not.toHaveBeenCalled();
   });
 
@@ -115,7 +111,7 @@ describe('Button', () => {
 
   it('merges a consumer className with the base xd-button class', () => {
     render(<Button className="my-button">Save</Button>);
-    expect(screen.getByRole('button')).toHaveClass('xd-button', 'my-button');
+    expect(getButton()).toHaveClass('xd-button', 'my-button');
   });
 
   it('forwards ref to the underlying DOM element', () => {
@@ -132,7 +128,7 @@ describe('Button', () => {
         <Button>Grouped</Button>
       </ButtonGroupProvider>,
     );
-    const button = screen.getByRole('button');
+    const button = getButton();
     expect(button).toHaveAttribute('data-variant', 'secondary');
     expect(button).toHaveAttribute('data-size', 'lg');
     expect(button).toBeDisabled();
@@ -148,7 +144,7 @@ describe('Button', () => {
         </Button>
       </ButtonGroupProvider>,
     );
-    const button = screen.getByRole('button');
+    const button = getButton();
     expect(button).toHaveAttribute('data-variant', 'destructive');
     expect(button).toHaveAttribute('data-size', 'sm');
     expect(button).not.toBeDisabled();

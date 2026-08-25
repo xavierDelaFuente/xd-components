@@ -2,6 +2,7 @@ import { createRef } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
+import { getInput } from '@asnewyla/unstyled-input/test-utils';
 import { Input } from '../components';
 
 describe('Input', () => {
@@ -17,7 +18,7 @@ describe('Input', () => {
 
     await user.click(screen.getByText('Name'));
 
-    expect(screen.getByRole('textbox', { name: 'Name' })).toHaveFocus();
+    expect(getInput('Name')).toHaveFocus();
   });
 
   it('auto-generates a unique id when none is provided', () => {
@@ -28,8 +29,8 @@ describe('Input', () => {
       </>,
     );
 
-    const first = screen.getByRole('textbox', { name: 'First name' });
-    const last = screen.getByRole('textbox', { name: 'Last name' });
+    const first = getInput('First name');
+    const last = getInput('Last name');
 
     expect(first.id).toBeTruthy();
     expect(last.id).toBeTruthy();
@@ -39,10 +40,7 @@ describe('Input', () => {
   it('respects an explicitly-provided id', () => {
     render(<Input label="Name" id="custom-id" />);
 
-    expect(screen.getByRole('textbox', { name: 'Name' })).toHaveAttribute(
-      'id',
-      'custom-id',
-    );
+    expect(getInput('Name')).toHaveAttribute('id', 'custom-id');
   });
 
   it('renders no error message when error is not provided', () => {
@@ -62,7 +60,7 @@ describe('Input', () => {
   it('links the input to the error message via aria-describedby', () => {
     render(<Input label="Email" error="Enter a valid email address" />);
 
-    const input = screen.getByRole('textbox', { name: 'Email' });
+    const input = getInput('Email');
     const describedById = input.getAttribute('aria-describedby');
 
     expect(describedById).toBeTruthy();
@@ -74,34 +72,26 @@ describe('Input', () => {
   it('sets aria-invalid on the input when error is provided', () => {
     render(<Input label="Email" error="Enter a valid email address" />);
 
-    expect(screen.getByRole('textbox', { name: 'Email' })).toHaveAttribute(
-      'aria-invalid',
-      'true',
-    );
+    expect(getInput('Email')).toHaveAttribute('aria-invalid', 'true');
   });
 
   it('does not set aria-invalid when error is not provided', () => {
     render(<Input label="Email" id="email" />);
 
-    expect(screen.getByRole('textbox', { name: 'Email' })).not.toHaveAttribute(
-      'aria-invalid',
-    );
+    expect(getInput('Email')).not.toHaveAttribute('aria-invalid');
     expect(screen.queryByTestId('email-error')).not.toBeInTheDocument();
   });
 
   it('forwards disabled to the underlying input', () => {
     render(<Input label="Name" disabled />);
 
-    expect(screen.getByRole('textbox', { name: 'Name' })).toBeDisabled();
+    expect(getInput('Name')).toBeDisabled();
   });
 
   it('merges a consumer className with the base xd-input-field class', () => {
     render(<Input label="Name" className="my-input" />);
 
-    expect(screen.getByRole('textbox', { name: 'Name' })).toHaveClass(
-      'xd-input-field',
-      'my-input',
-    );
+    expect(getInput('Name')).toHaveClass('xd-input-field', 'my-input');
   });
 
   it('forwards a ref to the underlying input element', () => {
@@ -114,17 +104,14 @@ describe('Input', () => {
   it('passes through arbitrary native input attributes', () => {
     render(<Input label="Name" placeholder="e.g. Jordan" />);
 
-    expect(screen.getByRole('textbox', { name: 'Name' })).toHaveAttribute(
-      'placeholder',
-      'e.g. Jordan',
-    );
+    expect(getInput('Name')).toHaveAttribute('placeholder', 'e.g. Jordan');
   });
 
   it('still sets data-focused on the underlying input when the consumer passes their own onFocus', () => {
     const handleFocus = vi.fn();
     render(<Input label="Name" onFocus={handleFocus} />);
 
-    const input = screen.getByRole('textbox', { name: 'Name' });
+    const input = getInput('Name');
     fireEvent.focus(input);
 
     expect(handleFocus).toHaveBeenCalled();

@@ -1,9 +1,10 @@
 import { Input } from '@asnewyla/input';
 import { fireEvent, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { type ChangeEvent, useState } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Form, FormFieldInput } from '../components';
+import { getFieldInput, submitForm } from '../test-utils';
 
 function ControlledEmailForm({
   onSubmit,
@@ -27,6 +28,12 @@ function ControlledEmailForm({
   );
 }
 
+let user: UserEvent;
+
+beforeEach(() => {
+  user = userEvent.setup();
+});
+
 describe('Form', () => {
   it('renders a form element with its children', () => {
     render(
@@ -35,12 +42,11 @@ describe('Form', () => {
       </Form>,
     );
 
-    expect(screen.getByRole('textbox', { name: 'Email' })).toBeInTheDocument();
+    expect(getFieldInput('Email')).toBeInTheDocument();
     expect(document.querySelector('form')).toBeInTheDocument();
   });
 
   it('calls onSubmit with the current field values when everything is valid', async () => {
-    const user = userEvent.setup();
     const handleSubmit = vi.fn();
     render(
       <Form onSubmit={handleSubmit}>
@@ -49,14 +55,13 @@ describe('Form', () => {
       </Form>,
     );
 
-    await user.type(screen.getByRole('textbox', { name: 'Name' }), 'Jordan');
-    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await user.type(getFieldInput('Name'), 'Jordan');
+    await submitForm(user);
 
     expect(handleSubmit).toHaveBeenCalledWith({ name: 'Jordan' });
   });
 
   it('does not call onSubmit when a required field is empty', async () => {
-    const user = userEvent.setup();
     const handleSubmit = vi.fn();
     render(
       <Form onSubmit={handleSubmit}>
@@ -65,7 +70,7 @@ describe('Form', () => {
       </Form>,
     );
 
-    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await submitForm(user);
 
     expect(handleSubmit).not.toHaveBeenCalled();
   });
@@ -86,13 +91,12 @@ describe('Form', () => {
   });
 
   it('validates on blur — a required field left empty becomes invalid', async () => {
-    const user = userEvent.setup();
     render(
       <Form onSubmit={vi.fn()}>
         <FormFieldInput label="Name" name="name" required defaultValue="" />
       </Form>,
     );
-    const input = screen.getByRole('textbox', { name: 'Name' });
+    const input = getFieldInput('Name');
 
     await user.click(input);
     await user.tab();
@@ -101,13 +105,12 @@ describe('Form', () => {
   });
 
   it('clears a field error once corrected and blurred again', async () => {
-    const user = userEvent.setup();
     render(
       <Form onSubmit={vi.fn()}>
         <FormFieldInput label="Name" name="name" required defaultValue="" />
       </Form>,
     );
-    const input = screen.getByRole('textbox', { name: 'Name' });
+    const input = getFieldInput('Name');
 
     await user.click(input);
     await user.tab();
@@ -120,13 +123,12 @@ describe('Form', () => {
   });
 
   it('validates on blur — a pattern mismatch becomes invalid and shows the message', async () => {
-    const user = userEvent.setup();
     render(
       <Form onSubmit={vi.fn()}>
         <FormFieldInput label="Email" name="email" pattern="^\S+@\S+$" />
       </Form>,
     );
-    const input = screen.getByRole('textbox', { name: 'Email' });
+    const input = getFieldInput('Email');
 
     await user.type(input, 'not-an-email');
     await user.tab();
@@ -136,13 +138,12 @@ describe('Form', () => {
   });
 
   it('validates on blur — a minLength violation becomes invalid', async () => {
-    const user = userEvent.setup();
     render(
       <Form onSubmit={vi.fn()}>
         <FormFieldInput label="Password" name="password" minLength={8} />
       </Form>,
     );
-    const input = screen.getByRole('textbox', { name: 'Password' });
+    const input = getFieldInput('Password');
 
     await user.type(input, 'short');
     await user.tab();
@@ -159,15 +160,12 @@ describe('Form', () => {
     // simulates real typing) from ever typing past the limit. A too-long
     // value can only reach the field via an initial value (defaultValue),
     // never by typing — this test is the contract for that constraint.
-    const user = userEvent.setup();
     render(
       <Form onSubmit={vi.fn()}>
         <FormFieldInput label="Nickname" name="nickname" maxLength={3} />
       </Form>,
     );
-    const input = screen.getByRole('textbox', {
-      name: 'Nickname',
-    }) as HTMLInputElement;
+    const input = getFieldInput('Nickname') as HTMLInputElement;
 
     await user.type(input, 'toolong');
 
@@ -175,7 +173,6 @@ describe('Form', () => {
   });
 
   it('validates on blur — a maxLength violation becomes invalid', async () => {
-    const user = userEvent.setup();
     render(
       <Form onSubmit={vi.fn()}>
         <FormFieldInput
@@ -186,7 +183,7 @@ describe('Form', () => {
         />
       </Form>,
     );
-    const input = screen.getByRole('textbox', { name: 'Nickname' });
+    const input = getFieldInput('Nickname');
 
     await user.click(input);
     await user.tab();
@@ -198,7 +195,6 @@ describe('Form', () => {
   });
 
   it('validates on blur — a min violation becomes invalid', async () => {
-    const user = userEvent.setup();
     render(
       <Form onSubmit={vi.fn()}>
         <FormFieldInput
@@ -209,7 +205,7 @@ describe('Form', () => {
         />
       </Form>,
     );
-    const input = screen.getByRole('spinbutton', { name: 'Quantity' });
+    const input = getFieldInput('Quantity', 'spinbutton');
 
     await user.type(input, '3');
     await user.tab();
@@ -219,7 +215,6 @@ describe('Form', () => {
   });
 
   it('validates on blur — a max violation becomes invalid', async () => {
-    const user = userEvent.setup();
     render(
       <Form onSubmit={vi.fn()}>
         <FormFieldInput
@@ -230,7 +225,7 @@ describe('Form', () => {
         />
       </Form>,
     );
-    const input = screen.getByRole('spinbutton', { name: 'Quantity' });
+    const input = getFieldInput('Quantity', 'spinbutton');
 
     await user.type(input, '10');
     await user.tab();
@@ -240,7 +235,6 @@ describe('Form', () => {
   });
 
   it('validates on blur — a custom validate function becomes invalid', async () => {
-    const user = userEvent.setup();
     const validate = (value: string) =>
       value === 'admin' ? 'That username is reserved' : undefined;
     render(
@@ -248,7 +242,7 @@ describe('Form', () => {
         <FormFieldInput label="Username" name="username" validate={validate} />
       </Form>,
     );
-    const input = screen.getByRole('textbox', { name: 'Username' });
+    const input = getFieldInput('Username');
 
     await user.type(input, 'admin');
     await user.tab();
@@ -258,7 +252,6 @@ describe('Form', () => {
   });
 
   it('does not call onSubmit when a non-required rule (pattern) fails on submit, not just on blur', async () => {
-    const user = userEvent.setup();
     const handleSubmit = vi.fn();
     render(
       <Form onSubmit={handleSubmit}>
@@ -267,22 +260,18 @@ describe('Form', () => {
       </Form>,
     );
 
-    await user.type(
-      screen.getByRole('textbox', { name: 'Email' }),
-      'not-an-email',
-    );
-    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await user.type(getFieldInput('Email'), 'not-an-email');
+    await submitForm(user);
 
     expect(handleSubmit).not.toHaveBeenCalled();
   });
 
   it('works with a controlled FormFieldInput (value + onChange), reading the live DOM value at validation time', async () => {
-    const user = userEvent.setup();
     const handleSubmit = vi.fn();
     render(<ControlledEmailForm onSubmit={handleSubmit} />);
 
-    await user.type(screen.getByRole('textbox', { name: 'Email' }), 'a@b.com');
-    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await user.type(getFieldInput('Email'), 'a@b.com');
+    await submitForm(user);
 
     expect(handleSubmit).toHaveBeenCalledWith({ email: 'a@b.com' });
   });
@@ -294,13 +283,10 @@ describe('Form', () => {
       </Form>,
     );
 
-    expect(screen.getByRole('textbox', { name: 'Search' })).not.toHaveAttribute(
-      'aria-invalid',
-    );
+    expect(getFieldInput('Search')).not.toHaveAttribute('aria-invalid');
   });
 
   it('a plain Input with a name is still collected into onSubmit via native FormData, even though it was never registered or validated — this is accepted, native <form> behavior, not something FormFieldInput needs to prevent', async () => {
-    const user = userEvent.setup();
     const handleSubmit = vi.fn();
     render(
       <Form onSubmit={handleSubmit}>
@@ -309,8 +295,8 @@ describe('Form', () => {
       </Form>,
     );
 
-    await user.type(screen.getByRole('textbox', { name: 'Search' }), 'koi');
-    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await user.type(getFieldInput('Search'), 'koi');
+    await submitForm(user);
 
     expect(handleSubmit).toHaveBeenCalledWith({ search: 'koi' });
   });
