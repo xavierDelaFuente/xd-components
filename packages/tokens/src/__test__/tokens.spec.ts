@@ -8,7 +8,7 @@ const css = readFileSync(resolve(__dirname, '../tokens.css'), 'utf-8');
 
 describe('@asnewyla/tokens', () => {
   it('defines the color tokens Button currently hardcodes as light-mode fallbacks', () => {
-    expect(css).toContain('--xd-color-primary: #0d9488;');
+    expect(css).toContain('--xd-color-primary: #0f766e;');
     expect(css).toContain('--xd-on-primary: #ffffff;');
     expect(css).toContain('--xd-color-secondary: #64748b;');
     expect(css).toContain('--xd-on-secondary: #ffffff;');
@@ -72,5 +72,50 @@ describe('@asnewyla/tokens', () => {
 
   it('defines a motion token, matching what Button and Input both hardcoded identically', () => {
     expect(css).toContain('--xd-motion-fast: 120ms ease-out;');
+  });
+
+  it('defines a surface/text tier, light mode and dark mode — needed by any component that owns a floating surface (e.g. Select)', () => {
+    expect(css).toContain('--xd-color-surface: #ffffff;');
+    expect(css).toContain('--xd-color-surface-hover: #f1f5f9;');
+    expect(css).toContain('--xd-color-text: #0f172a;');
+    expect(css).toContain('--xd-color-text-muted: #475569;');
+
+    const darkBlock = css.split('prefers-color-scheme: dark')[1] ?? '';
+    expect(darkBlock).toContain('--xd-color-surface: #0f172a;');
+    expect(darkBlock).toContain('--xd-color-surface-hover: #1e293b;');
+    expect(darkBlock).toContain('--xd-color-text: #f1f5f9;');
+    expect(darkBlock).toContain('--xd-color-text-muted: #94a3b8;');
+  });
+
+  it('defines a stronger border tier for interactive control edges (WCAG 1.4.11, 3:1), separate from the decorative border', () => {
+    expect(css).toContain('--xd-color-border-strong: #6b7688;');
+    const darkBlock = css.split('prefers-color-scheme: dark')[1] ?? '';
+    expect(darkBlock).toContain('--xd-color-border-strong: #64748b;');
+  });
+
+  it('defines a focus ring color token, independent of primary so it can diverge on a primary-filled control', () => {
+    expect(css).toContain('--xd-color-focus: #0f766e;');
+    const darkBlock = css.split('prefers-color-scheme: dark')[1] ?? '';
+    expect(darkBlock).toContain('--xd-color-focus: #06b6d4;');
+  });
+
+  it('defines an elevation scale, flattened to none in dark mode', () => {
+    expect(css).toContain('--xd-shadow-sm: 0 1px 2px rgb(15 23 42 / 8%);');
+    expect(css).toContain('--xd-shadow-md: 0 4px 12px rgb(15 23 42 / 12%);');
+
+    const darkBlock = css.split('prefers-color-scheme: dark')[1] ?? '';
+    expect(darkBlock).toContain('--xd-shadow-sm: none;');
+    expect(darkBlock).toContain('--xd-shadow-md: none;');
+  });
+
+  it('lets an explicit data-mode="light" override force light while the OS prefers dark', () => {
+    expect(css).toContain(':root:not([data-mode="light"])');
+  });
+
+  it('lets an explicit data-mode="dark" override force dark regardless of the OS preference or prefers-color-scheme', () => {
+    const explicitDarkBlock = css.split(':root[data-mode="dark"]')[1] ?? '';
+    expect(explicitDarkBlock).toContain('--xd-color-primary: #06b6d4;');
+    expect(explicitDarkBlock).toContain('--xd-color-surface: #0f172a;');
+    expect(explicitDarkBlock).toContain('--xd-shadow-sm: none;');
   });
 });

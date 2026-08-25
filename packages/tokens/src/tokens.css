@@ -4,16 +4,31 @@
  * its own hardcoded fallback (var(--xd-*, value)) matching what is defined
  * here, so a consumer who imports nothing still gets a working default.
  * See the Tokens dependency model entry in PROJECT.md.
+ *
+ * Every value below is measured, not eyeballed. Lowest ratios in the set:
+ * white-on-primary 5.47:1, border-strong-on-surface 4.59:1, focus ring
+ * 5.47:1. See DESIGN_TOKENS_CONTRACT.md part 6 for the required pairs.
  */
 
 :root {
   /* ─── Color — light mode (default) ─── */
-  --xd-color-primary: #0d9488;
+  --xd-color-primary: #0f766e;
   --xd-on-primary: #ffffff;
   --xd-color-secondary: #64748b;
   --xd-on-secondary: #ffffff;
   --xd-color-destructive: #dc2626;
   --xd-on-destructive: #ffffff;
+
+  /* ─── Surface & text ───
+     surface       page and popover background
+     surface-hover raised/recessed fill: hover rows, inset fields, chips
+     text          primary text
+     text-muted    placeholders and secondary text -- still real text,
+                   so it is held to 4.5:1, not 3:1 */
+  --xd-color-surface: #ffffff;
+  --xd-color-surface-hover: #f1f5f9;
+  --xd-color-text: #0f172a;
+  --xd-color-text-muted: #475569;
 
   /* ─── Spacing ─── */
   --xd-space-xs: 0.25rem;
@@ -39,8 +54,13 @@
   --xd-font-weight-semibold: 600;
   --xd-line-height-normal: 1.25;
 
-  /* ─── Border ─── */
+  /* ─── Border ───
+     Two tiers with different jobs. -border is decorative and may be a
+     hairline; -border-strong bounds an interactive control and must
+     clear 3:1 against the surface (WCAG 1.4.11). Using the wrong one
+     is an accessibility failure, not a style choice. */
   --xd-color-border: #cbd5e1;
+  --xd-color-border-strong: #6b7688;
   /* Stays in px, not rem, on purpose: a hairline border should render as
      exactly one device pixel at any text-zoom level. In rem it would scale
      with the user's font-size preference and could round to a blurry
@@ -49,9 +69,20 @@
 
   /* ─── Focus ring ───
      Same px-not-rem reasoning as border-width — a focus ring is a fixed
-     visual indicator, not something that should grow with text size. */
+     visual indicator, not something that should grow with text size.
+     -focus is its own token rather than an alias of -primary: on a
+     primary-filled control the ring has to contrast with the fill, so
+     the two need to be able to diverge per theme. */
+  --xd-color-focus: #0f766e;
   --xd-focus-ring-width: 2px;
   --xd-focus-ring-offset: 2px;
+
+  /* ─── Elevation ───
+     Themes may set these to none. Any component relying on a shadow to
+     separate a floating layer must ALSO draw a border, or it becomes
+     invisible in a theme that flattens elevation. */
+  --xd-shadow-sm: 0 1px 2px rgb(15 23 42 / 8%);
+  --xd-shadow-md: 0 4px 12px rgb(15 23 42 / 12%);
 
   /* ─── State ─── */
   --xd-opacity-disabled: 0.5;
@@ -60,18 +91,58 @@
   --xd-motion-fast: 120ms ease-out;
 }
 
-/* --- Color -- dark mode ---
+/* --- Color -- dark mode, follows system ---
    Only the color tokens switch; spacing, radius, and typography stay
-   constant across schemes. Matches the existing Button dark-mode
-   fallback values. */
+   constant across schemes.
+   :not([data-mode="light"]) is what lets an explicit toggle force light
+   while the OS is dark. Without it the toggle is one-way. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-mode="light"]) {
+    color-scheme: dark;
+
     --xd-color-primary: #06b6d4;
     --xd-on-primary: #000000;
     --xd-color-secondary: #cbd5e1;
     --xd-on-secondary: #000000;
     --xd-color-destructive: #f87171;
     --xd-on-destructive: #000000;
+
+    --xd-color-surface: #0f172a;
+    --xd-color-surface-hover: #1e293b;
+    --xd-color-text: #f1f5f9;
+    --xd-color-text-muted: #94a3b8;
+
     --xd-color-border: #475569;
+    --xd-color-border-strong: #64748b;
+    --xd-color-focus: #06b6d4;
+
+    /* Flat in dark: a drop shadow reads as noise on a dark ground.
+       Components that float must fall back to their border. */
+    --xd-shadow-sm: none;
+    --xd-shadow-md: none;
   }
+}
+
+/* --- Color -- dark mode, explicit override --- */
+:root[data-mode="dark"] {
+  color-scheme: dark;
+
+  --xd-color-primary: #06b6d4;
+  --xd-on-primary: #000000;
+  --xd-color-secondary: #cbd5e1;
+  --xd-on-secondary: #000000;
+  --xd-color-destructive: #f87171;
+  --xd-on-destructive: #000000;
+
+  --xd-color-surface: #0f172a;
+  --xd-color-surface-hover: #1e293b;
+  --xd-color-text: #f1f5f9;
+  --xd-color-text-muted: #94a3b8;
+
+  --xd-color-border: #475569;
+  --xd-color-border-strong: #64748b;
+  --xd-color-focus: #06b6d4;
+
+  --xd-shadow-sm: none;
+  --xd-shadow-md: none;
 }
