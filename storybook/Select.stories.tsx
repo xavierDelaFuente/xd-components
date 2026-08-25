@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { Select } from '@asnewyla/select';
 import { Stack } from '@asnewyla/layout';
 
@@ -9,10 +9,27 @@ const fruitOptions = [
   { value: 'durian', label: 'Durian' },
 ];
 
+// The popup is `position: absolute`, so opening it doesn't grow the
+// story's normal-flow height the way Storybook's docs-page iframe sizing
+// expects — without this, the open listbox gets clipped into a scrollable
+// box instead of the iframe growing to fit it. Reserving the space up
+// front (label + trigger + a fully open popup) sidesteps that rather than
+// relying on interaction-triggered resize. Pulled out to a named,
+// explicitly-typed `Decorator` — inlined in `meta.decorators`, an
+// untyped arrow collapses `StoryObj<typeof meta>`'s inferred args to
+// `never`, since `Select`'s discriminated-union props don't survive
+// Storybook's own generic inference through an untyped decorator.
+const reserveOpenPopupSpace: Decorator = (Story) => (
+  <div style={{ minHeight: 340, minWidth: 260 }}>
+    <Story />
+  </div>
+);
+
 const meta = {
   title: 'Components/Select',
   component: Select,
   tags: ['autodocs'],
+  decorators: [reserveOpenPopupSpace],
 } satisfies Meta<typeof Select>;
 
 export default meta;

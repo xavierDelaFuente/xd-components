@@ -31,16 +31,22 @@
   color-scheme: light;
 
   /* ─── Color — light mode (default) ───
-     Only primary/on-primary, destructive/on-destructive, and border diverge
-     from tokens.css's default palette; secondary was never defined by the
-     original design draft, so it's left at the shared default rather than
-     guessed. */
+     secondary was never defined by the original design draft, so it's
+     left at the shared default rather than guessed. */
   --xd-color-primary: oklch(55% 0.115 50);
   --xd-on-primary: oklch(99% 0.006 75);
   --xd-color-secondary: #64748b;
   --xd-on-secondary: #ffffff;
   --xd-color-destructive: oklch(58% 0.16 25);
   --xd-on-destructive: oklch(99% 0 0);
+
+  /* ─── Surface & text ───
+     Warm-neutral page, deeper sand for raised/recessed fills, warm
+     near-black text. */
+  --xd-color-surface: oklch(98% 0.01 75);
+  --xd-color-surface-hover: oklch(95.5% 0.016 72);
+  --xd-color-text: oklch(30% 0.022 60);
+  --xd-color-text-muted: oklch(53% 0.02 65);
 
   /* ─── Spacing — unchanged from the default scale ─── */
   --xd-space-xs: 0.25rem;
@@ -73,14 +79,22 @@
   --xd-line-height-normal: 1.25;
 
   /* ─── Border ───
-     The draft's second, stronger border tier (--xd-border-strong) has no
-     current token to map onto -- dropped, not invented. */
+     The draft's second, stronger tier now has a token to map onto. */
   --xd-color-border: oklch(89% 0.016 70);
+  --xd-color-border-strong: oklch(64% 0.024 70);
   --xd-border-width-thin: 1px;
 
-  /* ─── Focus ring — unchanged; the draft didn't define this at all ─── */
+  /* ─── Focus ring — width/offset unchanged; the colour is the theme's
+     hover clay, darker than primary, clearing 3:1 with margin. */
+  --xd-color-focus: oklch(49% 0.125 50);
   --xd-focus-ring-width: 2px;
   --xd-focus-ring-offset: 2px;
+
+  /* ─── Elevation — warm-tinted, slightly softer and more diffuse than
+     paper's, matching this theme's larger radius. */
+  --xd-shadow-sm: 0 1px 3px oklch(45% 0.04 60 / 8%);
+  --xd-shadow-md:
+    0 3px 10px oklch(45% 0.04 60 / 13%), 0 10px 28px oklch(45% 0.04 60 / 9%);
 
   /* ─── State — unchanged ─── */
   --xd-opacity-disabled: 0.5;
@@ -105,7 +119,18 @@
     --xd-on-secondary: #000000;
     --xd-color-destructive: oklch(68% 0.15 25);
     --xd-on-destructive: oklch(19% 0 0);
+
+    --xd-color-surface: oklch(21% 0.016 60);
+    --xd-color-surface-hover: oklch(25% 0.02 60);
+    --xd-color-text: oklch(95% 0.008 75);
+    --xd-color-text-muted: oklch(70% 0.016 68);
+
     --xd-color-border: oklch(32% 0.02 62);
+    --xd-color-border-strong: oklch(52% 0.026 62);
+    --xd-color-focus: oklch(74% 0.1 50);
+
+    --xd-shadow-sm: none;
+    --xd-shadow-md: none;
   }
 }
 
@@ -121,5 +146,16 @@
   --xd-on-secondary: #000000;
   --xd-color-destructive: oklch(68% 0.15 25);
   --xd-on-destructive: oklch(19% 0 0);
+
+  --xd-color-surface: oklch(21% 0.016 60);
+  --xd-color-surface-hover: oklch(25% 0.02 60);
+  --xd-color-text: oklch(95% 0.008 75);
+  --xd-color-text-muted: oklch(70% 0.016 68);
+
   --xd-color-border: oklch(32% 0.02 62);
+  --xd-color-border-strong: oklch(52% 0.026 62);
+  --xd-color-focus: oklch(74% 0.1 50);
+
+  --xd-shadow-sm: none;
+  --xd-shadow-md: none;
 }

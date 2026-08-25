@@ -1,13 +1,113 @@
+/*
+ * asnewyla/select -- Select.css
+ *
+ * DOM produced by Select.tsx + UnstyledSelect.tsx:
+ *
+ *   div.xd-select                      Select.tsx wrapper
+ *   |- label.xd-select-label
+ *   |- div                             UnstyledSelect containerRef,
+ *   |  |                               unclassed -- reached via :has()
+ *   |  |- div.xd-select-trigger        role="combobox"
+ *   |  |                               data-open / data-invalid / data-disabled
+ *   |  |                               holds span.xd-select-value, or
+ *   |  |                               span.xd-select-chips when multiple
+ *   |  '- div[role="listbox"]          present only while open
+ *   |     |- div > input               search field
+ *   |     '- button[role="option"]     data-selected / data-disabled
+ *   '- div.xd-select-error
+ *
+ * Options take REAL focus (useRovingFocus calls .focus()), so
+ * :focus-visible is the keyboard indicator -- there is no data-active
+ * attribute to style. :hover and :focus-visible therefore share one fill.
+ *
+ * ─── Changes in this revision ───
+ *
+ * 1. The previous version referenced five tokens that do not exist:
+ *    --xd-color-surface, --xd-color-surface-hover, --xd-shadow-md,
+ *    --xd-color-focus and --xd-color-text. Every one silently fell back
+ *    to its hardcoded literal, so the component ignored the active theme
+ *    entirely and the popover rendered WHITE in dark mode. Those tokens
+ *    now exist in tokens.css; this file reads them.
+ *
+ * 2. The popover was in normal flow with a margin-top, so opening the
+ *    Select pushed everything below it down the page. It is now
+ *    absolutely positioned against the containerRef.
+ *
+ * 3. A selected option was filled with --xd-color-primary while focused
+ *    options also draw a ring, so the selected row swallowed the focus
+ *    indicator. Selected is now carried by colour plus a check mark;
+ *    the fill is reserved for hover/focus, which is the transient state
+ *    the user needs to track.
+ *
+ * 4. The listbox had no max-height, so a long option list grew without
+ *    bound. Now caps and scrolls, with a sticky search field.
+ *
+ * 5. Interactive edges use --xd-color-border-strong. --xd-color-border
+ *    is ~1.3:1 against its surface: correct for the popover's own outline
+ *    (decorative), wrong for a control the user has to find (WCAG 1.4.11).
+ *
+ * 6. The single-select value and the empty-multi-select placeholder are
+ *    now real elements (span.xd-select-value, from Select.tsx's own
+ *    renderValue), not a bare text node -- so both can be dimmed and
+ *    truncated instead of only the (already-wrapped) chips case.
+ *
+ * Fallbacks below mirror tokens.css's default light palette, per the
+ * soft-dependency model -- a consumer importing no token file still gets
+ * a working component.
+ *
+ * Not fixable here, needs measurement in UnstyledSelect.tsx: the popover
+ * never flips upward near the viewport bottom.
+ */
+
+/* This package has no global reset to rely on, and `width: 100%` +
+   padding/border below (the search input, options) needs border-box to
+   not overflow its container — content-box (the browser default) adds
+   padding/border on top of that 100%, which is exactly what caused the
+   horizontal scrollbar on the popup. Scoped to this component's own
+   subtree rather than a real global reset, since nothing here should
+   reach outside `.xd-select`. */
+.xd-select,
+.xd-select *,
+.xd-select *::before,
+.xd-select *::after {
+  box-sizing: border-box;
+}
+
 .xd-select {
+  /* Local, component-scoped values. Not tokens: nothing else in the
+     library needs a popover offset or a listbox height cap. */
+  --xd-select-gap: var(--xd-space-xs, 0.25rem);
+  --xd-select-max-h: 17rem;
+
   display: flex;
   flex-direction: column;
   gap: var(--xd-space-xs, 0.25rem);
+  /* Without this, a short label/placeholder ("Fruit" / "Choose a fruit")
+     lets the whole field shrink to fit that text, reading as an
+     undersized control rather than a normal-width form field. Still just
+     a floor — a longer value or a wider parent can grow it past this. */
+  min-width: 14rem;
+  color: var(--xd-color-text, #0f172a);
 }
+
+/* UnstyledSelect's container has no class of its own; it is the
+   positioning context for the popover. :has() is Baseline since 2023.
+   To avoid depending on it, add className="xd-select-field" to the
+   containerRef div in UnstyledSelect.tsx and swap this one selector. */
+.xd-select > div:has(> .xd-select-trigger) {
+  position: relative;
+}
+
+/* --- Label --- */
 
 .xd-select-label {
   font-size: var(--xd-font-size-sm, 0.8125rem);
   font-weight: var(--xd-font-weight-semibold, 600);
+  line-height: var(--xd-line-height-normal, 1.25);
+  color: var(--xd-color-text, #0f172a);
 }
+
+/* --- Trigger --- */
 
 .xd-select-trigger {
   display: flex;
@@ -15,41 +115,76 @@
   flex-wrap: wrap;
   gap: var(--xd-space-xs, 0.25rem);
   min-height: 2.25rem;
-  border: var(--xd-border-width-thin, 1px) solid var(--xd-color-border, #cbd5e1);
-  border-radius: var(--xd-radius-sm, 0.25rem);
+
+  border: var(--xd-border-width-thin, 1px) solid
+    var(--xd-color-border-strong, #6b7688);
+  border-radius: var(--xd-radius-md, 0.375rem);
   padding: var(--xd-space-sm, 0.375rem) var(--xd-space-md, 0.5rem);
+
   font-family: inherit;
   font-size: var(--xd-font-size-md, 0.875rem);
-  color: inherit;
-  background-color: transparent;
+  line-height: var(--xd-line-height-normal, 1.25);
+
+  background-color: var(--xd-color-surface, #ffffff);
+  color: var(--xd-color-text, #0f172a);
   cursor: pointer;
+  box-shadow: var(--xd-shadow-sm, 0 1px 2px rgb(15 23 42 / 8%));
+
   transition:
     border-color var(--xd-motion-fast, 120ms ease-out),
-    outline-color var(--xd-motion-fast, 120ms ease-out);
+    background-color var(--xd-motion-fast, 120ms ease-out),
+    box-shadow var(--xd-motion-fast, 120ms ease-out);
 }
+
+.xd-select-trigger:hover:not([data-disabled="true"]) {
+  background-color: var(--xd-color-surface-hover, #f1f5f9);
+}
+
+.xd-select-trigger:focus-visible {
+  outline: var(--xd-focus-ring-width, 2px) solid var(--xd-color-focus, #0f766e);
+  outline-offset: var(--xd-focus-ring-offset, 2px);
+}
+
+/* Open: hold the focus colour on the border so the trigger reads as
+   connected to the popover, which is a visually separate box. */
+.xd-select-trigger[data-open="true"] {
+  border-color: var(--xd-color-focus, #0f766e);
+  background-color: var(--xd-color-surface-hover, #f1f5f9);
+}
+
+/* --- Chevron --- */
 
 .xd-select-trigger::after {
   content: "";
   flex-shrink: 0;
   margin-left: auto;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-right: var(--xd-border-width-thin, 1px) solid
-    var(--xd-color-border, #cbd5e1);
-  border-bottom: var(--xd-border-width-thin, 1px) solid
-    var(--xd-color-border, #cbd5e1);
-  transform: rotate(45deg);
-  transition: transform var(--xd-motion-fast, 120ms ease-out);
+  width: 0.45em;
+  height: 0.45em;
+  border-right: var(--xd-border-width-thin, 1px) solid currentColor;
+  border-bottom: var(--xd-border-width-thin, 1px) solid currentColor;
+  color: var(--xd-color-text-muted, #475569);
+  transform: translateY(-0.15em) rotate(45deg);
+  transition:
+    transform var(--xd-motion-fast, 120ms ease-out),
+    color var(--xd-motion-fast, 120ms ease-out);
 }
 
-.xd-select-trigger[aria-expanded="true"]::after {
-  transform: rotate(-135deg);
+.xd-select-trigger[data-open="true"]::after {
+  color: var(--xd-color-text, #0f172a);
+  transform: translateY(0.1em) rotate(-135deg);
 }
 
-.xd-select-trigger:focus-visible {
-  outline: var(--xd-focus-ring-width, 2px) solid
-    var(--xd-color-focus, var(--xd-color-primary, #0d9488));
-  outline-offset: var(--xd-focus-ring-offset, 2px);
+/* --- Value / placeholder --- */
+
+.xd-select-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.xd-select-value[data-placeholder="true"] {
+  color: var(--xd-color-text-muted, #475569);
 }
 
 /* --- Invalid --- */
@@ -64,6 +199,7 @@
 
 .xd-select-error {
   font-size: var(--xd-font-size-sm, 0.8125rem);
+  line-height: var(--xd-line-height-normal, 1.25);
   color: var(--xd-color-destructive, #dc2626);
 }
 
@@ -72,26 +208,37 @@
 .xd-select-trigger[data-disabled="true"] {
   opacity: var(--xd-opacity-disabled, 0.5);
   cursor: not-allowed;
+  box-shadow: none;
 }
 
-/* --- Multi-select chips --- */
+/* --- Multi-select chips ---
+   Neutral fill rather than --xd-color-primary: a row of six saturated
+   chips overwhelms the trigger in every theme, and a chip is a value
+   already chosen, not a call to action. The remove button carries the
+   destructive colour on hover, where the warning is actually useful. */
 
 .xd-select-chips {
   display: inline-flex;
   flex-wrap: wrap;
   gap: var(--xd-space-xs, 0.25rem);
+  min-width: 0;
 }
 
 .xd-select-chip {
   display: inline-flex;
   align-items: center;
   gap: var(--xd-space-xs, 0.25rem);
+
+  border: var(--xd-border-width-thin, 1px) solid var(--xd-color-border, #cbd5e1);
   border-radius: var(--xd-radius-sm, 0.25rem);
   padding: 0.125rem var(--xd-space-xs, 0.25rem) 0.125rem
     var(--xd-space-sm, 0.375rem);
-  background-color: var(--xd-color-primary, #0d9488);
-  color: var(--xd-on-primary, #ffffff);
+
+  background-color: var(--xd-color-surface-hover, #f1f5f9);
+  color: var(--xd-color-text, #0f172a);
   font-size: var(--xd-font-size-sm, 0.8125rem);
+  line-height: var(--xd-line-height-normal, 1.25);
+  white-space: nowrap;
 }
 
 .xd-select-chip-remove {
@@ -103,31 +250,81 @@
   width: 1rem;
   height: 1rem;
   padding: 0;
+
   background: transparent;
-  color: inherit;
+  color: var(--xd-color-text-muted, #475569);
   font-size: 0.875rem;
   line-height: 1;
   cursor: pointer;
+
+  transition:
+    background-color var(--xd-motion-fast, 120ms ease-out),
+    color var(--xd-motion-fast, 120ms ease-out);
 }
 
 .xd-select-chip-remove:hover {
-  background-color: rgb(255 255 255 / 25%);
+  background-color: var(--xd-color-destructive, #dc2626);
+  color: var(--xd-on-destructive, #ffffff);
 }
 
 .xd-select-chip-remove:focus-visible {
-  outline: var(--xd-focus-ring-width, 2px) solid var(--xd-on-primary, #ffffff);
+  outline: var(--xd-focus-ring-width, 2px) solid var(--xd-color-focus, #0f766e);
   outline-offset: 1px;
 }
 
-/* --- Popup (rendered by UnstyledSelect as the trigger's next sibling) --- */
+/* --- Popup (rendered by UnstyledSelect as the trigger's next sibling) ---
+   Absolutely positioned so opening does not reflow the page.
+   Border AND shadow, both always: themes set --xd-shadow-md to none in
+   dark mode, so the border is what keeps the popover legible there. */
 
 .xd-select-trigger + [role="listbox"] {
-  margin-top: var(--xd-space-xs, 0.25rem);
+  position: absolute;
+  top: calc(100% + var(--xd-select-gap));
+  left: 0;
+  right: 0;
+  z-index: 50;
+
+  max-height: var(--xd-select-max-h);
+  overflow-y: auto;
+  /* Explicit, not just "not set": a non-visible overflow-y with overflow-x
+     left at its visible default computes overflow-x to auto too (CSS
+     Overflow spec) — so any future horizontal overflow in here would
+     silently reappear as a scrollbar instead of just being invisible. */
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+
   border: var(--xd-border-width-thin, 1px) solid var(--xd-color-border, #cbd5e1);
-  border-radius: var(--xd-radius-sm, 0.25rem);
+  border-radius: var(--xd-radius-md, 0.375rem);
   padding: var(--xd-space-xs, 0.25rem);
   background-color: var(--xd-color-surface, #ffffff);
-  box-shadow: var(--xd-shadow-md, 0 4px 12px rgb(0 0 0 / 12%));
+  box-shadow: var(--xd-shadow-md, 0 4px 12px rgb(15 23 42 / 12%));
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--xd-color-border-strong, #6b7688) transparent;
+
+  transform-origin: top center;
+  animation: xd-select-open var(--xd-motion-fast, 120ms ease-out);
+}
+
+@keyframes xd-select-open {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+/* Search field, kept sticky so it stays reachable once the list scrolls.
+   Negative margins let its background bleed to the popover's padding
+   edge, so options do not appear to slide out from under it. */
+
+.xd-select-trigger + [role="listbox"] > div:first-child {
+  position: sticky;
+  top: calc(var(--xd-space-xs, 0.25rem) * -1);
+  z-index: 1;
+  margin: calc(var(--xd-space-xs, 0.25rem) * -1)
+    calc(var(--xd-space-xs, 0.25rem) * -1) var(--xd-space-xs, 0.25rem);
+  padding: var(--xd-space-xs, 0.25rem);
+  background-color: var(--xd-color-surface, #ffffff);
 }
 
 .xd-select-trigger + [role="listbox"] input {
@@ -135,51 +332,118 @@
   border: var(--xd-border-width-thin, 1px) solid var(--xd-color-border, #cbd5e1);
   border-radius: var(--xd-radius-sm, 0.25rem);
   padding: var(--xd-space-sm, 0.375rem) var(--xd-space-md, 0.5rem);
-  margin-bottom: var(--xd-space-xs, 0.25rem);
+
   font-family: inherit;
   font-size: var(--xd-font-size-md, 0.875rem);
-  color: inherit;
-  background-color: transparent;
+  line-height: var(--xd-line-height-normal, 1.25);
+
+  background-color: var(--xd-color-surface-hover, #f1f5f9);
+  color: var(--xd-color-text, #0f172a);
+
+  transition: border-color var(--xd-motion-fast, 120ms ease-out);
+}
+
+.xd-select-trigger + [role="listbox"] input::placeholder {
+  color: var(--xd-color-text-muted, #475569);
 }
 
 .xd-select-trigger + [role="listbox"] input:focus-visible {
-  outline: var(--xd-focus-ring-width, 2px) solid
-    var(--xd-color-focus, var(--xd-color-primary, #0d9488));
-  outline-offset: var(--xd-focus-ring-offset, 2px);
+  outline: var(--xd-focus-ring-width, 2px) solid var(--xd-color-focus, #0f766e);
+  outline-offset: -1px;
+  border-color: transparent;
 }
 
+/* --- Options ---
+   :hover and :focus-visible share one fill. Two different highlights in
+   an open listbox is a real usability bug: the user cannot tell which
+   row Enter will commit. */
+
 .xd-select-trigger + [role="listbox"] [role="option"] {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--xd-space-xs, 0.25rem);
   width: 100%;
+
   border: none;
   border-radius: var(--xd-radius-sm, 0.25rem);
   padding: var(--xd-space-sm, 0.375rem) var(--xd-space-md, 0.5rem);
+
   text-align: left;
   font-family: inherit;
   font-size: var(--xd-font-size-md, 0.875rem);
-  color: inherit;
+  font-weight: var(--xd-font-weight-regular, 400);
+  line-height: var(--xd-line-height-normal, 1.25);
+
   background-color: transparent;
+  color: var(--xd-color-text, #0f172a);
   cursor: pointer;
+  scroll-margin: var(--xd-space-xs, 0.25rem);
+
+  transition:
+    background-color var(--xd-motion-fast, 120ms ease-out),
+    color var(--xd-motion-fast, 120ms ease-out);
 }
 
 .xd-select-trigger
   + [role="listbox"]
-  [role="option"]:hover:not([data-disabled="true"]) {
+  [role="option"]:hover:not([data-disabled="true"]),
+.xd-select-trigger
+  + [role="listbox"]
+  [role="option"]:focus-visible:not([data-disabled="true"]) {
   background-color: var(--xd-color-surface-hover, #f1f5f9);
 }
 
 .xd-select-trigger + [role="listbox"] [role="option"]:focus-visible {
-  outline: var(--xd-focus-ring-width, 2px) solid
-    var(--xd-color-focus, var(--xd-color-primary, #0d9488));
+  outline: var(--xd-focus-ring-width, 2px) solid var(--xd-color-focus, #0f766e);
   outline-offset: -2px;
 }
 
+/* Selected: colour and a check, never a fill -- a filled selected row
+   plus a filled focused row makes the focused row unidentifiable. */
 .xd-select-trigger + [role="listbox"] [role="option"][data-selected="true"] {
-  background-color: var(--xd-color-primary, #0d9488);
-  color: var(--xd-on-primary, #ffffff);
+  color: var(--xd-color-focus, #0f766e);
+  font-weight: var(--xd-font-weight-semibold, 600);
+}
+
+/* Check mark, drawn from two borders. The pseudo-element occupies its
+   width on every row so labels stay aligned whether selected or not. */
+.xd-select-trigger + [role="listbox"] [role="option"]::before {
+  content: "";
+  flex-shrink: 0;
+  width: 0.35em;
+  height: 0.65em;
+  margin: 0 0.2em 0.15em 0.1em;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  opacity: 0;
+  transition: opacity var(--xd-motion-fast, 120ms ease-out);
+}
+
+.xd-select-trigger
+  + [role="listbox"]
+  [role="option"][data-selected="true"]::before {
+  opacity: 1;
 }
 
 .xd-select-trigger + [role="listbox"] [role="option"][data-disabled="true"] {
   opacity: var(--xd-opacity-disabled, 0.5);
   cursor: not-allowed;
+}
+
+/* --- Motion preference --- */
+
+@media (prefers-reduced-motion: reduce) {
+  .xd-select-trigger,
+  .xd-select-trigger::after,
+  .xd-select-chip-remove,
+  .xd-select-trigger + [role="listbox"] input,
+  .xd-select-trigger + [role="listbox"] [role="option"],
+  .xd-select-trigger + [role="listbox"] [role="option"]::before {
+    transition-duration: 1ms;
+  }
+
+  .xd-select-trigger + [role="listbox"] {
+    animation: none;
+  }
 }

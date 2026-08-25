@@ -25,10 +25,9 @@
  * Dropped, not invented -- no current token to map onto: --xd-primary-h /
  * --xd-danger-h (hover shades are already derived per-component via
  * color-mix() from the base color, see the --_bg-hover pattern in
- * PROJECT.md), --xd-accent, --xd-surface / --xd-surface-2 / --xd-text /
- * --xd-muted / --xd-border-strong, --xd-shadow*, --xd-font / --xd-font-mono
- * / --xd-tracking / --xd-weight / --xd-press. secondary was never defined
- * by the draft, so it's left at the shared default rather than guessed.
+ * PROJECT.md), --xd-accent, --xd-font / --xd-font-mono / --xd-tracking /
+ * --xd-weight / --xd-press. secondary was never defined by the draft, so
+ * it's left at the shared default rather than guessed.
  *
  * See theme-paper.css for why the fallback selector below is
  * `:root:not([data-theme])` rather than plain `:root`.
@@ -45,6 +44,14 @@
   --xd-on-secondary: #ffffff;
   --xd-color-destructive: oklch(58% 0.16 10);
   --xd-on-destructive: oklch(99% 0 0);
+
+  /* ─── Surface & text — derived, see "Changes in this revision" above.
+     Cool, low-chroma page; warm-neutral secondary/destructive stay as-is,
+     only the new surface/text tier follows the primary's violet-blue. */
+  --xd-color-surface: oklch(97.5% 0.008 295);
+  --xd-color-surface-hover: oklch(95% 0.014 296);
+  --xd-color-text: oklch(27% 0.025 300);
+  --xd-color-text-muted: oklch(53% 0.02 298);
 
   /* ─── Spacing — unchanged from the default scale ─── */
   --xd-space-xs: 0.25rem;
@@ -71,13 +78,23 @@
   --xd-font-weight-semibold: 600;
   --xd-line-height-normal: 1.25;
 
-  /* ─── Border ─── */
+  /* ─── Border ───
+     The draft's second, stronger tier now has a token to map onto. */
   --xd-color-border: oklch(91% 0.016 300);
+  --xd-color-border-strong: oklch(64% 0.028 297);
   --xd-border-width-thin: 1px;
 
-  /* ─── Focus ring — unchanged; the draft didn't define this at all ─── */
+  /* ─── Focus ring — width/offset unchanged; the draft didn't define this
+     at all. Colour is primary darkened, same derivation as paper/sand. */
+  --xd-color-focus: oklch(50% 0.115 295);
   --xd-focus-ring-width: 2px;
   --xd-focus-ring-offset: 2px;
+
+  /* ─── Elevation — cool-tinted and the most diffuse of the three themes,
+     matching this theme's largest radius and slowest motion. */
+  --xd-shadow-sm: 0 1px 2px oklch(35% 0.03 295 / 10%);
+  --xd-shadow-md:
+    0 3px 9px oklch(35% 0.03 295 / 13%), 0 9px 26px oklch(35% 0.03 295 / 9%);
 
   /* ─── State — unchanged ─── */
   --xd-opacity-disabled: 0.5;
@@ -102,7 +119,18 @@
     --xd-on-secondary: #000000;
     --xd-color-destructive: oklch(69% 0.12 10);
     --xd-on-destructive: oklch(19% 0.02 295);
+
+    --xd-color-surface: oklch(20% 0.02 295);
+    --xd-color-surface-hover: oklch(24% 0.022 295);
+    --xd-color-text: oklch(95% 0.012 295);
+    --xd-color-text-muted: oklch(70% 0.018 296);
+
     --xd-color-border: oklch(32% 0.028 295);
+    --xd-color-border-strong: oklch(52% 0.028 295);
+    --xd-color-focus: oklch(73% 0.1 295);
+
+    --xd-shadow-sm: none;
+    --xd-shadow-md: none;
   }
 }
 
@@ -118,5 +146,16 @@
   --xd-on-secondary: #000000;
   --xd-color-destructive: oklch(69% 0.12 10);
   --xd-on-destructive: oklch(19% 0.02 295);
+
+  --xd-color-surface: oklch(20% 0.02 295);
+  --xd-color-surface-hover: oklch(24% 0.022 295);
+  --xd-color-text: oklch(95% 0.012 295);
+  --xd-color-text-muted: oklch(70% 0.018 296);
+
   --xd-color-border: oklch(32% 0.028 295);
+  --xd-color-border-strong: oklch(52% 0.028 295);
+  --xd-color-focus: oklch(73% 0.1 295);
+
+  --xd-shadow-sm: none;
+  --xd-shadow-md: none;
 }
