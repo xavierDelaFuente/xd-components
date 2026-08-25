@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { createRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { UnstyledSelect, type UnstyledSelectProps } from '../components';
 import {
@@ -15,6 +16,12 @@ import {
 const fruitOptions: UnstyledSelectProps['options'] = [
   { value: 'apple', label: 'Apple' },
   { value: 'banana', label: 'Banana' },
+  { value: 'cherry', label: 'Cherry' },
+];
+
+const fruitOptionsWithDisabled: UnstyledSelectProps['options'] = [
+  { value: 'apple', label: 'Apple' },
+  { value: 'banana', label: 'Banana', disabled: true },
   { value: 'cherry', label: 'Cherry' },
 ];
 
@@ -202,6 +209,24 @@ describe('UnstyledSelect — single-select core mechanics', () => {
 
     expect(queryListbox()).not.toBeInTheDocument();
   });
+
+  it('forwards a ref to the trigger element', () => {
+    const ref = createRef<HTMLButtonElement>();
+    render(
+      <UnstyledSelect aria-label="Fruit" options={fruitOptions} ref={ref} />,
+    );
+
+    expect(ref.current).toBeInstanceOf(HTMLButtonElement);
+    expect(ref.current).toBe(getCombobox());
+  });
+
+  it('passes through arbitrary native button attributes', () => {
+    render(
+      <UnstyledSelect aria-label="Fruit" options={fruitOptions} name="fruit" />,
+    );
+
+    expect(getCombobox()).toHaveAttribute('name', 'fruit');
+  });
 });
 
 describe('UnstyledSelect — multi-select', () => {
@@ -364,5 +389,177 @@ describe('UnstyledSelect — multi-select', () => {
     await clickOption(user, 'Durian');
 
     expect(handleChange).not.toHaveBeenCalled();
+  });
+});
+
+describe('UnstyledSelect — keyboard navigation', () => {
+  it('moves focus to the first option when opened with no selection', async () => {
+    const user = userEvent.setup();
+    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+
+    await openSelect(user);
+
+    expect(getOption('Apple')).toHaveFocus();
+  });
+
+  it('moves focus to the currently selected option when opened', async () => {
+    const user = userEvent.setup();
+    render(
+      <UnstyledSelect
+        aria-label="Fruit"
+        options={fruitOptions}
+        defaultValue="cherry"
+      />,
+    );
+
+    await openSelect(user);
+
+    expect(getOption('Cherry')).toHaveFocus();
+  });
+
+  it('ArrowDown moves focus to the next option', async () => {
+    const user = userEvent.setup();
+    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+
+    await openSelect(user);
+    await user.keyboard('{ArrowDown}');
+
+    expect(getOption('Banana')).toHaveFocus();
+  });
+
+  it('ArrowUp moves focus to the previous option', async () => {
+    const user = userEvent.setup();
+    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+
+    await openSelect(user);
+    await user.keyboard('{ArrowDown}{ArrowUp}');
+
+    expect(getOption('Apple')).toHaveFocus();
+  });
+
+  it('ArrowDown does not move past the last option', async () => {
+    const user = userEvent.setup();
+    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+
+    await openSelect(user);
+    await user.keyboard('{ArrowDown}{ArrowDown}{ArrowDown}{ArrowDown}');
+
+    expect(getOption('Cherry')).toHaveFocus();
+  });
+
+  it('ArrowUp does not move before the first option', async () => {
+    const user = userEvent.setup();
+    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+
+    await openSelect(user);
+    await user.keyboard('{ArrowUp}{ArrowUp}');
+
+    expect(getOption('Apple')).toHaveFocus();
+  });
+
+  it('ArrowDown skips a disabled option', async () => {
+    const user = userEvent.setup();
+    render(
+      <UnstyledSelect aria-label="Fruit" options={fruitOptionsWithDisabled} />,
+    );
+
+    await openSelect(user);
+    await user.keyboard('{ArrowDown}');
+
+    expect(getOption('Cherry')).toHaveFocus();
+  });
+
+  it('ArrowUp skips a disabled option', async () => {
+    const user = userEvent.setup();
+    render(
+      <UnstyledSelect
+        aria-label="Fruit"
+        options={fruitOptionsWithDisabled}
+        defaultValue="cherry"
+      />,
+    );
+
+    await openSelect(user);
+    await user.keyboard('{ArrowUp}');
+
+    expect(getOption('Apple')).toHaveFocus();
+  });
+
+  it('Home moves focus to the first enabled option', async () => {
+    const user = userEvent.setup();
+    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+
+    await openSelect(user);
+    await user.keyboard('{ArrowDown}{Home}');
+
+    expect(getOption('Apple')).toHaveFocus();
+  });
+
+  it('End moves focus to the last enabled option', async () => {
+    const user = userEvent.setup();
+    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+
+    await openSelect(user);
+    await user.keyboard('{End}');
+
+    expect(getOption('Cherry')).toHaveFocus();
+  });
+
+  it('Enter selects the focused option and closes the listbox (single-select)', async () => {
+    const user = userEvent.setup();
+    const handleChange = vi.fn();
+    render(
+      <UnstyledSelect
+        aria-label="Fruit"
+        options={fruitOptions}
+        onChange={handleChange}
+      />,
+    );
+
+    await openSelect(user);
+    await user.keyboard('{ArrowDown}{Enter}');
+
+    expect(handleChange).toHaveBeenCalledWith('banana');
+    expect(queryListbox()).not.toBeInTheDocument();
+  });
+
+  it('in multi-select mode, Enter toggles the focused option without closing the listbox', async () => {
+    const user = userEvent.setup();
+    const handleChange = vi.fn();
+    render(
+      <UnstyledSelect
+        aria-label="Fruit"
+        options={fruitOptions}
+        multiple
+        onChange={handleChange}
+      />,
+    );
+
+    await openSelect(user);
+    await user.keyboard('{Enter}');
+
+    expect(handleChange).toHaveBeenCalledWith(['apple']);
+    expect(getListbox()).toBeInTheDocument();
+    expect(getOption('Apple')).toHaveFocus();
+  });
+
+  it('closing via Escape returns focus to the trigger', async () => {
+    const user = userEvent.setup();
+    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+
+    await openSelect(user);
+    await user.keyboard('{Escape}');
+
+    expect(getCombobox()).toHaveFocus();
+  });
+
+  it('closing via selecting an option returns focus to the trigger (single-select)', async () => {
+    const user = userEvent.setup();
+    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+
+    await openSelect(user);
+    await clickOption(user, 'Banana');
+
+    expect(getCombobox()).toHaveFocus();
   });
 });

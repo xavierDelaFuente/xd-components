@@ -1,13 +1,20 @@
 import { type RefObject, useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
+
+export interface UseSelectOpenStateParams {
+  onEscape?: () => void;
+}
 
 export interface UseSelectOpenStateResult {
   open: boolean;
   containerRef: RefObject<HTMLDivElement>;
-  toggle: () => void;
+  toggle: () => boolean;
   close: () => void;
 }
 
-export function useSelectOpenState(): UseSelectOpenStateResult {
+export function useSelectOpenState({
+  onEscape,
+}: UseSelectOpenStateParams = {}): UseSelectOpenStateResult {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -27,6 +34,7 @@ export function useSelectOpenState(): UseSelectOpenStateResult {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
         setOpen(false);
+        onEscape?.();
       }
     }
 
@@ -36,12 +44,20 @@ export function useSelectOpenState(): UseSelectOpenStateResult {
       document.removeEventListener('mousedown', handlePointerDown);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [open]);
+  }, [open, onEscape]);
+
+  const toggle = () => {
+    const next = !open;
+    // flushSync commits synchronously so a caller opening the listbox can
+    // focus an option immediately after, before it's ever painted closed.
+    flushSync(() => setOpen(next));
+    return next;
+  };
 
   return {
     open,
     containerRef,
-    toggle: () => setOpen((prev) => !prev),
+    toggle,
     close: () => setOpen(false),
   };
 }

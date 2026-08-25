@@ -1,4 +1,5 @@
 import { type ForwardedRef, forwardRef } from 'react';
+import { useRovingFocus } from './useRovingFocus';
 import { useSelectOpenState } from './useSelectOpenState';
 import { useSelectValue } from './useSelectValue';
 
@@ -60,24 +61,46 @@ function UnstyledSelectInner(
     onChange,
   });
 
-  const { open, containerRef, toggle, close } = useSelectOpenState();
+  const {
+    setTriggerRef,
+    getOptionRef,
+    focusTrigger,
+    focusInitialOption,
+    handleListboxKeyDown,
+  } = useRovingFocus({ options });
+  const { open, containerRef, toggle, close } = useSelectOpenState({
+    onEscape: focusTrigger,
+  });
+
+  const setRefs = (node: HTMLButtonElement | null) => {
+    setTriggerRef(node);
+    if (typeof ref === 'function') {
+      ref(node);
+    } else if (ref) {
+      ref.current = node;
+    }
+  };
 
   const handleTriggerClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     onClick?.(e);
     if (disabled) return;
-    toggle();
+    const nextOpen = toggle();
+    if (nextOpen) focusInitialOption(selectedValues);
   };
 
   const handleOptionClick = (option: SelectOption) => {
     if (option.disabled) return;
     selectOption(option);
-    if (!multiple) close();
+    if (!multiple) {
+      close();
+      focusTrigger();
+    }
   };
 
   return (
     <div ref={containerRef}>
       <button
-        ref={ref}
+        ref={setRefs}
         {...rest}
         type="button"
         role="combobox"
@@ -95,12 +118,14 @@ function UnstyledSelectInner(
         <div
           role="listbox"
           aria-multiselectable={multiple ? 'true' : undefined}
+          onKeyDown={handleListboxKeyDown}
         >
           {options.map((option) => {
             const isSelected = selectedValues.includes(option.value);
             return (
               <button
                 key={option.value}
+                ref={getOptionRef(option.value)}
                 type="button"
                 role="option"
                 aria-selected={isSelected}
