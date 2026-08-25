@@ -1,9 +1,15 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
-import { UnstyledButton } from '../components/UnstyledButton';
-import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
 import { act } from 'react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import userEvent, { type UserEvent } from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { UnstyledButton } from '../components/UnstyledButton';
+import {
+  clickButton,
+  getButton,
+  getInner,
+  hoverButton,
+  unhoverButton,
+} from '../test-utils';
 
 function CustomComponent({
   children,
@@ -14,11 +20,17 @@ function CustomComponent({
   return <div {...props}>{children}</div>;
 }
 
+let user: UserEvent;
+
+beforeEach(() => {
+  user = userEvent.setup();
+});
+
 describe('UnstyledButton', () => {
   it('renders as a <button> element by default', () => {
     render(<UnstyledButton>Press me</UnstyledButton>);
 
-    const button = screen.getByRole('button', { name: /press me/i });
+    const button = getButton(/press me/i);
     expect(button).toBeInTheDocument();
     expect(button.tagName).toBe('BUTTON');
   });
@@ -61,13 +73,10 @@ describe('UnstyledButton', () => {
       </UnstyledButton>,
     );
 
-    const inner = screen.getByTestId('inner');
-    expect(inner).toHaveTextContent('idle');
+    expect(getInner()).toHaveTextContent('idle');
   });
 
   it('passes isHovered=true to render function on hover', async () => {
-    const user = userEvent.setup();
-
     render(
       <UnstyledButton>
         {({ isHovered }) => (
@@ -76,42 +85,38 @@ describe('UnstyledButton', () => {
       </UnstyledButton>,
     );
 
-    await user.hover(screen.getByRole('button'));
-    expect(screen.getByTestId('inner')).toHaveTextContent('hovered');
+    await hoverButton(user);
+    expect(getInner()).toHaveTextContent('hovered');
   });
 
   it('calls onClick when clicked', async () => {
     const handleClick = vi.fn();
-    const user = userEvent.setup();
     render(<UnstyledButton onClick={handleClick}>Click</UnstyledButton>);
-    await user.click(screen.getByRole('button'));
+    await clickButton(user);
     expect(handleClick).toHaveBeenCalledOnce();
   });
 
   it('does not call onClick when disabled', async () => {
     const handleClick = vi.fn();
-    const user = userEvent.setup();
     render(
       <UnstyledButton disabled onClick={handleClick}>
         Disabled
       </UnstyledButton>,
     );
-    await user.click(screen.getByRole('button'));
+    await clickButton(user);
     expect(handleClick).not.toHaveBeenCalled();
   });
 
   it('is focusable via Tab key', async () => {
-    const user = userEvent.setup();
     render(<UnstyledButton>Focus me</UnstyledButton>);
     await user.tab();
-    expect(screen.getByRole('button')).toHaveFocus();
+    expect(getButton()).toHaveFocus();
   });
 
   it('triggers on Enter and Space keys', async () => {
     const handleClick = vi.fn();
-    const user = userEvent.setup();
     render(<UnstyledButton onClick={handleClick}>Key</UnstyledButton>);
-    const button = screen.getByRole('button');
+    const button = getButton();
 
     act(() => {
       button.focus();
@@ -122,20 +127,14 @@ describe('UnstyledButton', () => {
     expect(handleClick).toHaveBeenCalledTimes(2);
   });
 
-  it('has aria-disabled when disabled', () => {
-    render(<UnstyledButton disabled>Disabled</UnstyledButton>);
-    expect(screen.getByRole('button')).toHaveAttribute('data-disabled', 'true');
-  });
-
   it('sets data-disabled when disabled', () => {
     render(<UnstyledButton disabled>Disabled</UnstyledButton>);
-    expect(screen.getByRole('button')).toHaveAttribute('data-disabled', 'true');
+    expect(getButton()).toHaveAttribute('data-disabled', 'true');
   });
 
   it('still tracks isHovered when the consumer passes their own onMouseEnter/onMouseLeave', async () => {
     const handleMouseEnter = vi.fn();
     const handleMouseLeave = vi.fn();
-    const user = userEvent.setup();
     render(
       <UnstyledButton
         onMouseEnter={handleMouseEnter}
@@ -147,13 +146,13 @@ describe('UnstyledButton', () => {
       </UnstyledButton>,
     );
 
-    await user.hover(screen.getByRole('button'));
+    await hoverButton(user);
     expect(handleMouseEnter).toHaveBeenCalled();
-    expect(screen.getByTestId('inner')).toHaveTextContent('hovered');
+    expect(getInner()).toHaveTextContent('hovered');
 
-    await user.unhover(screen.getByRole('button'));
+    await unhoverButton(user);
     expect(handleMouseLeave).toHaveBeenCalled();
-    expect(screen.getByTestId('inner')).toHaveTextContent('idle');
+    expect(getInner()).toHaveTextContent('idle');
   });
 
   it('still tracks isPressed when the consumer passes their own onMouseDown/onMouseUp', () => {
@@ -166,15 +165,15 @@ describe('UnstyledButton', () => {
         )}
       </UnstyledButton>,
     );
-    const button = screen.getByRole('button');
+    const button = getButton();
 
     fireEvent.mouseDown(button);
     expect(handleMouseDown).toHaveBeenCalled();
-    expect(screen.getByTestId('inner')).toHaveTextContent('pressed');
+    expect(getInner()).toHaveTextContent('pressed');
 
     fireEvent.mouseUp(button);
     expect(handleMouseUp).toHaveBeenCalled();
-    expect(screen.getByTestId('inner')).toHaveTextContent('idle');
+    expect(getInner()).toHaveTextContent('idle');
   });
 
   it('still tracks data-focused when the consumer passes their own onFocus/onBlur', () => {
@@ -185,7 +184,7 @@ describe('UnstyledButton', () => {
         Focus me
       </UnstyledButton>,
     );
-    const button = screen.getByRole('button');
+    const button = getButton();
 
     fireEvent.focus(button);
     expect(handleFocus).toHaveBeenCalled();

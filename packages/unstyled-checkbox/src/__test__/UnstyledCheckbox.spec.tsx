@@ -1,28 +1,34 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { createRef } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { fireEvent, render } from '@testing-library/react';
+import userEvent, { type UserEvent } from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { UnstyledCheckbox } from '../components';
+import { getCheckbox } from '../test-utils';
+
+let user: UserEvent;
+
+beforeEach(() => {
+  user = userEvent.setup();
+});
 
 describe('UnstyledCheckbox', () => {
   it('renders a checkbox', () => {
     render(<UnstyledCheckbox aria-label="Accept terms" />);
 
-    expect(screen.getByRole('checkbox')).toBeInTheDocument();
+    expect(getCheckbox()).toBeInTheDocument();
   });
 
   it('always renders as a checkbox input, regardless of any type override', () => {
     render(<UnstyledCheckbox aria-label="Accept terms" />);
 
-    expect(screen.getByRole('checkbox')).toHaveAttribute('type', 'checkbox');
+    expect(getCheckbox()).toHaveAttribute('type', 'checkbox');
   });
 
   it('is uncontrolled by default — starts at defaultChecked and toggles on click', async () => {
-    const user = userEvent.setup();
     render(
       <UnstyledCheckbox aria-label="Accept terms" defaultChecked={false} />,
     );
-    const checkbox = screen.getByRole('checkbox');
+    const checkbox = getCheckbox();
 
     expect(checkbox).not.toBeChecked();
     await user.click(checkbox);
@@ -30,7 +36,6 @@ describe('UnstyledCheckbox', () => {
   });
 
   it('supports controlled usage via checked + onChange', async () => {
-    const user = userEvent.setup();
     const handleChange = vi.fn();
     render(
       <UnstyledCheckbox
@@ -39,7 +44,7 @@ describe('UnstyledCheckbox', () => {
         onChange={handleChange}
       />,
     );
-    const checkbox = screen.getByRole('checkbox');
+    const checkbox = getCheckbox();
 
     expect(checkbox).not.toBeChecked();
     await user.click(checkbox);
@@ -50,7 +55,6 @@ describe('UnstyledCheckbox', () => {
   });
 
   it('calls onChange with the actual checked value in the event', async () => {
-    const user = userEvent.setup();
     let checkedValue: boolean | undefined;
     const handleChange = vi.fn((e: React.ChangeEvent<HTMLInputElement>) => {
       checkedValue = e.target.checked;
@@ -63,13 +67,12 @@ describe('UnstyledCheckbox', () => {
       />,
     );
 
-    await user.click(screen.getByRole('checkbox'));
+    await user.click(getCheckbox());
 
     expect(checkedValue).toBe(true);
   });
 
   it('calls a consumer-provided onChange even in uncontrolled mode', async () => {
-    const user = userEvent.setup();
     const handleChange = vi.fn();
     render(
       <UnstyledCheckbox
@@ -79,17 +82,16 @@ describe('UnstyledCheckbox', () => {
       />,
     );
 
-    await user.click(screen.getByRole('checkbox'));
+    await user.click(getCheckbox());
 
     expect(handleChange).toHaveBeenCalled();
   });
 
   it('sets data-checked to true when checked and removes it when unchecked (uncontrolled)', async () => {
-    const user = userEvent.setup();
     render(
       <UnstyledCheckbox aria-label="Accept terms" defaultChecked={false} />,
     );
-    const checkbox = screen.getByRole('checkbox');
+    const checkbox = getCheckbox();
 
     expect(checkbox).not.toHaveAttribute('data-checked');
     await user.click(checkbox);
@@ -107,15 +109,12 @@ describe('UnstyledCheckbox', () => {
       />,
     );
 
-    expect(screen.getByRole('checkbox')).toHaveAttribute(
-      'data-checked',
-      'true',
-    );
+    expect(getCheckbox()).toHaveAttribute('data-checked', 'true');
   });
 
   it('sets the indeterminate DOM property and data-indeterminate when indeterminate', () => {
     render(<UnstyledCheckbox aria-label="Select all" indeterminate />);
-    const checkbox = screen.getByRole('checkbox') as HTMLInputElement;
+    const checkbox = getCheckbox() as HTMLInputElement;
 
     expect(checkbox.indeterminate).toBe(true);
     expect(checkbox).toHaveAttribute('data-indeterminate', 'true');
@@ -123,24 +122,23 @@ describe('UnstyledCheckbox', () => {
 
   it('omits data-indeterminate and clears the indeterminate DOM property when not indeterminate', () => {
     render(<UnstyledCheckbox aria-label="Select all" />);
-    const checkbox = screen.getByRole('checkbox') as HTMLInputElement;
+    const checkbox = getCheckbox() as HTMLInputElement;
 
     expect(checkbox.indeterminate).toBe(false);
     expect(checkbox).not.toHaveAttribute('data-indeterminate');
   });
 
   it('is focusable via Tab key', async () => {
-    const user = userEvent.setup();
     render(<UnstyledCheckbox aria-label="Accept terms" />);
 
     await user.tab();
 
-    expect(screen.getByRole('checkbox')).toHaveFocus();
+    expect(getCheckbox()).toHaveFocus();
   });
 
   it('sets data-focused on focus and clears it on blur', () => {
     render(<UnstyledCheckbox aria-label="Accept terms" />);
-    const checkbox = screen.getByRole('checkbox');
+    const checkbox = getCheckbox();
 
     fireEvent.focus(checkbox);
     expect(checkbox).toHaveAttribute('data-focused', 'true');
@@ -152,14 +150,10 @@ describe('UnstyledCheckbox', () => {
   it('sets data-disabled when disabled', () => {
     render(<UnstyledCheckbox aria-label="Accept terms" disabled />);
 
-    expect(screen.getByRole('checkbox')).toHaveAttribute(
-      'data-disabled',
-      'true',
-    );
+    expect(getCheckbox()).toHaveAttribute('data-disabled', 'true');
   });
 
   it('is not toggleable when disabled', async () => {
-    const user = userEvent.setup();
     render(
       <UnstyledCheckbox
         aria-label="Accept terms"
@@ -167,7 +161,7 @@ describe('UnstyledCheckbox', () => {
         defaultChecked={false}
       />,
     );
-    const checkbox = screen.getByRole('checkbox');
+    const checkbox = getCheckbox();
 
     await user.click(checkbox);
 
@@ -176,7 +170,7 @@ describe('UnstyledCheckbox', () => {
 
   it('sets data-invalid and aria-invalid when invalid', () => {
     render(<UnstyledCheckbox aria-label="Accept terms" invalid />);
-    const checkbox = screen.getByRole('checkbox');
+    const checkbox = getCheckbox();
 
     expect(checkbox).toHaveAttribute('data-invalid', 'true');
     expect(checkbox).toHaveAttribute('aria-invalid', 'true');
@@ -184,7 +178,7 @@ describe('UnstyledCheckbox', () => {
 
   it('omits data-invalid and aria-invalid when not invalid', () => {
     render(<UnstyledCheckbox aria-label="Accept terms" />);
-    const checkbox = screen.getByRole('checkbox');
+    const checkbox = getCheckbox();
 
     expect(checkbox).not.toHaveAttribute('data-invalid');
     expect(checkbox).not.toHaveAttribute('aria-invalid');
@@ -200,7 +194,7 @@ describe('UnstyledCheckbox', () => {
   it('passes through arbitrary native input attributes', () => {
     render(<UnstyledCheckbox aria-label="Accept terms" name="terms" />);
 
-    expect(screen.getByRole('checkbox')).toHaveAttribute('name', 'terms');
+    expect(getCheckbox()).toHaveAttribute('name', 'terms');
   });
 
   it('still tracks data-focused even when the consumer passes their own onFocus', () => {
@@ -208,7 +202,7 @@ describe('UnstyledCheckbox', () => {
     render(
       <UnstyledCheckbox aria-label="Accept terms" onFocus={handleFocus} />,
     );
-    const checkbox = screen.getByRole('checkbox');
+    const checkbox = getCheckbox();
 
     fireEvent.focus(checkbox);
 
@@ -219,7 +213,7 @@ describe('UnstyledCheckbox', () => {
   it('still tracks data-focused clearing even when the consumer passes their own onBlur', () => {
     const handleBlur = vi.fn();
     render(<UnstyledCheckbox aria-label="Accept terms" onBlur={handleBlur} />);
-    const checkbox = screen.getByRole('checkbox');
+    const checkbox = getCheckbox();
 
     fireEvent.focus(checkbox);
     fireEvent.blur(checkbox);

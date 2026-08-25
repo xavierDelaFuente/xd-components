@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
+import { getButton } from '@asnewyla/button/test-utils';
 import { IconButton } from '../components/IconButton';
 
 const MockIcon = () => (
@@ -12,16 +13,13 @@ const MockIcon = () => (
 describe('IconButton', () => {
   it('has accessible label via aria-label', () => {
     render(<IconButton icon={<MockIcon />} label="Save file" />);
-    expect(
-      screen.getByRole('button', { name: /save file/i }),
-    ).toBeInTheDocument();
+    expect(getButton(/save file/i)).toBeInTheDocument();
   });
 
   it('renders the icon inside the button', () => {
     render(<IconButton icon={<MockIcon />} label="Save" />);
-    const button = screen.getByRole('button');
     const icon = screen.getByTestId('mock-icon');
-    expect(button).toContainElement(icon);
+    expect(getButton()).toContainElement(icon);
   });
 
   it('hides the icon from assistive technology', () => {
@@ -32,22 +30,19 @@ describe('IconButton', () => {
 
   it('renders no visible text content', () => {
     render(<IconButton icon={<MockIcon />} label="Save" />);
-    expect(screen.getByRole('button').textContent?.trim()).toBe('');
+    expect(getButton().textContent?.trim()).toBe('');
   });
 
   it('accepts variant prop', () => {
     render(
       <IconButton icon={<MockIcon />} label="Delete" variant="destructive" />,
     );
-    expect(screen.getByRole('button')).toHaveAttribute(
-      'data-variant',
-      'destructive',
-    );
+    expect(getButton()).toHaveAttribute('data-variant', 'destructive');
   });
 
   it('accepts size prop', () => {
     render(<IconButton icon={<MockIcon />} label="Save" size="lg" />);
-    expect(screen.getByRole('button')).toHaveAttribute('data-size', 'lg');
+    expect(getButton()).toHaveAttribute('data-size', 'lg');
   });
 
   it('does not respond to clicks when disabled', async () => {
@@ -61,7 +56,7 @@ describe('IconButton', () => {
         onClick={handleClick}
       />,
     );
-    await user.click(screen.getByRole('button'));
+    await user.click(getButton());
     expect(handleClick).not.toHaveBeenCalled();
   });
 

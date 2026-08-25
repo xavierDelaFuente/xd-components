@@ -1,8 +1,15 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { createRef } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import userEvent, { type UserEvent } from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Radio, RadioGroupProvider } from '../components';
+import { getRadio } from '../test-utils';
+
+let user: UserEvent;
+
+beforeEach(() => {
+  user = userEvent.setup();
+});
 
 describe('Radio', () => {
   it('renders the label text', () => {
@@ -12,10 +19,9 @@ describe('Radio', () => {
   });
 
   it('associates the label with the input — clicking the label checks it', async () => {
-    const user = userEvent.setup();
     render(<Radio label="Option A" defaultChecked={false} />);
 
-    const radio = screen.getByRole('radio', { name: 'Option A' });
+    const radio = getRadio('Option A');
     expect(radio).not.toBeChecked();
 
     await user.click(screen.getByText('Option A'));
@@ -31,8 +37,8 @@ describe('Radio', () => {
       </>,
     );
 
-    const first = screen.getByRole('radio', { name: 'Option A' });
-    const last = screen.getByRole('radio', { name: 'Option B' });
+    const first = getRadio('Option A');
+    const last = getRadio('Option B');
 
     expect(first.id).toBeTruthy();
     expect(last.id).toBeTruthy();
@@ -42,10 +48,7 @@ describe('Radio', () => {
   it('respects an explicitly-provided id', () => {
     render(<Radio label="Option A" id="custom-id" />);
 
-    expect(screen.getByRole('radio', { name: 'Option A' })).toHaveAttribute(
-      'id',
-      'custom-id',
-    );
+    expect(getRadio('Option A')).toHaveAttribute('id', 'custom-id');
   });
 
   it('renders no error message when error is not provided', () => {
@@ -63,7 +66,7 @@ describe('Radio', () => {
   it('links the input to the error message via aria-describedby', () => {
     render(<Radio label="Option A" error="You must choose an option" />);
 
-    const radio = screen.getByRole('radio', { name: 'Option A' });
+    const radio = getRadio('Option A');
     const describedById = radio.getAttribute('aria-describedby');
 
     expect(describedById).toBeTruthy();
@@ -75,34 +78,26 @@ describe('Radio', () => {
   it('sets aria-invalid on the input when error is provided', () => {
     render(<Radio label="Option A" error="You must choose an option" />);
 
-    expect(screen.getByRole('radio', { name: 'Option A' })).toHaveAttribute(
-      'aria-invalid',
-      'true',
-    );
+    expect(getRadio('Option A')).toHaveAttribute('aria-invalid', 'true');
   });
 
   it('does not set aria-invalid when error is not provided', () => {
     render(<Radio label="Option A" id="option-a" />);
 
-    expect(screen.getByRole('radio', { name: 'Option A' })).not.toHaveAttribute(
-      'aria-invalid',
-    );
+    expect(getRadio('Option A')).not.toHaveAttribute('aria-invalid');
     expect(screen.queryByTestId('option-a-error')).not.toBeInTheDocument();
   });
 
   it('forwards disabled to the underlying input', () => {
     render(<Radio label="Option A" disabled />);
 
-    expect(screen.getByRole('radio', { name: 'Option A' })).toBeDisabled();
+    expect(getRadio('Option A')).toBeDisabled();
   });
 
   it('merges a consumer className with the base xd-radio-input class', () => {
     render(<Radio label="Option A" className="my-radio" />);
 
-    expect(screen.getByRole('radio', { name: 'Option A' })).toHaveClass(
-      'xd-radio-input',
-      'my-radio',
-    );
+    expect(getRadio('Option A')).toHaveClass('xd-radio-input', 'my-radio');
   });
 
   it('forwards a ref to the underlying input element', () => {
@@ -115,7 +110,7 @@ describe('Radio', () => {
   it('passes through arbitrary native input attributes', () => {
     render(<Radio label="Option A" name="choice" value="a" />);
 
-    const radio = screen.getByRole('radio', { name: 'Option A' });
+    const radio = getRadio('Option A');
     expect(radio).toHaveAttribute('name', 'choice');
     expect(radio).toHaveAttribute('value', 'a');
   });
@@ -124,7 +119,7 @@ describe('Radio', () => {
     const handleFocus = vi.fn();
     render(<Radio label="Option A" onFocus={handleFocus} />);
 
-    const radio = screen.getByRole('radio', { name: 'Option A' });
+    const radio = getRadio('Option A');
     fireEvent.focus(radio);
 
     expect(handleFocus).toHaveBeenCalled();
@@ -142,7 +137,7 @@ describe('Radio — inside a RadioGroupProvider', () => {
       </RadioGroupProvider>,
     );
 
-    expect(screen.getByRole('radio', { name: 'Medium' })).toBeChecked();
+    expect(getRadio('Medium')).toBeChecked();
   });
 
   it("is not checked when its own value does not match the group's value", () => {
@@ -154,7 +149,7 @@ describe('Radio — inside a RadioGroupProvider', () => {
       </RadioGroupProvider>,
     );
 
-    expect(screen.getByRole('radio', { name: 'Large' })).not.toBeChecked();
+    expect(getRadio('Large')).not.toBeChecked();
   });
 
   it("uses the group's name so member radios share native grouping", () => {
@@ -166,14 +161,10 @@ describe('Radio — inside a RadioGroupProvider', () => {
       </RadioGroupProvider>,
     );
 
-    expect(screen.getByRole('radio', { name: 'Large' })).toHaveAttribute(
-      'name',
-      'size',
-    );
+    expect(getRadio('Large')).toHaveAttribute('name', 'size');
   });
 
   it('calls the group onChange with its own value when selected', async () => {
-    const user = userEvent.setup();
     const handleGroupChange = vi.fn();
     render(
       <RadioGroupProvider
@@ -183,13 +174,12 @@ describe('Radio — inside a RadioGroupProvider', () => {
       </RadioGroupProvider>,
     );
 
-    await user.click(screen.getByRole('radio', { name: 'Large' }));
+    await user.click(getRadio('Large'));
 
     expect(handleGroupChange).toHaveBeenCalledWith('lg');
   });
 
   it('still calls its own onChange alongside the group onChange', async () => {
-    const user = userEvent.setup();
     const handleOwnChange = vi.fn();
     render(
       <RadioGroupProvider
@@ -199,7 +189,7 @@ describe('Radio — inside a RadioGroupProvider', () => {
       </RadioGroupProvider>,
     );
 
-    await user.click(screen.getByRole('radio', { name: 'Large' }));
+    await user.click(getRadio('Large'));
 
     expect(handleOwnChange).toHaveBeenCalled();
   });
@@ -216,7 +206,7 @@ describe('Radio — inside a RadioGroupProvider', () => {
     // group.value ("md") does not match "lg", but the explicit checked
     // prop wins anyway — same prop ?? group?.x precedence Button already
     // uses for ButtonGroupContext.
-    expect(screen.getByRole('radio', { name: 'Large' })).toBeChecked();
+    expect(getRadio('Large')).toBeChecked();
   });
 
   it('resolving two radios against the same group only checks the one whose value matches', () => {
@@ -229,7 +219,7 @@ describe('Radio — inside a RadioGroupProvider', () => {
       </RadioGroupProvider>,
     );
 
-    expect(screen.getByRole('radio', { name: 'Medium' })).toBeChecked();
-    expect(screen.getByRole('radio', { name: 'Large' })).not.toBeChecked();
+    expect(getRadio('Medium')).toBeChecked();
+    expect(getRadio('Large')).not.toBeChecked();
   });
 });

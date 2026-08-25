@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { Button } from '@asnewyla/button';
+import { getButton } from '@asnewyla/button/test-utils';
 import { ButtonGroup } from '../index';
 
 describe('ButtonGroup', () => {
@@ -13,13 +14,9 @@ describe('ButtonGroup', () => {
     );
 
     const group = screen.getByRole('group', { name: /text alignment/i });
-    expect(screen.getByRole('button', { name: /left/i })).toBeInTheDocument();
-    expect(group).toContainElement(
-      screen.getByRole('button', { name: /left/i }),
-    );
-    expect(group).toContainElement(
-      screen.getByRole('button', { name: /center/i }),
-    );
+    expect(getButton(/left/i)).toBeInTheDocument();
+    expect(group).toContainElement(getButton(/left/i));
+    expect(group).toContainElement(getButton(/center/i));
   });
 
   it('propagates variant to child buttons via context', () => {
@@ -28,10 +25,7 @@ describe('ButtonGroup', () => {
         <Button>Left</Button>
       </ButtonGroup>,
     );
-    expect(screen.getByRole('button')).toHaveAttribute(
-      'data-variant',
-      'secondary',
-    );
+    expect(getButton()).toHaveAttribute('data-variant', 'secondary');
   });
 
   it('propagates size to child buttons via context', () => {
@@ -40,7 +34,7 @@ describe('ButtonGroup', () => {
         <Button>Left</Button>
       </ButtonGroup>,
     );
-    expect(screen.getByRole('button')).toHaveAttribute('data-size', 'lg');
+    expect(getButton()).toHaveAttribute('data-size', 'lg');
   });
 
   it('propagates disabled to child buttons via context', () => {
@@ -49,7 +43,7 @@ describe('ButtonGroup', () => {
         <Button>Left</Button>
       </ButtonGroup>,
     );
-    expect(screen.getByRole('button')).toBeDisabled();
+    expect(getButton()).toBeDisabled();
   });
 
   it('lets an individual button override the group variant', () => {
@@ -59,14 +53,8 @@ describe('ButtonGroup', () => {
         <Button variant="destructive">Delete</Button>
       </ButtonGroup>,
     );
-    expect(screen.getByRole('button', { name: /keep/i })).toHaveAttribute(
-      'data-variant',
-      'secondary',
-    );
-    expect(screen.getByRole('button', { name: /delete/i })).toHaveAttribute(
-      'data-variant',
-      'destructive',
-    );
+    expect(getButton(/keep/i)).toHaveAttribute('data-variant', 'secondary');
+    expect(getButton(/delete/i)).toHaveAttribute('data-variant', 'destructive');
   });
 
   it('lets an individual button override the group size', () => {
@@ -75,7 +63,7 @@ describe('ButtonGroup', () => {
         <Button size="sm">Small override</Button>
       </ButtonGroup>,
     );
-    expect(screen.getByRole('button')).toHaveAttribute('data-size', 'sm');
+    expect(getButton()).toHaveAttribute('data-size', 'sm');
   });
 
   it('lets an individual button override the group disabled state', () => {
@@ -84,7 +72,7 @@ describe('ButtonGroup', () => {
         <Button disabled={false}>Still enabled</Button>
       </ButtonGroup>,
     );
-    expect(screen.getByRole('button')).not.toBeDisabled();
+    expect(getButton()).not.toBeDisabled();
   });
 
   it('forwards ref to the underlying div element', () => {

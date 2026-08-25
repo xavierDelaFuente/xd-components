@@ -1,26 +1,32 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { type ChangeEvent, createRef } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { fireEvent, render } from '@testing-library/react';
+import userEvent, { type UserEvent } from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { UnstyledRadio } from '../components';
+import { getRadio } from '../test-utils';
+
+let user: UserEvent;
+
+beforeEach(() => {
+  user = userEvent.setup();
+});
 
 describe('UnstyledRadio', () => {
   it('renders a radio', () => {
     render(<UnstyledRadio aria-label="Option A" />);
 
-    expect(screen.getByRole('radio')).toBeInTheDocument();
+    expect(getRadio()).toBeInTheDocument();
   });
 
   it('always renders as a radio input, regardless of any type override', () => {
     render(<UnstyledRadio aria-label="Option A" />);
 
-    expect(screen.getByRole('radio')).toHaveAttribute('type', 'radio');
+    expect(getRadio()).toHaveAttribute('type', 'radio');
   });
 
   it('is uncontrolled by default — starts unchecked and becomes checked on click', async () => {
-    const user = userEvent.setup();
     render(<UnstyledRadio aria-label="Option A" defaultChecked={false} />);
-    const radio = screen.getByRole('radio');
+    const radio = getRadio();
 
     expect(radio).not.toBeChecked();
     await user.click(radio);
@@ -28,7 +34,6 @@ describe('UnstyledRadio', () => {
   });
 
   it('supports controlled usage via checked + onChange', async () => {
-    const user = userEvent.setup();
     const handleChange = vi.fn();
     render(
       <UnstyledRadio
@@ -37,7 +42,7 @@ describe('UnstyledRadio', () => {
         onChange={handleChange}
       />,
     );
-    const radio = screen.getByRole('radio');
+    const radio = getRadio();
 
     expect(radio).not.toBeChecked();
     await user.click(radio);
@@ -48,7 +53,6 @@ describe('UnstyledRadio', () => {
   });
 
   it('calls onChange with the actual checked value in the event', async () => {
-    const user = userEvent.setup();
     let checkedValue: boolean | undefined;
     const handleChange = vi.fn((e: ChangeEvent<HTMLInputElement>) => {
       checkedValue = e.target.checked;
@@ -61,13 +65,12 @@ describe('UnstyledRadio', () => {
       />,
     );
 
-    await user.click(screen.getByRole('radio'));
+    await user.click(getRadio());
 
     expect(checkedValue).toBe(true);
   });
 
   it('calls a consumer-provided onChange even in uncontrolled mode', async () => {
-    const user = userEvent.setup();
     const handleChange = vi.fn();
     render(
       <UnstyledRadio
@@ -77,15 +80,14 @@ describe('UnstyledRadio', () => {
       />,
     );
 
-    await user.click(screen.getByRole('radio'));
+    await user.click(getRadio());
 
     expect(handleChange).toHaveBeenCalled();
   });
 
   it('sets data-checked to true once checked (uncontrolled)', async () => {
-    const user = userEvent.setup();
     render(<UnstyledRadio aria-label="Option A" defaultChecked={false} />);
-    const radio = screen.getByRole('radio');
+    const radio = getRadio();
 
     expect(radio).not.toHaveAttribute('data-checked');
     await user.click(radio);
@@ -95,7 +97,7 @@ describe('UnstyledRadio', () => {
   it('reflects data-checked from the checked prop when controlled', () => {
     render(<UnstyledRadio aria-label="Option A" checked onChange={() => {}} />);
 
-    expect(screen.getByRole('radio')).toHaveAttribute('data-checked', 'true');
+    expect(getRadio()).toHaveAttribute('data-checked', 'true');
   });
 
   it(
@@ -104,15 +106,14 @@ describe('UnstyledRadio', () => {
       '— real multi-radio groups need RadioGroup, not several independent ' +
       'UnstyledRadios',
     async () => {
-      const user = userEvent.setup();
       render(
         <>
           <UnstyledRadio aria-label="Option A" name="choice" defaultChecked />
           <UnstyledRadio aria-label="Option B" name="choice" />
         </>,
       );
-      const optionA = screen.getByRole('radio', { name: 'Option A' });
-      const optionB = screen.getByRole('radio', { name: 'Option B' });
+      const optionA = getRadio('Option A');
+      const optionB = getRadio('Option B');
 
       expect(optionA).toHaveAttribute('data-checked', 'true');
 
@@ -135,17 +136,16 @@ describe('UnstyledRadio', () => {
   );
 
   it('is focusable via Tab key', async () => {
-    const user = userEvent.setup();
     render(<UnstyledRadio aria-label="Option A" />);
 
     await user.tab();
 
-    expect(screen.getByRole('radio')).toHaveFocus();
+    expect(getRadio()).toHaveFocus();
   });
 
   it('sets data-focused on focus and clears it on blur', () => {
     render(<UnstyledRadio aria-label="Option A" />);
-    const radio = screen.getByRole('radio');
+    const radio = getRadio();
 
     fireEvent.focus(radio);
     expect(radio).toHaveAttribute('data-focused', 'true');
@@ -157,15 +157,14 @@ describe('UnstyledRadio', () => {
   it('sets data-disabled when disabled', () => {
     render(<UnstyledRadio aria-label="Option A" disabled />);
 
-    expect(screen.getByRole('radio')).toHaveAttribute('data-disabled', 'true');
+    expect(getRadio()).toHaveAttribute('data-disabled', 'true');
   });
 
   it('is not toggleable when disabled', async () => {
-    const user = userEvent.setup();
     render(
       <UnstyledRadio aria-label="Option A" disabled defaultChecked={false} />,
     );
-    const radio = screen.getByRole('radio');
+    const radio = getRadio();
 
     await user.click(radio);
 
@@ -174,7 +173,7 @@ describe('UnstyledRadio', () => {
 
   it('sets data-invalid and aria-invalid when invalid', () => {
     render(<UnstyledRadio aria-label="Option A" invalid />);
-    const radio = screen.getByRole('radio');
+    const radio = getRadio();
 
     expect(radio).toHaveAttribute('data-invalid', 'true');
     expect(radio).toHaveAttribute('aria-invalid', 'true');
@@ -182,7 +181,7 @@ describe('UnstyledRadio', () => {
 
   it('omits data-invalid and aria-invalid when not invalid', () => {
     render(<UnstyledRadio aria-label="Option A" />);
-    const radio = screen.getByRole('radio');
+    const radio = getRadio();
 
     expect(radio).not.toHaveAttribute('data-invalid');
     expect(radio).not.toHaveAttribute('aria-invalid');
@@ -198,7 +197,7 @@ describe('UnstyledRadio', () => {
   it('passes through arbitrary native input attributes', () => {
     render(<UnstyledRadio aria-label="Option A" name="choice" value="a" />);
 
-    const radio = screen.getByRole('radio');
+    const radio = getRadio();
     expect(radio).toHaveAttribute('name', 'choice');
     expect(radio).toHaveAttribute('value', 'a');
   });
@@ -206,7 +205,7 @@ describe('UnstyledRadio', () => {
   it('still tracks data-focused even when the consumer passes their own onFocus', () => {
     const handleFocus = vi.fn();
     render(<UnstyledRadio aria-label="Option A" onFocus={handleFocus} />);
-    const radio = screen.getByRole('radio');
+    const radio = getRadio();
 
     fireEvent.focus(radio);
 
@@ -217,7 +216,7 @@ describe('UnstyledRadio', () => {
   it('still tracks data-focused clearing even when the consumer passes their own onBlur', () => {
     const handleBlur = vi.fn();
     render(<UnstyledRadio aria-label="Option A" onBlur={handleBlur} />);
-    const radio = screen.getByRole('radio');
+    const radio = getRadio();
 
     fireEvent.focus(radio);
     fireEvent.blur(radio);

@@ -3,6 +3,7 @@ import { createRef } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { FormFieldInput } from '../components';
+import { getFieldInput } from '../test-utils';
 
 const contextValue: FormFieldContextValue = {
   registerField: vi.fn(),
@@ -20,7 +21,7 @@ describe('FormFieldInput', () => {
   it('renders as a normal Input when there is no FormFieldProvider ancestor', () => {
     render(<FormFieldInput label="Name" name="name" />);
 
-    expect(screen.getByRole('textbox', { name: 'Name' })).toBeInTheDocument();
+    expect(getFieldInput('Name')).toBeInTheDocument();
   });
 
   it('registers itself on mount when inside a FormFieldProvider', () => {
@@ -46,9 +47,7 @@ describe('FormFieldInput', () => {
     const [, registration] = (
       contextValue.registerField as ReturnType<typeof vi.fn>
     ).mock.calls[0];
-    expect(registration.ref.current).toBe(
-      screen.getByRole('textbox', { name: 'Email' }),
-    );
+    expect(registration.ref.current).toBe(getFieldInput('Email'));
   });
 
   it("a consumer's own forwarded ref still points at the same input, alongside registration", () => {
@@ -59,7 +58,7 @@ describe('FormFieldInput', () => {
       </FormFieldProvider>,
     );
 
-    expect(ref.current).toBe(screen.getByRole('textbox', { name: 'Email' }));
+    expect(ref.current).toBe(getFieldInput('Email'));
   });
 
   it('bundles the validation-rule props into the registration', () => {
@@ -104,7 +103,7 @@ describe('FormFieldInput', () => {
       </FormFieldProvider>,
     );
 
-    fireEvent.blur(screen.getByRole('textbox', { name: 'Email' }));
+    fireEvent.blur(getFieldInput('Email'));
 
     expect(contextValue.validateField).toHaveBeenCalledWith('email');
   });
@@ -117,7 +116,7 @@ describe('FormFieldInput', () => {
       </FormFieldProvider>,
     );
 
-    fireEvent.blur(screen.getByRole('textbox', { name: 'Email' }));
+    fireEvent.blur(getFieldInput('Email'));
 
     expect(handleBlur).toHaveBeenCalled();
     expect(contextValue.validateField).toHaveBeenCalledWith('email');
@@ -132,10 +131,7 @@ describe('FormFieldInput', () => {
     );
 
     expect(screen.getByText('Enter a valid email address')).toBeInTheDocument();
-    expect(screen.getByRole('textbox', { name: 'Email' })).toHaveAttribute(
-      'aria-invalid',
-      'true',
-    );
+    expect(getFieldInput('Email')).toHaveAttribute('aria-invalid', 'true');
   });
 
   it('prefers a local error prop over context.errors[name] when both are present', () => {
@@ -161,7 +157,7 @@ describe('FormFieldInput', () => {
       />,
     );
 
-    const input = screen.getByRole('textbox', { name: 'Email' });
+    const input = getFieldInput('Email');
     expect(input).toHaveAttribute('required');
     expect(input).toHaveAttribute('pattern', '^\\S+@\\S+$');
     expect(input).toHaveAttribute('minLength', '5');
@@ -169,7 +165,7 @@ describe('FormFieldInput', () => {
 
   it('outside a Form, blur does not throw and does not mark the field invalid on its own', () => {
     render(<FormFieldInput label="Email" name="email" required />);
-    const input = screen.getByRole('textbox', { name: 'Email' });
+    const input = getFieldInput('Email');
 
     expect(() => fireEvent.blur(input)).not.toThrow();
     expect(input).not.toHaveAttribute('aria-invalid');
@@ -212,6 +208,6 @@ describe('FormFieldInput', () => {
       />,
     );
 
-    expect(receivedNode).toBe(screen.getByRole('textbox', { name: 'Email' }));
+    expect(receivedNode).toBe(getFieldInput('Email'));
   });
 });

@@ -1,7 +1,8 @@
+import { createRef } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { createRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
+import { getCheckbox } from '@asnewyla/unstyled-checkbox/test-utils';
 import { Checkbox } from '../components';
 
 describe('Checkbox', () => {
@@ -15,7 +16,7 @@ describe('Checkbox', () => {
     const user = userEvent.setup();
     render(<Checkbox label="Accept terms" defaultChecked={false} />);
 
-    const checkbox = screen.getByRole('checkbox', { name: 'Accept terms' });
+    const checkbox = getCheckbox('Accept terms');
     expect(checkbox).not.toBeChecked();
 
     await user.click(screen.getByText('Accept terms'));
@@ -31,8 +32,8 @@ describe('Checkbox', () => {
       </>,
     );
 
-    const first = screen.getByRole('checkbox', { name: 'Accept terms' });
-    const last = screen.getByRole('checkbox', { name: 'Subscribe to updates' });
+    const first = getCheckbox('Accept terms');
+    const last = getCheckbox('Subscribe to updates');
 
     expect(first.id).toBeTruthy();
     expect(last.id).toBeTruthy();
@@ -42,9 +43,7 @@ describe('Checkbox', () => {
   it('respects an explicitly-provided id', () => {
     render(<Checkbox label="Accept terms" id="custom-id" />);
 
-    expect(
-      screen.getByRole('checkbox', { name: 'Accept terms' }),
-    ).toHaveAttribute('id', 'custom-id');
+    expect(getCheckbox('Accept terms')).toHaveAttribute('id', 'custom-id');
   });
 
   it('renders no error message when error is not provided', () => {
@@ -64,7 +63,7 @@ describe('Checkbox', () => {
   it('links the input to the error message via aria-describedby', () => {
     render(<Checkbox label="Accept terms" error="You must accept the terms" />);
 
-    const checkbox = screen.getByRole('checkbox', { name: 'Accept terms' });
+    const checkbox = getCheckbox('Accept terms');
     const describedById = checkbox.getAttribute('aria-describedby');
 
     expect(describedById).toBeTruthy();
@@ -76,32 +75,26 @@ describe('Checkbox', () => {
   it('sets aria-invalid on the input when error is provided', () => {
     render(<Checkbox label="Accept terms" error="You must accept the terms" />);
 
-    expect(
-      screen.getByRole('checkbox', { name: 'Accept terms' }),
-    ).toHaveAttribute('aria-invalid', 'true');
+    expect(getCheckbox('Accept terms')).toHaveAttribute('aria-invalid', 'true');
   });
 
   it('does not set aria-invalid when error is not provided', () => {
     render(<Checkbox label="Accept terms" id="terms" />);
 
-    expect(
-      screen.getByRole('checkbox', { name: 'Accept terms' }),
-    ).not.toHaveAttribute('aria-invalid');
+    expect(getCheckbox('Accept terms')).not.toHaveAttribute('aria-invalid');
     expect(screen.queryByTestId('terms-error')).not.toBeInTheDocument();
   });
 
   it('forwards disabled to the underlying input', () => {
     render(<Checkbox label="Accept terms" disabled />);
 
-    expect(
-      screen.getByRole('checkbox', { name: 'Accept terms' }),
-    ).toBeDisabled();
+    expect(getCheckbox('Accept terms')).toBeDisabled();
   });
 
   it('merges a consumer className with the base xd-checkbox-input class', () => {
     render(<Checkbox label="Accept terms" className="my-checkbox" />);
 
-    expect(screen.getByRole('checkbox', { name: 'Accept terms' })).toHaveClass(
+    expect(getCheckbox('Accept terms')).toHaveClass(
       'xd-checkbox-input',
       'my-checkbox',
     );
@@ -117,16 +110,14 @@ describe('Checkbox', () => {
   it('passes through arbitrary native input attributes', () => {
     render(<Checkbox label="Accept terms" name="terms" />);
 
-    expect(
-      screen.getByRole('checkbox', { name: 'Accept terms' }),
-    ).toHaveAttribute('name', 'terms');
+    expect(getCheckbox('Accept terms')).toHaveAttribute('name', 'terms');
   });
 
   it('still sets data-focused on the underlying input when the consumer passes their own onFocus', () => {
     const handleFocus = vi.fn();
     render(<Checkbox label="Accept terms" onFocus={handleFocus} />);
 
-    const checkbox = screen.getByRole('checkbox', { name: 'Accept terms' });
+    const checkbox = getCheckbox('Accept terms');
     fireEvent.focus(checkbox);
 
     expect(handleFocus).toHaveBeenCalled();

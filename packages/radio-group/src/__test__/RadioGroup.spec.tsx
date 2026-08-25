@@ -1,9 +1,16 @@
 import { Radio } from '@asnewyla/radio';
+import { getRadio } from '@asnewyla/radio/test-utils';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { createRef } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { RadioGroup } from '../components';
+
+let user: UserEvent;
+
+beforeEach(() => {
+  user = userEvent.setup();
+});
 
 describe('RadioGroup', () => {
   it('renders its children', () => {
@@ -35,13 +42,12 @@ describe('RadioGroup', () => {
       </RadioGroup>,
     );
 
-    expect(screen.getByRole('radio', { name: 'Medium' })).toBeChecked();
-    expect(screen.getByRole('radio', { name: 'Small' })).not.toBeChecked();
-    expect(screen.getByRole('radio', { name: 'Large' })).not.toBeChecked();
+    expect(getRadio('Medium')).toBeChecked();
+    expect(getRadio('Small')).not.toBeChecked();
+    expect(getRadio('Large')).not.toBeChecked();
   });
 
   it('clicking a different member radio moves the selection (uncontrolled) — the actual fix for the sibling-desync limitation documented in @asnewyla/unstyled-radio', async () => {
-    const user = userEvent.setup();
     render(
       <RadioGroup name="size" defaultValue="sm">
         <Radio label="Small" value="sm" />
@@ -50,18 +56,17 @@ describe('RadioGroup', () => {
       </RadioGroup>,
     );
 
-    await user.click(screen.getByRole('radio', { name: 'Medium' }));
+    await user.click(getRadio('Medium'));
 
     // Unlike two bare, independent UnstyledRadios sharing a name, the
     // group is one shared source of truth — clicking Medium re-renders
     // Small with checked=false from context, no stale attribute.
-    expect(screen.getByRole('radio', { name: 'Medium' })).toBeChecked();
-    expect(screen.getByRole('radio', { name: 'Small' })).not.toBeChecked();
-    expect(screen.getByRole('radio', { name: 'Large' })).not.toBeChecked();
+    expect(getRadio('Medium')).toBeChecked();
+    expect(getRadio('Small')).not.toBeChecked();
+    expect(getRadio('Large')).not.toBeChecked();
   });
 
   it('supports controlled usage via value + onChange', async () => {
-    const user = userEvent.setup();
     const handleChange = vi.fn();
     render(
       <RadioGroup name="size" value="sm" onChange={handleChange}>
@@ -70,13 +75,13 @@ describe('RadioGroup', () => {
       </RadioGroup>,
     );
 
-    await user.click(screen.getByRole('radio', { name: 'Medium' }));
+    await user.click(getRadio('Medium'));
 
     expect(handleChange).toHaveBeenCalledWith('md');
     // still "sm" — nothing updated the value prop, matching how every
     // other controlled component in this codebase behaves
-    expect(screen.getByRole('radio', { name: 'Small' })).toBeChecked();
-    expect(screen.getByRole('radio', { name: 'Medium' })).not.toBeChecked();
+    expect(getRadio('Small')).toBeChecked();
+    expect(getRadio('Medium')).not.toBeChecked();
   });
 
   it('gives every member radio the same native name', () => {
@@ -87,14 +92,8 @@ describe('RadioGroup', () => {
       </RadioGroup>,
     );
 
-    expect(screen.getByRole('radio', { name: 'Small' })).toHaveAttribute(
-      'name',
-      'size',
-    );
-    expect(screen.getByRole('radio', { name: 'Medium' })).toHaveAttribute(
-      'name',
-      'size',
-    );
+    expect(getRadio('Small')).toHaveAttribute('name', 'size');
+    expect(getRadio('Medium')).toHaveAttribute('name', 'size');
   });
 
   it('forwards a ref to the wrapping element', () => {
