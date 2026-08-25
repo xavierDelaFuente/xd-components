@@ -35,9 +35,11 @@
     "@asnewyla/layout": "workspace:*",
     "@asnewyla/radio": "workspace:*",
     "@asnewyla/radio-group": "workspace:*",
+    "@asnewyla/select": "workspace:*",
     "@asnewyla/theme": "workspace:*",
     "@asnewyla/tokens": "workspace:*",
-    "@asnewyla/unstyled-button": "workspace:*"
+    "@asnewyla/unstyled-button": "workspace:*",
+    "@asnewyla/unstyled-select": "workspace:*"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.9",

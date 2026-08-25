@@ -6,7 +6,7 @@ interface UseRovingFocusParams {
 }
 
 interface UseRovingFocusResult {
-  setTriggerRef: (node: HTMLButtonElement | null) => void;
+  setTriggerRef: (node: HTMLDivElement | null) => void;
   setSearchInputRef: (node: HTMLInputElement | null) => void;
   getOptionRef: (value: string) => (node: HTMLButtonElement | null) => void;
   focusTrigger: () => void;
@@ -17,11 +17,11 @@ interface UseRovingFocusResult {
 export function useRovingFocus({
   options,
 }: UseRovingFocusParams): UseRovingFocusResult {
-  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const triggerRef = useRef<HTMLDivElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const optionRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
-  const setTriggerRef = (node: HTMLButtonElement | null) => {
+  const setTriggerRef = (node: HTMLDivElement | null) => {
     triggerRef.current = node;
   };
 

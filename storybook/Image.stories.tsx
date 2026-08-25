@@ -50,7 +50,9 @@ export const Fit: StoryObj = {
     <Group gap="md">
       {(['cover', 'contain', 'fill'] as const).map((fit) => (
         <Stack key={fit} gap="sm" align="center">
-          <div style={{ width: 150, height: 100, border: '1px dashed #94a3b8' }}>
+          <div
+            style={{ width: 150, height: 100, border: '1px dashed #94a3b8' }}
+          >
             <Image
               src={photo}
               alt={`Fit mode: ${fit}`}

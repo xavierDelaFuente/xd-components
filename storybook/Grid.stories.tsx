@@ -43,9 +43,7 @@ export const ThreeColumns: Story = {
   args: {
     columns: 3,
     gap: 'md',
-    children: Array.from({ length: 6 }, (_, i) => (
-      <Chip key={i}>{i + 1}</Chip>
-    )),
+    children: Array.from({ length: 6 }, (_, i) => <Chip key={i}>{i + 1}</Chip>),
   },
   render: (args) => (
     <div style={{ width: 320 }}>
