@@ -82,19 +82,27 @@ Keyboard support:
 
 | Key | Behavior |
 |---|---|
-| `Enter` / `Space` on the trigger | Opens the listbox, focusing the selected option (or the first enabled one) |
-| `ArrowDown` / `ArrowUp` | Moves focus to the next/previous enabled option, skipping disabled ones, clamped at the ends (no wrap) |
+| `Enter` / `Space` on the trigger | Opens the listbox and focuses the search input |
+| `ArrowDown` | Moves focus to the next enabled option, skipping disabled ones, clamped at the end (no wrap) |
+| `ArrowUp` | Moves focus to the previous enabled option; from the first option (or with nothing focused), moves focus back to the search input |
 | `Home` / `End` | Jumps to the first/last enabled option |
 | `Enter` / `Space` on a focused option | Selects it |
-| `Escape` | Closes the listbox and returns focus to the trigger |
+| `Escape` | Clears the search query, closes the listbox, and returns focus to the trigger |
 | Click outside | Closes the listbox |
+
+### Search / filter
+
+Opening the listbox renders a search `<input>` (`aria-label="Search
+options"`) as the first child of the popup, above the option list — the
+trigger itself stays a `<button role="combobox">`, it does not become an
+editable input. Typing filters `options` client-side by a case-insensitive
+substring match on `label`; there's no async/remote search. Selecting an
+option or closing the listbox (`Escape`, click outside) clears the query.
 
 ### Not yet supported
 
 This primitive is still growing. Not implemented yet:
 
-- **Search/typeahead filtering** — the trigger is a `<button>`, not an
-  editable text input.
 - **Native form participation** — nothing here submits through
   `FormData` the way `@asnewyla/form`'s `FormFieldInput` expects.
 - **Portal rendering** — the listbox renders inline, so it can be
