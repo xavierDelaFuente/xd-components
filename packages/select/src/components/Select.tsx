@@ -30,31 +30,31 @@ function SelectInner(
 
   const renderValue = rest.multiple
     ? (
-      selectedOptions: SelectOption[],
-      { removeOption }: UnstyledSelectRenderValueHelpers,
-    ) =>
-      selectedOptions.length > 0 ? (
-        <span className="xd-select-chips">
-          {selectedOptions.map((option) => (
-            <span key={option.value} className="xd-select-chip">
-              {option.label}
-              <button
-                type="button"
-                className="xd-select-chip-remove"
-                aria-label={`Remove ${option.label}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeOption(option);
-                }}
-              >
-                ×
-              </button>
-            </span>
-          ))}
-        </span>
-      ) : (
-        placeholder
-      )
+        selectedOptions: SelectOption[],
+        { removeOption }: UnstyledSelectRenderValueHelpers,
+      ) =>
+        selectedOptions.length > 0 ? (
+          <span className="xd-select-chips">
+            {selectedOptions.map((option) => (
+              <span key={option.value} className="xd-select-chip">
+                {option.label}
+                <button
+                  type="button"
+                  className="xd-select-chip-remove"
+                  aria-label={`Remove ${option.label}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeOption(option);
+                  }}
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </span>
+        ) : (
+          placeholder
+        )
     : undefined;
 
   return (

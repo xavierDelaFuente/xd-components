@@ -41,6 +41,9 @@ importers:
       '@asnewyla/radio-group':
         specifier: workspace:*
         version: link:packages/radio-group
+      '@asnewyla/select':
+        specifier: workspace:*
+        version: link:packages/select
       '@asnewyla/theme':
         specifier: workspace:*
         version: link:packages/theme
@@ -50,6 +53,9 @@ importers:
       '@asnewyla/unstyled-button':
         specifier: workspace:*
         version: link:packages/unstyled-button
+      '@asnewyla/unstyled-select':
+        specifier: workspace:*
+        version: link:packages/unstyled-select
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.5.9

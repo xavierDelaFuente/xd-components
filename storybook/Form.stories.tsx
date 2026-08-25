@@ -40,7 +40,13 @@ export const ValidationRules: StoryObj = {
           minLength={3}
           maxLength={16}
         />
-        <FormFieldInput label="Age" name="age" type="number" min={18} max={120} />
+        <FormFieldInput
+          label="Age"
+          name="age"
+          type="number"
+          min={18}
+          max={120}
+        />
         <FormFieldInput
           label="Handle"
           name="handle"

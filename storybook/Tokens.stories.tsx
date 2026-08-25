@@ -39,7 +39,10 @@ export const Spacing: StoryObj = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
       {['xs', 'sm', 'md', 'lg', 'xl', '2xl'].map((step) => (
-        <div key={step} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div
+          key={step}
+          style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}
+        >
           <code>--xd-space-{step}</code>
           <div
             style={{
@@ -76,7 +79,10 @@ export const Typography: StoryObj = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
       {['sm', 'md', 'lg'].map((step) => (
-        <p key={step} style={{ fontSize: `var(--xd-font-size-${step})`, margin: 0 }}>
+        <p
+          key={step}
+          style={{ fontSize: `var(--xd-font-size-${step})`, margin: 0 }}
+        >
           --xd-font-size-{step}
         </p>
       ))}
