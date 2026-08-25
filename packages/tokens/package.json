@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/tokens",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Design tokens (color, spacing, typography, radius) as CSS custom properties",
   "license": "MIT",
   "repository": {
