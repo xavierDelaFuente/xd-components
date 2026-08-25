@@ -37,6 +37,10 @@ export function openSelect(user: UserEvent): Promise<void> {
   return user.click(getCombobox());
 }
 
+export function closeSelect(user: UserEvent): Promise<void> {
+  return user.keyboard('{Escape}');
+}
+
 export function clickOption(user: UserEvent, name: string): Promise<void> {
   return user.click(getOption(name));
 }
@@ -47,4 +51,8 @@ export function getSearchInput(): HTMLElement {
 
 export function typeQuery(user: UserEvent, text: string): Promise<void> {
   return user.type(getSearchInput(), text);
+}
+
+export function clearQuery(user: UserEvent): Promise<void> {
+  return user.clear(getSearchInput());
 }

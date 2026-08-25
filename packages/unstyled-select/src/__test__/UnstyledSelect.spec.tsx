@@ -1,10 +1,12 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { createRef } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { UnstyledSelect, type UnstyledSelectProps } from '../components';
 import {
+  clearQuery,
   clickOption,
+  closeSelect,
   getCombobox,
   getListbox,
   getOption,
@@ -28,35 +30,54 @@ const fruitOptionsWithDisabled: UnstyledSelectProps['options'] = [
   { value: 'cherry', label: 'Cherry' },
 ];
 
+let user: UserEvent;
+
+beforeEach(() => {
+  user = userEvent.setup();
+});
+
+// `options` is the only required field on `UnstyledSelectProps` — every
+// other field, including `multiple`, is already correctly optional/required
+// per branch of the discriminated union. So overrides only need `options`
+// loosened, not the whole type `Partial<>`'d (that would widen `multiple`
+// to `true | undefined` in the multi branch and break the union). `T` has
+// to stay a naked type parameter for the conditional to distribute over
+// the union member-by-member rather than collapsing it.
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown
+  ? Omit<T, K>
+  : never;
+type SelectOverrides = DistributiveOmit<UnstyledSelectProps, 'options'> & {
+  options?: UnstyledSelectProps['options'];
+};
+
+function renderSelect(overrides: SelectOverrides = {}) {
+  return render(
+    <UnstyledSelect aria-label="Fruit" options={fruitOptions} {...overrides} />,
+  );
+}
+
 describe('UnstyledSelect — single-select core mechanics', () => {
   it('renders a combobox trigger', () => {
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     expect(getCombobox()).toBeInTheDocument();
   });
 
   it('is closed by default — no listbox in the document', () => {
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     expect(queryListbox()).not.toBeInTheDocument();
     expect(getCombobox()).toHaveAttribute('aria-expanded', 'false');
   });
 
   it('shows placeholder text when nothing is selected', () => {
-    render(
-      <UnstyledSelect
-        aria-label="Fruit"
-        options={fruitOptions}
-        placeholder="Choose a fruit"
-      />,
-    );
+    renderSelect({ placeholder: 'Choose a fruit' });
 
     expect(getCombobox()).toHaveTextContent('Choose a fruit');
   });
 
   it('opens the listbox and renders every option on click', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
 
@@ -65,27 +86,14 @@ describe('UnstyledSelect — single-select core mechanics', () => {
   });
 
   it('is uncontrolled by default — defaultValue shows the matching option label', () => {
-    render(
-      <UnstyledSelect
-        aria-label="Fruit"
-        options={fruitOptions}
-        defaultValue="banana"
-      />,
-    );
+    renderSelect({ defaultValue: 'banana' });
 
     expect(getCombobox()).toHaveTextContent('Banana');
   });
 
   it('clicking an option selects it, calls onChange, and closes the listbox', async () => {
-    const user = userEvent.setup();
     const handleChange = vi.fn();
-    render(
-      <UnstyledSelect
-        aria-label="Fruit"
-        options={fruitOptions}
-        onChange={handleChange}
-      />,
-    );
+    renderSelect({ onChange: handleChange });
 
     await openSelect(user);
     await clickOption(user, 'Banana');
@@ -96,14 +104,7 @@ describe('UnstyledSelect — single-select core mechanics', () => {
   });
 
   it('marks the currently selected option with aria-selected', async () => {
-    const user = userEvent.setup();
-    render(
-      <UnstyledSelect
-        aria-label="Fruit"
-        options={fruitOptions}
-        defaultValue="cherry"
-      />,
-    );
+    renderSelect({ defaultValue: 'cherry' });
 
     await openSelect(user);
 
@@ -112,16 +113,8 @@ describe('UnstyledSelect — single-select core mechanics', () => {
   });
 
   it('supports controlled usage via value + onChange', async () => {
-    const user = userEvent.setup();
     const handleChange = vi.fn();
-    render(
-      <UnstyledSelect
-        aria-label="Fruit"
-        options={fruitOptions}
-        value="apple"
-        onChange={handleChange}
-      />,
-    );
+    renderSelect({ value: 'apple', onChange: handleChange });
 
     await openSelect(user);
     await clickOption(user, 'Banana');
@@ -131,19 +124,12 @@ describe('UnstyledSelect — single-select core mechanics', () => {
   });
 
   it('does not select or close when clicking a disabled option', async () => {
-    const user = userEvent.setup();
     const handleChange = vi.fn();
     const options = [
       ...fruitOptions,
       { value: 'durian', label: 'Durian', disabled: true },
     ];
-    render(
-      <UnstyledSelect
-        aria-label="Fruit"
-        options={options}
-        onChange={handleChange}
-      />,
-    );
+    renderSelect({ options, onChange: handleChange });
 
     await openSelect(user);
     await clickOption(user, 'Durian');
@@ -153,12 +139,11 @@ describe('UnstyledSelect — single-select core mechanics', () => {
   });
 
   it('marks a disabled option with aria-disabled', async () => {
-    const user = userEvent.setup();
     const options = [
       ...fruitOptions,
       { value: 'durian', label: 'Durian', disabled: true },
     ];
-    render(<UnstyledSelect aria-label="Fruit" options={options} />);
+    renderSelect({ options });
 
     await openSelect(user);
 
@@ -166,10 +151,7 @@ describe('UnstyledSelect — single-select core mechanics', () => {
   });
 
   it('does not open when the whole select is disabled', async () => {
-    const user = userEvent.setup();
-    render(
-      <UnstyledSelect aria-label="Fruit" options={fruitOptions} disabled />,
-    );
+    renderSelect({ disabled: true });
 
     await openSelect(user);
 
@@ -177,15 +159,12 @@ describe('UnstyledSelect — single-select core mechanics', () => {
   });
 
   it('sets aria-disabled on the trigger when disabled', () => {
-    render(
-      <UnstyledSelect aria-label="Fruit" options={fruitOptions} disabled />,
-    );
+    renderSelect({ disabled: true });
 
     expect(getCombobox()).toHaveAttribute('aria-disabled', 'true');
   });
 
   it('closes the listbox when clicking outside', async () => {
-    const user = userEvent.setup();
     render(
       <div>
         <UnstyledSelect aria-label="Fruit" options={fruitOptions} />
@@ -202,13 +181,12 @@ describe('UnstyledSelect — single-select core mechanics', () => {
   });
 
   it('closes the listbox on Escape', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
     expect(getListbox()).toBeInTheDocument();
 
-    await user.keyboard('{Escape}');
+    await closeSelect(user);
 
     expect(queryListbox()).not.toBeInTheDocument();
   });
@@ -224,9 +202,7 @@ describe('UnstyledSelect — single-select core mechanics', () => {
   });
 
   it('passes through arbitrary native button attributes', () => {
-    render(
-      <UnstyledSelect aria-label="Fruit" options={fruitOptions} name="fruit" />,
-    );
+    renderSelect({ name: 'fruit' });
 
     expect(getCombobox()).toHaveAttribute('name', 'fruit');
   });
@@ -234,10 +210,7 @@ describe('UnstyledSelect — single-select core mechanics', () => {
 
 describe('UnstyledSelect — multi-select', () => {
   it('marks the listbox aria-multiselectable when multiple', async () => {
-    const user = userEvent.setup();
-    render(
-      <UnstyledSelect aria-label="Fruit" options={fruitOptions} multiple />,
-    );
+    renderSelect({ multiple: true });
 
     await openSelect(user);
 
@@ -245,27 +218,13 @@ describe('UnstyledSelect — multi-select', () => {
   });
 
   it('shows placeholder text when nothing is selected', () => {
-    render(
-      <UnstyledSelect
-        aria-label="Fruit"
-        options={fruitOptions}
-        multiple
-        placeholder="Choose fruits"
-      />,
-    );
+    renderSelect({ multiple: true, placeholder: 'Choose fruits' });
 
     expect(getCombobox()).toHaveTextContent('Choose fruits');
   });
 
   it('is uncontrolled by default — defaultValue shows every selected label', () => {
-    render(
-      <UnstyledSelect
-        aria-label="Fruit"
-        options={fruitOptions}
-        multiple
-        defaultValue={['apple', 'cherry']}
-      />,
-    );
+    renderSelect({ multiple: true, defaultValue: ['apple', 'cherry'] });
     const trigger = getCombobox();
 
     expect(trigger).toHaveTextContent('Apple');
@@ -273,17 +232,12 @@ describe('UnstyledSelect — multi-select', () => {
   });
 
   it('clicking an unselected option adds it, calls onChange with the full array, and keeps the listbox open', async () => {
-    const user = userEvent.setup();
     const handleChange = vi.fn();
-    render(
-      <UnstyledSelect
-        aria-label="Fruit"
-        options={fruitOptions}
-        multiple
-        defaultValue={['apple']}
-        onChange={handleChange}
-      />,
-    );
+    renderSelect({
+      multiple: true,
+      defaultValue: ['apple'],
+      onChange: handleChange,
+    });
 
     await openSelect(user);
     await clickOption(user, 'Banana');
@@ -293,17 +247,12 @@ describe('UnstyledSelect — multi-select', () => {
   });
 
   it('clicking an already-selected option removes it from the value', async () => {
-    const user = userEvent.setup();
     const handleChange = vi.fn();
-    render(
-      <UnstyledSelect
-        aria-label="Fruit"
-        options={fruitOptions}
-        multiple
-        defaultValue={['apple', 'banana']}
-        onChange={handleChange}
-      />,
-    );
+    renderSelect({
+      multiple: true,
+      defaultValue: ['apple', 'banana'],
+      onChange: handleChange,
+    });
 
     await openSelect(user);
     await clickOption(user, 'Apple');
@@ -312,16 +261,11 @@ describe('UnstyledSelect — multi-select', () => {
   });
 
   it('shows the placeholder again once every selection is removed (uncontrolled)', async () => {
-    const user = userEvent.setup();
-    render(
-      <UnstyledSelect
-        aria-label="Fruit"
-        options={fruitOptions}
-        multiple
-        defaultValue={['apple']}
-        placeholder="Choose fruits"
-      />,
-    );
+    renderSelect({
+      multiple: true,
+      defaultValue: ['apple'],
+      placeholder: 'Choose fruits',
+    });
 
     await openSelect(user);
     await clickOption(user, 'Apple');
@@ -330,15 +274,7 @@ describe('UnstyledSelect — multi-select', () => {
   });
 
   it('marks every selected option with aria-selected, not just one', async () => {
-    const user = userEvent.setup();
-    render(
-      <UnstyledSelect
-        aria-label="Fruit"
-        options={fruitOptions}
-        multiple
-        defaultValue={['apple', 'cherry']}
-      />,
-    );
+    renderSelect({ multiple: true, defaultValue: ['apple', 'cherry'] });
 
     await openSelect(user);
 
@@ -348,17 +284,8 @@ describe('UnstyledSelect — multi-select', () => {
   });
 
   it('supports controlled usage via value + onChange', async () => {
-    const user = userEvent.setup();
     const handleChange = vi.fn();
-    render(
-      <UnstyledSelect
-        aria-label="Fruit"
-        options={fruitOptions}
-        multiple
-        value={['apple']}
-        onChange={handleChange}
-      />,
-    );
+    renderSelect({ multiple: true, value: ['apple'], onChange: handleChange });
 
     await openSelect(user);
     await clickOption(user, 'Banana');
@@ -372,21 +299,17 @@ describe('UnstyledSelect — multi-select', () => {
   });
 
   it('does not toggle the value or call onChange when clicking a disabled option', async () => {
-    const user = userEvent.setup();
     const handleChange = vi.fn();
     const options = [
       ...fruitOptions,
       { value: 'durian', label: 'Durian', disabled: true },
     ];
-    render(
-      <UnstyledSelect
-        aria-label="Fruit"
-        options={options}
-        multiple
-        defaultValue={['apple']}
-        onChange={handleChange}
-      />,
-    );
+    renderSelect({
+      options,
+      multiple: true,
+      defaultValue: ['apple'],
+      onChange: handleChange,
+    });
 
     await openSelect(user);
     await clickOption(user, 'Durian');
@@ -397,8 +320,7 @@ describe('UnstyledSelect — multi-select', () => {
 
 describe('UnstyledSelect — keyboard navigation', () => {
   it('focuses the search input when opened', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
 
@@ -406,8 +328,7 @@ describe('UnstyledSelect — keyboard navigation', () => {
   });
 
   it('ArrowDown from the search input moves focus to the first option', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
     await user.keyboard('{ArrowDown}');
@@ -416,8 +337,7 @@ describe('UnstyledSelect — keyboard navigation', () => {
   });
 
   it('ArrowUp from the first option moves focus back to the search input', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
     await user.keyboard('{ArrowDown}{ArrowUp}');
@@ -426,8 +346,7 @@ describe('UnstyledSelect — keyboard navigation', () => {
   });
 
   it('ArrowDown moves focus to the next option', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
     await user.keyboard('{ArrowDown}{ArrowDown}');
@@ -436,8 +355,7 @@ describe('UnstyledSelect — keyboard navigation', () => {
   });
 
   it('ArrowUp moves focus to the previous option', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
     await user.keyboard('{ArrowDown}{ArrowDown}{ArrowUp}');
@@ -446,8 +364,7 @@ describe('UnstyledSelect — keyboard navigation', () => {
   });
 
   it('ArrowDown does not move past the last option', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
     await user.keyboard('{ArrowDown}{ArrowDown}{ArrowDown}{ArrowDown}');
@@ -456,10 +373,7 @@ describe('UnstyledSelect — keyboard navigation', () => {
   });
 
   it('ArrowDown skips a disabled option', async () => {
-    const user = userEvent.setup();
-    render(
-      <UnstyledSelect aria-label="Fruit" options={fruitOptionsWithDisabled} />,
-    );
+    renderSelect({ options: fruitOptionsWithDisabled });
 
     await openSelect(user);
     await user.keyboard('{ArrowDown}{ArrowDown}');
@@ -468,10 +382,7 @@ describe('UnstyledSelect — keyboard navigation', () => {
   });
 
   it('ArrowUp skips a disabled option', async () => {
-    const user = userEvent.setup();
-    render(
-      <UnstyledSelect aria-label="Fruit" options={fruitOptionsWithDisabled} />,
-    );
+    renderSelect({ options: fruitOptionsWithDisabled });
 
     await openSelect(user);
     await user.keyboard('{End}{ArrowUp}');
@@ -480,8 +391,7 @@ describe('UnstyledSelect — keyboard navigation', () => {
   });
 
   it('Home moves focus to the first enabled option', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
     await user.keyboard('{ArrowDown}{ArrowDown}{Home}');
@@ -490,8 +400,7 @@ describe('UnstyledSelect — keyboard navigation', () => {
   });
 
   it('End moves focus to the last enabled option', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
     await user.keyboard('{End}');
@@ -500,15 +409,8 @@ describe('UnstyledSelect — keyboard navigation', () => {
   });
 
   it('Enter selects the focused option and closes the listbox (single-select)', async () => {
-    const user = userEvent.setup();
     const handleChange = vi.fn();
-    render(
-      <UnstyledSelect
-        aria-label="Fruit"
-        options={fruitOptions}
-        onChange={handleChange}
-      />,
-    );
+    renderSelect({ onChange: handleChange });
 
     await openSelect(user);
     await user.keyboard('{ArrowDown}{ArrowDown}{Enter}');
@@ -518,16 +420,8 @@ describe('UnstyledSelect — keyboard navigation', () => {
   });
 
   it('in multi-select mode, Enter toggles the focused option without closing the listbox', async () => {
-    const user = userEvent.setup();
     const handleChange = vi.fn();
-    render(
-      <UnstyledSelect
-        aria-label="Fruit"
-        options={fruitOptions}
-        multiple
-        onChange={handleChange}
-      />,
-    );
+    renderSelect({ multiple: true, onChange: handleChange });
 
     await openSelect(user);
     await user.keyboard('{ArrowDown}{Enter}');
@@ -538,18 +432,16 @@ describe('UnstyledSelect — keyboard navigation', () => {
   });
 
   it('closing via Escape returns focus to the trigger', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
-    await user.keyboard('{Escape}');
+    await closeSelect(user);
 
     expect(getCombobox()).toHaveFocus();
   });
 
   it('closing via selecting an option returns focus to the trigger (single-select)', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
     await clickOption(user, 'Banana');
@@ -560,8 +452,7 @@ describe('UnstyledSelect — keyboard navigation', () => {
 
 describe('UnstyledSelect — search / filter', () => {
   it('renders a search input inside the popup when opened', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
 
@@ -569,8 +460,7 @@ describe('UnstyledSelect — search / filter', () => {
   });
 
   it('the search input starts empty when the listbox opens', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
 
@@ -578,8 +468,7 @@ describe('UnstyledSelect — search / filter', () => {
   });
 
   it('typing filters the rendered options by label, case-insensitively', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
     await typeQuery(user, 'AN');
@@ -588,8 +477,7 @@ describe('UnstyledSelect — search / filter', () => {
   });
 
   it('shows no options when the query matches nothing', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
     await typeQuery(user, 'xyz');
@@ -598,19 +486,17 @@ describe('UnstyledSelect — search / filter', () => {
   });
 
   it('clearing the query shows every option again', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
     await typeQuery(user, 'an');
-    await user.clear(getSearchInput());
+    await clearQuery(user);
 
     expect(getOptionLabels()).toEqual(['Apple', 'Banana', 'Cherry']);
   });
 
   it('keyboard navigation operates over the filtered results, not the full list', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
     await typeQuery(user, 'a');
@@ -622,15 +508,8 @@ describe('UnstyledSelect — search / filter', () => {
   });
 
   it('selecting a filtered option selects the right value', async () => {
-    const user = userEvent.setup();
     const handleChange = vi.fn();
-    render(
-      <UnstyledSelect
-        aria-label="Fruit"
-        options={fruitOptions}
-        onChange={handleChange}
-      />,
-    );
+    renderSelect({ onChange: handleChange });
 
     await openSelect(user);
     await typeQuery(user, 'an');
@@ -640,12 +519,11 @@ describe('UnstyledSelect — search / filter', () => {
   });
 
   it('resets the query when the listbox closes without selecting (Escape)', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
     await typeQuery(user, 'an');
-    await user.keyboard('{Escape}');
+    await closeSelect(user);
     await openSelect(user);
 
     expect(getSearchInput()).toHaveValue('');
@@ -653,8 +531,7 @@ describe('UnstyledSelect — search / filter', () => {
   });
 
   it('resets the query after selecting an option (single-select)', async () => {
-    const user = userEvent.setup();
-    render(<UnstyledSelect aria-label="Fruit" options={fruitOptions} />);
+    renderSelect();
 
     await openSelect(user);
     await typeQuery(user, 'an');
@@ -666,10 +543,7 @@ describe('UnstyledSelect — search / filter', () => {
   });
 
   it('a disabled option matching the query still shows aria-disabled', async () => {
-    const user = userEvent.setup();
-    render(
-      <UnstyledSelect aria-label="Fruit" options={fruitOptionsWithDisabled} />,
-    );
+    renderSelect({ options: fruitOptionsWithDisabled });
 
     await openSelect(user);
     await typeQuery(user, 'ban');
@@ -678,10 +552,7 @@ describe('UnstyledSelect — search / filter', () => {
   });
 
   it('multi-select also supports search filtering', async () => {
-    const user = userEvent.setup();
-    render(
-      <UnstyledSelect aria-label="Fruit" options={fruitOptions} multiple />,
-    );
+    renderSelect({ multiple: true });
 
     await openSelect(user);
     await typeQuery(user, 'an');
