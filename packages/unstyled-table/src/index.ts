@@ -1,5 +1,5 @@
 export {
-  type UnstyledTableProps,
   type TableColumn,
   UnstyledTable,
+  type UnstyledTableProps,
 } from './components';

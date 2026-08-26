@@ -1,5 +1,2 @@
-export {
-  type UnstyledTableProps,
-  type TableColumn,
-  UnstyledTable,
-} from './UnstyledTable';
+export type { TableColumn } from './TableHeaderRow';
+export { UnstyledTable, type UnstyledTableProps } from './UnstyledTable';

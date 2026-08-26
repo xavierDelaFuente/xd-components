@@ -1,10 +1,6 @@
-import {
-  type ForwardedRef,
-  forwardRef,
-  type ReactNode,
-  useMemo,
-  useState,
-} from 'react';
+import { type ForwardedRef, forwardRef, useMemo, useState } from 'react';
+import { TableBodyRows } from './TableBodyRows';
+import { type TableColumn, TableHeaderRow } from './TableHeaderRow';
 
 export type SortDirection = 'asc' | 'desc';
 
@@ -13,95 +9,24 @@ export type SortState<T> = {
   direction: SortDirection;
 };
 
-export type TableColumn<T> = {
-  key: keyof T;
-  header: string;
-  render?: (row: T) => ReactNode;
-  sortable?: boolean;
-};
-
 export type UnstyledTableProps<T> = {
   columns: TableColumn<T>[];
   data: T[];
   sort?: SortState<T> | null;
   defaultSort?: SortState<T> | null;
   onSortChange?: (sort: SortState<T> | null) => void;
+  filterable?: boolean;
 };
 
-function TableHeader<T>({
-  column,
-  sortState,
-  onSort,
-}: {
-  column: TableColumn<T>;
-  sortState: SortState<T> | null;
-  onSort: (key: keyof T) => void;
-}) {
-  if (!column.sortable) {
-    return <th>{column.header}</th>;
-  }
-
-  const isActive = sortState?.key === column.key;
-  const ariaSort = isActive
-    ? sortState.direction === 'asc'
-      ? 'ascending'
-      : 'descending'
-    : 'none';
-
-  return (
-    <th aria-sort={ariaSort}>
-      <button type="button" onClick={() => onSort(column.key)}>
-        {column.header}
-      </button>
-    </th>
-  );
-}
-
-function Header<T>({
-  columns,
-  sortState,
-  onSort,
-}: {
-  columns: TableColumn<T>[];
-  sortState: SortState<T> | null;
-  onSort: (key: keyof T) => void;
-}) {
-  return (
-    <thead>
-      <tr>
-        {columns.map((column) => {
-          return (
-            <TableHeader
-              key={String(column.key)}
-              column={column}
-              sortState={sortState}
-              onSort={onSort}
-            />
-          );
-        })}
-      </tr>
-    </thead>
-  );
-}
-
-function Body<T>({ columns, data }: { columns: TableColumn<T>[]; data: T[] }) {
-  return (
-    <tbody>
-      {data.map((row, index) => (
-        <tr key={index}>
-          {columns.map((column) => (
-            <td key={String(column.key)}>
-              {column.render ? column.render(row) : String(row[column.key])}
-            </td>
-          ))}
-        </tr>
-      ))}
-    </tbody>
-  );
-}
-
 function UnstyledTableInner<T>(
-  { columns, data, sort, defaultSort, onSortChange }: UnstyledTableProps<T>,
+  {
+    columns,
+    data,
+    sort,
+    defaultSort,
+    onSortChange,
+    filterable,
+  }: UnstyledTableProps<T>,
   ref: ForwardedRef<HTMLTableElement>,
 ) {
   const isControlled = sort !== undefined;
@@ -109,6 +34,7 @@ function UnstyledTableInner<T>(
     defaultSort ?? null,
   );
   const sortState = isControlled ? sort : internalSort;
+  const [filterQuery, setFilterQuery] = useState('');
 
   const handleSort = (key: keyof T) => {
     let next: SortState<T> | null;
@@ -124,23 +50,48 @@ function UnstyledTableInner<T>(
     onSortChange?.(next);
   };
 
-  const sortedData = useMemo(() => {
-    if (!sortState) {
+  const filteredData = useMemo(() => {
+    if (!filterQuery) {
       return data;
     }
+    const query = filterQuery.toLowerCase();
+    return data.filter((row) =>
+      columns.some((column) =>
+        String(row[column.key]).toLowerCase().includes(query),
+      ),
+    );
+  }, [data, columns, filterQuery]);
+
+  const sortedData = useMemo(() => {
+    if (!sortState) {
+      return filteredData;
+    }
     const { key, direction } = sortState;
-    return [...data].sort((a, b) => {
+    return [...filteredData].sort((a, b) => {
       if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
       if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
       return 0;
     });
-  }, [data, sortState]);
+  }, [filteredData, sortState]);
 
   return (
-    <table ref={ref}>
-      <Header columns={columns} sortState={sortState} onSort={handleSort} />
-      <Body columns={columns} data={sortedData} />
-    </table>
+    <>
+      {filterable && (
+        <input
+          aria-label="Search table"
+          value={filterQuery}
+          onChange={(e) => setFilterQuery(e.target.value)}
+        />
+      )}
+      <table ref={ref}>
+        <TableHeaderRow
+          columns={columns}
+          sortState={sortState}
+          onSort={handleSort}
+        />
+        <TableBodyRows columns={columns} data={sortedData} />
+      </table>
+    </>
   );
 }
 
