@@ -1,5 +1,12 @@
 # @asnewyla/radio-group
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [b02fc0d]
+  - @asnewyla/radio@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes

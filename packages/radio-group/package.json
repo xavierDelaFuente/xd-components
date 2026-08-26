@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/radio-group",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Groups radios and shares selected value/name via context",
   "license": "MIT",
   "repository": {

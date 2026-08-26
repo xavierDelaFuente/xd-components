@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/card",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Content card surface with an optional image, padding, and radius",
   "license": "MIT",
   "repository": {

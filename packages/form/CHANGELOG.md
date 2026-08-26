@@ -1,5 +1,12 @@
 # @asnewyla/form
 
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies [b02fc0d]
+  - @asnewyla/input@0.2.1
+
 ## 0.2.1
 
 ### Patch Changes

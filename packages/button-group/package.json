@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/button-group",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Groups buttons visually and propagates shared props via context",
   "license": "MIT",
   "repository": {
