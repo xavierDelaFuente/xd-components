@@ -118,4 +118,63 @@ describe('@asnewyla/tokens', () => {
     expect(explicitDarkBlock).toContain('--xd-color-surface: #0f172a;');
     expect(explicitDarkBlock).toContain('--xd-shadow-sm: none;');
   });
+
+  it('paints background-color/color/font-family on the root itself, not just components — a bare <ThemeProvider> with nothing else mounted still renders themed, not transparent', () => {
+    expect(css).toContain('background-color: var(--xd-color-surface);');
+    expect(css).toContain('color: var(--xd-color-text);');
+    expect(css).toContain('font-family: var(--xd-font-family);');
+  });
+
+  it('defines a font-family scale, sans + mono, with system fallbacks', () => {
+    expect(css).toContain('--xd-font-family: system-ui, sans-serif;');
+    expect(css).toContain('--xd-font-family-mono: ui-monospace, monospace;');
+  });
+
+  it('defines medium/bold font-weight tokens alongside the existing regular/semibold', () => {
+    expect(css).toContain('--xd-font-weight-medium: 500;');
+    expect(css).toContain('--xd-font-weight-bold: 700;');
+  });
+
+  it('defines label letter-spacing/text-transform tokens, neutral by default', () => {
+    expect(css).toContain('--xd-letter-spacing-label: 0;');
+    expect(css).toContain('--xd-text-transform-label: none;');
+  });
+
+  it('extends the spacing scale with --xd-space-3xl, for airier themes', () => {
+    expect(css).toContain('--xd-space-3xl: 2rem;');
+  });
+
+  it('defines a thicker border-width tier, for a filled control outline or a heavier frame', () => {
+    expect(css).toContain('--xd-border-width-thick: 2px;');
+  });
+
+  it('defines --xd-frame-border-width for cards/popovers/listboxes, defaulting to the hairline border', () => {
+    expect(css).toContain(
+      '--xd-frame-border-width: var(--xd-border-width-thin);',
+    );
+  });
+
+  it("defines a control border width/color pair, off by default so a filled control's own outline stays opt-in per theme", () => {
+    expect(css).toContain('--xd-control-border-width: 0;');
+    expect(css).toContain('--xd-control-border-color: currentColor;');
+  });
+
+  it('defines --xd-control-height-md, a fixed height for md-sized interactive controls', () => {
+    expect(css).toContain('--xd-control-height-md: 2.25rem;');
+  });
+
+  it('defines a control-specific elevation tier (press shadow/transform), separate from surface elevation, off by default', () => {
+    expect(css).toContain('--xd-shadow-control: none;');
+    expect(css).toContain('--xd-shadow-control-active: none;');
+    expect(css).toContain('--xd-press-transform: none;');
+  });
+
+  it('keeps the new typography/border/density/control-elevation tokens constant across light and dark — only color and surface elevation switch', () => {
+    const darkBlock = css.split('prefers-color-scheme: dark')[1] ?? '';
+    expect(darkBlock).not.toContain('--xd-font-family:');
+    expect(darkBlock).not.toContain('--xd-space-3xl:');
+    expect(darkBlock).not.toContain('--xd-border-width-thick:');
+    expect(darkBlock).not.toContain('--xd-control-height-md:');
+    expect(darkBlock).not.toContain('--xd-press-transform:');
+  });
 });

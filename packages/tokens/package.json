@@ -13,9 +13,12 @@
   },
   "exports": {
     "./tokens.css": "./dist/tokens.css",
-    "./theme-paper.css": "./dist/theme-paper.css",
-    "./theme-sand.css": "./dist/theme-sand.css",
-    "./theme-lavender.css": "./dist/theme-lavender.css"
+    "./theme-terra.css": "./dist/theme-terra.css",
+    "./theme-almanac.css": "./dist/theme-almanac.css",
+    "./theme-block.css": "./dist/theme-block.css",
+    "./theme-graphite.css": "./dist/theme-graphite.css",
+    "./theme-rubber.css": "./dist/theme-rubber.css",
+    "./theme-terminal.css": "./dist/theme-terminal.css"
   },
   "files": ["dist"],
   "sideEffects": ["*.css"],

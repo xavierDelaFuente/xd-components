@@ -38,7 +38,7 @@ export const Colors: StoryObj = {
 export const Spacing: StoryObj = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-      {['xs', 'sm', 'md', 'lg', 'xl', '2xl'].map((step) => (
+      {['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'].map((step) => (
         <div
           key={step}
           style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}
@@ -86,6 +86,19 @@ export const Typography: StoryObj = {
           --xd-font-size-{step}
         </p>
       ))}
+    </div>
+  ),
+};
+
+export const FontFamily: StoryObj = {
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+      <p style={{ fontFamily: 'var(--xd-font-family)', margin: 0 }}>
+        --xd-font-family: The quick brown fox jumps over the lazy dog
+      </p>
+      <p style={{ fontFamily: 'var(--xd-font-family-mono)', margin: 0 }}>
+        --xd-font-family-mono: The quick brown fox jumps over the lazy dog
+      </p>
     </div>
   ),
 };

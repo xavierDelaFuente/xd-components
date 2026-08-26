@@ -1,0 +1,139 @@
+/*
+ * asnewyla/tokens -- theme-almanac.css
+ *
+ * Almanac: editorial serif on cool ink-and-cream. Legal-pad, not warm paper.
+ * Source Serif 4, tight 2-4px corners, generous spacing, 200ms motion. Navy-ink primary instead of terracotta.
+ *
+ * Complete, standalone theme: every --xd-* token the library defines
+ * (including the font-family/letter-spacing/border/density/elevation
+ * additions below) is set here, so importing only this file gives every
+ * component a full working set of fallback values. Also paints
+ * background-color/color/font-family directly on the themed root, not
+ * just the custom properties -- a page that mounts only this theme
+ * (no per-component styling) still renders correctly, not transparent.
+ *
+ * Usage:
+ *   import '@asnewyla/tokens/theme-almanac.css';
+ *   <ThemeProvider theme="almanac">...
+ *   Light/dark follows prefers-color-scheme by default; data-mode="light"|"dark"
+ *   on <html> drives an explicit toggle independent of the active theme.
+ */
+
+[data-theme="almanac"] {
+  color-scheme: light;
+  background-color: var(--xd-color-surface);
+  color: var(--xd-color-text);
+  font-family: var(--xd-font-family);
+
+  --xd-color-primary: oklch(32% 0.05 255);
+  --xd-on-primary: oklch(98% 0.006 255);
+  --xd-color-secondary: oklch(38% 0.015 60);
+  --xd-on-secondary: oklch(98% 0.006 255);
+  --xd-color-destructive: oklch(46% 0.15 25);
+  --xd-on-destructive: oklch(98% 0.006 255);
+
+  --xd-color-surface: oklch(98% 0.006 90);
+  --xd-color-surface-hover: oklch(94% 0.012 88);
+  --xd-color-text: oklch(22% 0.008 60);
+  --xd-color-text-muted: oklch(46% 0.012 60);
+
+  --xd-space-xs: 0.25rem;
+  --xd-space-sm: 0.4375rem;
+  --xd-space-md: 0.5625rem;
+  --xd-space-lg: 0.875rem;
+  --xd-space-xl: 1.125rem;
+  --xd-space-2xl: 1.75rem;
+  --xd-space-3xl: 2.5rem;
+
+  --xd-radius-sm: 0.125rem;
+  --xd-radius-md: 0.1875rem;
+  --xd-radius-lg: 0.25rem;
+  --xd-radius-full: 9999px;
+
+  --xd-font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --xd-font-family-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --xd-font-size-sm: 0.875rem;
+  --xd-font-size-md: 0.9375rem;
+  --xd-font-size-lg: 1.0625rem;
+  --xd-font-weight-regular: 400;
+  --xd-font-weight-medium: 500;
+  --xd-font-weight-semibold: 600;
+  --xd-font-weight-bold: 700;
+  --xd-line-height-normal: 1.35;
+  --xd-letter-spacing-label: 0.015em;
+  --xd-text-transform-label: none;
+
+  --xd-color-border: oklch(88% 0.01 80);
+  --xd-color-border-strong: oklch(50% 0.012 60);
+  --xd-border-width-thin: 1px;
+  --xd-border-width-thick: 2px;
+  --xd-frame-border-width: var(--xd-border-width-thin);
+  --xd-control-border-width: 0;
+  --xd-control-border-color: currentColor;
+  --xd-control-height-md: 2.375rem;
+
+  --xd-color-focus: oklch(32% 0.05 255);
+  --xd-focus-ring-width: 2px;
+  --xd-focus-ring-offset: 2px;
+
+  --xd-shadow-sm: 0 1px 0 oklch(30% 0.01 60 / 12%);
+  --xd-shadow-md: 0 2px 7px oklch(30% 0.01 60 / 10%);
+  --xd-shadow-control: none;
+  --xd-shadow-control-active: none;
+  --xd-press-transform: none;
+
+  --xd-opacity-disabled: 0.5;
+  --xd-motion-fast: 200ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-theme="almanac"]:not([data-mode="light"]) {
+    color-scheme: dark;
+
+    --xd-color-primary: oklch(76% 0.08 255);
+    --xd-on-primary: oklch(18% 0.012 255);
+    --xd-color-secondary: oklch(78% 0.014 70);
+    --xd-on-secondary: oklch(18% 0.012 255);
+    --xd-color-destructive: oklch(70% 0.14 28);
+    --xd-on-destructive: oklch(18% 0.012 255);
+
+    --xd-color-surface: oklch(19% 0.01 60);
+    --xd-color-surface-hover: oklch(24% 0.012 60);
+    --xd-color-text: oklch(93% 0.006 85);
+    --xd-color-text-muted: oklch(70% 0.012 70);
+
+    --xd-color-border: oklch(31% 0.012 60);
+    --xd-color-border-strong: oklch(54% 0.014 65);
+    --xd-color-focus: oklch(76% 0.08 255);
+
+    --xd-shadow-sm: none;
+    --xd-shadow-md: none;
+    --xd-shadow-control: none;
+    --xd-shadow-control-active: none;
+  }
+}
+
+[data-theme="almanac"][data-mode="dark"] {
+  color-scheme: dark;
+
+  --xd-color-primary: oklch(76% 0.08 255);
+  --xd-on-primary: oklch(18% 0.012 255);
+  --xd-color-secondary: oklch(78% 0.014 70);
+  --xd-on-secondary: oklch(18% 0.012 255);
+  --xd-color-destructive: oklch(70% 0.14 28);
+  --xd-on-destructive: oklch(18% 0.012 255);
+
+  --xd-color-surface: oklch(19% 0.01 60);
+  --xd-color-surface-hover: oklch(24% 0.012 60);
+  --xd-color-text: oklch(93% 0.006 85);
+  --xd-color-text-muted: oklch(70% 0.012 70);
+
+  --xd-color-border: oklch(31% 0.012 60);
+  --xd-color-border-strong: oklch(54% 0.014 65);
+  --xd-color-focus: oklch(76% 0.08 255);
+
+  --xd-shadow-sm: none;
+  --xd-shadow-md: none;
+  --xd-shadow-control: none;
+  --xd-shadow-control-active: none;
+}
