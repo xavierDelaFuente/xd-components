@@ -4,9 +4,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { type TableColumn, UnstyledTable } from '../components';
 import {
   getBodyRows,
-  getNameHeader,
-  getNameSortButton,
+  getColumnHeader,
   getSearchInput,
+  getSortButton,
   getTable,
   namesInOrder,
 } from '../test-utils';
@@ -99,8 +99,8 @@ describe('UnstyledTable sorting', () => {
   it('renders a sortable column header as a button, unsorted by default', () => {
     render(<UnstyledTable data={unsortedPeople} columns={sortableColumns} />);
 
-    expect(getNameSortButton()).toBeInTheDocument();
-    expect(getNameHeader()).toHaveAttribute('aria-sort', 'none');
+    expect(getSortButton('Name')).toBeInTheDocument();
+    expect(getColumnHeader('Name')).toHaveAttribute('aria-sort', 'none');
   });
 
   it('renders a non-sortable column header as plain text, not a button', () => {
@@ -109,27 +109,25 @@ describe('UnstyledTable sorting', () => {
     expect(
       screen.queryByRole('button', { name: 'Age' }),
     ).not.toBeInTheDocument();
-    expect(
-      screen.getByRole('columnheader', { name: 'Age' }),
-    ).not.toHaveAttribute('aria-sort');
+    expect(getColumnHeader('Age')).not.toHaveAttribute('aria-sort');
   });
 
   it('sorts rows ascending by a column on first click, uncontrolled', async () => {
     render(<UnstyledTable data={unsortedPeople} columns={sortableColumns} />);
 
-    await user.click(getNameSortButton());
+    await user.click(getSortButton('Name'));
 
     expect(namesInOrder()).toEqual([
       'Ada Lovelace',
       'Alan Turing',
       'Grace Hopper',
     ]);
-    expect(getNameHeader()).toHaveAttribute('aria-sort', 'ascending');
+    expect(getColumnHeader('Name')).toHaveAttribute('aria-sort', 'ascending');
   });
 
   it('sorts rows descending on a second click of the same column', async () => {
     render(<UnstyledTable data={unsortedPeople} columns={sortableColumns} />);
-    const nameButton = getNameSortButton();
+    const nameButton = getSortButton('Name');
 
     await user.click(nameButton);
     await user.click(nameButton);
@@ -139,12 +137,12 @@ describe('UnstyledTable sorting', () => {
       'Alan Turing',
       'Ada Lovelace',
     ]);
-    expect(getNameHeader()).toHaveAttribute('aria-sort', 'descending');
+    expect(getColumnHeader('Name')).toHaveAttribute('aria-sort', 'descending');
   });
 
   it('clears sorting and restores original row order on a third click', async () => {
     render(<UnstyledTable data={unsortedPeople} columns={sortableColumns} />);
-    const nameButton = getNameSortButton();
+    const nameButton = getSortButton('Name');
 
     await user.click(nameButton);
     await user.click(nameButton);
@@ -155,7 +153,7 @@ describe('UnstyledTable sorting', () => {
       'Grace Hopper',
       'Ada Lovelace',
     ]);
-    expect(getNameHeader()).toHaveAttribute('aria-sort', 'none');
+    expect(getColumnHeader('Name')).toHaveAttribute('aria-sort', 'none');
   });
 
   it('supports controlled sorting via sort + onSortChange, without reordering internally', async () => {
@@ -169,7 +167,7 @@ describe('UnstyledTable sorting', () => {
       />,
     );
 
-    await user.click(getNameSortButton());
+    await user.click(getSortButton('Name'));
 
     expect(handleSortChange).toHaveBeenCalledWith({
       key: 'name',
@@ -198,7 +196,7 @@ describe('UnstyledTable sorting', () => {
       'Alan Turing',
       'Ada Lovelace',
     ]);
-    expect(getNameHeader()).toHaveAttribute('aria-sort', 'descending');
+    expect(getColumnHeader('Name')).toHaveAttribute('aria-sort', 'descending');
   });
 });
 
@@ -269,7 +267,7 @@ describe('UnstyledTable filtering', () => {
 
     // 'o' matches Zoe and Bob, not Amy
     await user.type(getSearchInput(), 'o');
-    await user.click(screen.getByRole('button', { name: 'Name' }));
+    await user.click(getSortButton('Name'));
 
     const rows = getBodyRows();
     expect(rows).toHaveLength(2);

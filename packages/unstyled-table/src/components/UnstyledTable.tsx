@@ -1,6 +1,8 @@
-import { type ForwardedRef, forwardRef, useMemo, useState } from 'react';
+import { type ForwardedRef, forwardRef } from 'react';
 import { TableBodyRows } from './TableBodyRows';
 import { type TableColumn, TableHeaderRow } from './TableHeaderRow';
+import { useTableFilter } from './useTableFilter';
+import { useTableSort } from './useTableSort';
 
 export type SortDirection = 'asc' | 'desc';
 
@@ -29,50 +31,16 @@ function UnstyledTableInner<T>(
   }: UnstyledTableProps<T>,
   ref: ForwardedRef<HTMLTableElement>,
 ) {
-  const isControlled = sort !== undefined;
-  const [internalSort, setInternalSort] = useState<SortState<T> | null>(
-    defaultSort ?? null,
-  );
-  const sortState = isControlled ? sort : internalSort;
-  const [filterQuery, setFilterQuery] = useState('');
-
-  const handleSort = (key: keyof T) => {
-    let next: SortState<T> | null;
-    if (sortState?.key === key) {
-      next = sortState.direction === 'asc' ? { key, direction: 'desc' } : null;
-    } else {
-      next = { key, direction: 'asc' };
-    }
-
-    if (!isControlled) {
-      setInternalSort(next);
-    }
-    onSortChange?.(next);
-  };
-
-  const filteredData = useMemo(() => {
-    if (!filterQuery) {
-      return data;
-    }
-    const query = filterQuery.toLowerCase();
-    return data.filter((row) =>
-      columns.some((column) =>
-        String(row[column.key]).toLowerCase().includes(query),
-      ),
-    );
-  }, [data, columns, filterQuery]);
-
-  const sortedData = useMemo(() => {
-    if (!sortState) {
-      return filteredData;
-    }
-    const { key, direction } = sortState;
-    return [...filteredData].sort((a, b) => {
-      if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
-      if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
-      return 0;
-    });
-  }, [filteredData, sortState]);
+  const { filterQuery, setFilterQuery, filteredData } = useTableFilter({
+    data,
+    columns,
+  });
+  const { sortState, handleSort, sortedData } = useTableSort({
+    data: filteredData,
+    sort,
+    defaultSort,
+    onSortChange,
+  });
 
   return (
     <>

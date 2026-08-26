@@ -9,12 +9,12 @@ export function getBodyRows(): HTMLElement[] {
   return screen.getAllByRole('row').slice(1);
 }
 
-export function getNameHeader() {
-  return screen.getByRole('columnheader', { name: 'Name' });
+export function getColumnHeader(name: string): HTMLElement {
+  return screen.getByRole('columnheader', { name });
 }
 
-export function getNameSortButton() {
-  return screen.getByRole('button', { name: 'Name' });
+export function getSortButton(name: string): HTMLElement {
+  return screen.getByRole('button', { name });
 }
 
 export function namesInOrder(): string[] {
