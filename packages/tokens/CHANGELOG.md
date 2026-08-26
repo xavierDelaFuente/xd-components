@@ -1,5 +1,13 @@
 # @asnewyla/tokens
 
+## 0.5.0
+
+### Minor Changes
+
+- b02fc0d: replace the unreleased `theme-paper`/`theme-sand`/`theme-lavender` themes with six complete themes — `theme-terra`, `theme-almanac`, `theme-block`, `theme-graphite`, `theme-rubber`, `theme-terminal` — each a full, standalone set of every `--xd-*` token (including the new tiers below), plus `background-color`/`color`/`font-family` painted directly on `[data-theme="name"]` so a page mounting only a theme file still renders correctly with nothing else styled. Unlike the retired themes, a theme file no longer combines a bare `:root:not([data-theme])` fallback into its own selector — `tokens.css`'s own `:root` is the sole untagged default now.
+  
+  Also, on `tokens.css` itself: adds a font-family tier (`--xd-font-family`, `--xd-font-family-mono`, `--xd-font-weight-medium`, `--xd-font-weight-bold`), label voicing (`--xd-letter-spacing-label`, `--xd-text-transform-label`), `--xd-space-3xl`, a second border tier (`--xd-border-width-thick`), `--xd-frame-border-width` (what cards/popovers/listboxes read), a control border pair (`--xd-control-border-width`/`--xd-control-border-color`, off by default), `--xd-control-height-md`, and a control-specific elevation tier separate from surface elevation (`--xd-shadow-control`, `--xd-shadow-control-active`, `--xd-press-transform`) for a themeable button press effect. Also fixes `tokens.css`'s own dark-mode media query to respect an explicit `data-mode="light"` override, matching what the theme files already did. Paints `background-color`/`color`/`font-family` on the bare `:root` too, so a lone `<ThemeProvider>` with nothing else mounted still renders themed rather than transparent.
+
 ## 0.4.0
 
 ### Minor Changes
