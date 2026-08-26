@@ -58,6 +58,8 @@
 
 .xd-checkbox-label {
   font-size: var(--xd-font-size-md, 0.875rem);
+  letter-spacing: var(--xd-letter-spacing-label, 0);
+  text-transform: var(--xd-text-transform-label, none);
   cursor: pointer;
 }
 

@@ -1,0 +1,139 @@
+/*
+ * asnewyla/tokens -- theme-graphite.css
+ *
+ * Graphite: dense, precise, neutral instrument-panel theme.
+ * Tight spacing/radius scale, IBM Plex Sans/Mono, 90ms motion. For tables and control panels, not marketing surfaces.
+ *
+ * Complete, standalone theme: every --xd-* token the library defines
+ * (including the font-family/letter-spacing/border/density/elevation
+ * additions below) is set here, so importing only this file gives every
+ * component a full working set of fallback values. Also paints
+ * background-color/color/font-family directly on the themed root, not
+ * just the custom properties -- a page that mounts only this theme
+ * (no per-component styling) still renders correctly, not transparent.
+ *
+ * Usage:
+ *   import '@asnewyla/tokens/theme-graphite.css';
+ *   <ThemeProvider theme="graphite">...
+ *   Light/dark follows prefers-color-scheme by default; data-mode="light"|"dark"
+ *   on <html> drives an explicit toggle independent of the active theme.
+ */
+
+[data-theme="graphite"] {
+  color-scheme: light;
+  background-color: var(--xd-color-surface);
+  color: var(--xd-color-text);
+  font-family: var(--xd-font-family);
+
+  --xd-color-primary: oklch(48% 0.15 258);
+  --xd-on-primary: oklch(99% 0 0);
+  --xd-color-secondary: oklch(45% 0.02 262);
+  --xd-on-secondary: oklch(99% 0 0);
+  --xd-color-destructive: oklch(52% 0.19 27);
+  --xd-on-destructive: oklch(99% 0 0);
+
+  --xd-color-surface: oklch(100% 0 0);
+  --xd-color-surface-hover: oklch(96.5% 0.004 262);
+  --xd-color-text: oklch(24% 0.012 262);
+  --xd-color-text-muted: oklch(50% 0.014 262);
+
+  --xd-space-xs: 0.25rem;
+  --xd-space-sm: 0.3125rem;
+  --xd-space-md: 0.4375rem;
+  --xd-space-lg: 0.625rem;
+  --xd-space-xl: 0.875rem;
+  --xd-space-2xl: 1.25rem;
+  --xd-space-3xl: 1.75rem;
+
+  --xd-radius-sm: 0.1875rem;
+  --xd-radius-md: 0.25rem;
+  --xd-radius-lg: 0.375rem;
+  --xd-radius-full: 9999px;
+
+  --xd-font-family: "IBM Plex Sans", system-ui, sans-serif;
+  --xd-font-family-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --xd-font-size-sm: 0.8125rem;
+  --xd-font-size-md: 0.875rem;
+  --xd-font-size-lg: 1rem;
+  --xd-font-weight-regular: 400;
+  --xd-font-weight-medium: 500;
+  --xd-font-weight-semibold: 600;
+  --xd-font-weight-bold: 700;
+  --xd-line-height-normal: 1.3;
+  --xd-letter-spacing-label: 0.005em;
+  --xd-text-transform-label: none;
+
+  --xd-color-border: oklch(90% 0.006 262);
+  --xd-color-border-strong: oklch(58% 0.014 262);
+  --xd-border-width-thin: 1px;
+  --xd-border-width-thick: 2px;
+  --xd-frame-border-width: var(--xd-border-width-thin);
+  --xd-control-border-width: 0;
+  --xd-control-border-color: currentColor;
+  --xd-control-height-md: 2rem;
+
+  --xd-color-focus: oklch(48% 0.15 258);
+  --xd-focus-ring-width: 2px;
+  --xd-focus-ring-offset: 2px;
+
+  --xd-shadow-sm: 0 1px 2px oklch(30% 0.02 262 / 9%);
+  --xd-shadow-md: 0 4px 10px oklch(30% 0.02 262 / 11%);
+  --xd-shadow-control: none;
+  --xd-shadow-control-active: none;
+  --xd-press-transform: none;
+
+  --xd-opacity-disabled: 0.5;
+  --xd-motion-fast: 90ms cubic-bezier(0.3, 0, 0, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-theme="graphite"]:not([data-mode="light"]) {
+    color-scheme: dark;
+
+    --xd-color-primary: oklch(70% 0.13 258);
+    --xd-on-primary: oklch(17% 0.02 262);
+    --xd-color-secondary: oklch(78% 0.015 262);
+    --xd-on-secondary: oklch(17% 0.02 262);
+    --xd-color-destructive: oklch(68% 0.16 27);
+    --xd-on-destructive: oklch(17% 0.02 262);
+
+    --xd-color-surface: oklch(18% 0.012 262);
+    --xd-color-surface-hover: oklch(23% 0.014 262);
+    --xd-color-text: oklch(95% 0.005 262);
+    --xd-color-text-muted: oklch(72% 0.012 262);
+
+    --xd-color-border: oklch(30% 0.012 262);
+    --xd-color-border-strong: oklch(54% 0.014 262);
+    --xd-color-focus: oklch(70% 0.13 258);
+
+    --xd-shadow-sm: none;
+    --xd-shadow-md: none;
+    --xd-shadow-control: none;
+    --xd-shadow-control-active: none;
+  }
+}
+
+[data-theme="graphite"][data-mode="dark"] {
+  color-scheme: dark;
+
+  --xd-color-primary: oklch(70% 0.13 258);
+  --xd-on-primary: oklch(17% 0.02 262);
+  --xd-color-secondary: oklch(78% 0.015 262);
+  --xd-on-secondary: oklch(17% 0.02 262);
+  --xd-color-destructive: oklch(68% 0.16 27);
+  --xd-on-destructive: oklch(17% 0.02 262);
+
+  --xd-color-surface: oklch(18% 0.012 262);
+  --xd-color-surface-hover: oklch(23% 0.014 262);
+  --xd-color-text: oklch(95% 0.005 262);
+  --xd-color-text-muted: oklch(72% 0.012 262);
+
+  --xd-color-border: oklch(30% 0.012 262);
+  --xd-color-border-strong: oklch(54% 0.014 262);
+  --xd-color-focus: oklch(70% 0.13 258);
+
+  --xd-shadow-sm: none;
+  --xd-shadow-md: none;
+  --xd-shadow-control: none;
+  --xd-shadow-control-active: none;
+}

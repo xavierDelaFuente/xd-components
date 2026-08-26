@@ -2,7 +2,10 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: var(--xd-border-width-thin, 1px) solid var(--xd-color-border, #cbd5e1);
+  /* Cards are a "frame" surface in the same sense Select's popover is —
+     see --xd-frame-border-width in tokens.css. Defaults to the hairline. */
+  border: var(--xd-frame-border-width, 1px) solid
+    var(--xd-color-border, #cbd5e1);
 }
 
 /* --- Padding --- */

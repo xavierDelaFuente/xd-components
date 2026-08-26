@@ -3,16 +3,26 @@ import { Button } from '@asnewyla/button';
 import { Card } from '@asnewyla/card';
 import { Group, Stack } from '@asnewyla/layout';
 import { ThemeProvider } from '@asnewyla/theme';
-import '@asnewyla/tokens/theme-paper.css';
-import '@asnewyla/tokens/theme-sand.css';
-import '@asnewyla/tokens/theme-lavender.css';
+import '@asnewyla/tokens/theme-terra.css';
+import '@asnewyla/tokens/theme-almanac.css';
+import '@asnewyla/tokens/theme-block.css';
+import '@asnewyla/tokens/theme-graphite.css';
+import '@asnewyla/tokens/theme-rubber.css';
+import '@asnewyla/tokens/theme-terminal.css';
 
-const themeNames = ['paper', 'sand', 'lavender'] as const;
+const themeNames = [
+  'terra',
+  'almanac',
+  'block',
+  'graphite',
+  'rubber',
+  'terminal',
+] as const;
 
 function ThemedDemo() {
   return (
-    <Stack gap="md" style={{ width: 280 }}>
-      <Group gap="sm">
+    <Stack gap="md" style={{ width: 260 }}>
+      <Group gap="sm" wrap>
         <Button size="sm">Primary</Button>
         <Button size="sm" variant="secondary">
           Secondary
@@ -29,6 +39,40 @@ function ThemedDemo() {
         </p>
       </Card>
     </Stack>
+  );
+}
+
+// Every theme's light-mode surface is a barely-tinted near-white (96.5-100%
+// lightness by design — see tokens.css for the measured values), so two
+// theme cards side by side can look like the same flat white without a
+// border of their own to actually separate them from the page and from
+// each other. This wrapper is comparison-view chrome, not theme-aware
+// styling — same "border: 1px solid #ccc" role a designer's own page
+// layout would play around a mounted <ThemeProvider>. `data-theme`/
+// `data-mode` live on this same element so its own `background-color`
+// (set by the theme file's `[data-theme="x"] { background-color: ... }`
+// rule) already matches, with no separate inline background needed.
+function ThemeCard({
+  theme,
+  mode,
+  children,
+}: {
+  theme: string;
+  mode?: 'light' | 'dark';
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      data-theme={theme}
+      data-mode={mode}
+      style={{
+        border: '1px solid var(--xd-color-border-strong, #94a3b8)',
+        borderRadius: 'var(--xd-radius-md, 6px)',
+        padding: '1rem',
+      }}
+    >
+      {children}
+    </div>
   );
 }
 
@@ -53,7 +97,7 @@ type Story = StoryObj<typeof meta>;
 
 export const LiveSwitcher: Story = {
   args: {
-    theme: 'paper',
+    theme: 'terra',
     children: <ThemedDemo />,
   },
   render: (args) => (
@@ -68,13 +112,15 @@ export const LightAndDark: StoryObj = {
     // Same reasoning as AllThemes below: two <ThemeProvider>s can't be
     // active on the shared document root at once, so this comparison view
     // sets [data-theme]/[data-mode] directly on each wrapper instead.
-    <Group gap="lg" align="start">
-      <div data-theme="sand" data-mode="light">
+    // `wrap` keeps this readable instead of forcing a horizontal scrollbar
+    // in a narrow viewport (e.g. the Storybook docs-page iframe).
+    <Group gap="lg" align="start" wrap>
+      <ThemeCard theme="terra" mode="light">
         <ThemedDemo />
-      </div>
-      <div data-theme="sand" data-mode="dark">
+      </ThemeCard>
+      <ThemeCard theme="terra" mode="dark">
         <ThemedDemo />
-      </div>
+      </ThemeCard>
     </Group>
   ),
 };
@@ -86,12 +132,14 @@ export const AllThemes: StoryObj = {
     // would just have the last one to run its effect win for the whole
     // page — only one theme can be active document-wide at a time. This
     // comparison view instead uses the underlying [data-theme] CSS
-    // mechanism directly, scoped to each wrapper.
-    <Group gap="lg" align="start">
+    // mechanism directly, scoped to each wrapper. `wrap` lets the six
+    // cards flow onto multiple rows instead of forcing one wide,
+    // horizontally-scrolling row.
+    <Group gap="lg" align="start" wrap>
       {themeNames.map((theme) => (
-        <div key={theme} data-theme={theme}>
+        <ThemeCard key={theme} theme={theme}>
           <ThemedDemo />
-        </div>
+        </ThemeCard>
       ))}
     </Group>
   ),

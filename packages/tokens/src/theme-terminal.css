@@ -1,0 +1,139 @@
+/*
+ * asnewyla/tokens -- theme-terminal.css
+ *
+ * Terminal: monospace, square, outlined, instant.
+ * JetBrains Mono everywhere, zero radius, 1px currentColor-mix outlines on filled controls, uppercase tracked labels, 60ms linear motion.
+ *
+ * Complete, standalone theme: every --xd-* token the library defines
+ * (including the font-family/letter-spacing/border/density/elevation
+ * additions below) is set here, so importing only this file gives every
+ * component a full working set of fallback values. Also paints
+ * background-color/color/font-family directly on the themed root, not
+ * just the custom properties -- a page that mounts only this theme
+ * (no per-component styling) still renders correctly, not transparent.
+ *
+ * Usage:
+ *   import '@asnewyla/tokens/theme-terminal.css';
+ *   <ThemeProvider theme="terminal">...
+ *   Light/dark follows prefers-color-scheme by default; data-mode="light"|"dark"
+ *   on <html> drives an explicit toggle independent of the active theme.
+ */
+
+[data-theme="terminal"] {
+  color-scheme: light;
+  background-color: var(--xd-color-surface);
+  color: var(--xd-color-text);
+  font-family: var(--xd-font-family);
+
+  --xd-color-primary: oklch(45% 0.13 152);
+  --xd-on-primary: oklch(98% 0.01 150);
+  --xd-color-secondary: oklch(40% 0.015 155);
+  --xd-on-secondary: oklch(98% 0.01 150);
+  --xd-color-destructive: oklch(50% 0.18 25);
+  --xd-on-destructive: oklch(98% 0.01 150);
+
+  --xd-color-surface: oklch(97.5% 0.006 150);
+  --xd-color-surface-hover: oklch(93.5% 0.014 152);
+  --xd-color-text: oklch(22% 0.02 155);
+  --xd-color-text-muted: oklch(46% 0.022 155);
+
+  --xd-space-xs: 0.25rem;
+  --xd-space-sm: 0.375rem;
+  --xd-space-md: 0.5rem;
+  --xd-space-lg: 0.75rem;
+  --xd-space-xl: 1rem;
+  --xd-space-2xl: 1.5rem;
+  --xd-space-3xl: 2rem;
+
+  --xd-radius-sm: 0;
+  --xd-radius-md: 0;
+  --xd-radius-lg: 0;
+  --xd-radius-full: 0;
+
+  --xd-font-family: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+  --xd-font-family-mono: "JetBrains Mono", ui-monospace, monospace;
+  --xd-font-size-sm: 0.75rem;
+  --xd-font-size-md: 0.8125rem;
+  --xd-font-size-lg: 0.9375rem;
+  --xd-font-weight-regular: 400;
+  --xd-font-weight-medium: 500;
+  --xd-font-weight-semibold: 600;
+  --xd-font-weight-bold: 700;
+  --xd-line-height-normal: 1.35;
+  --xd-letter-spacing-label: 0.07em;
+  --xd-text-transform-label: uppercase;
+
+  --xd-color-border: oklch(86% 0.014 152);
+  --xd-color-border-strong: oklch(48% 0.022 155);
+  --xd-border-width-thin: 1px;
+  --xd-border-width-thick: 2px;
+  --xd-frame-border-width: var(--xd-border-width-thin);
+  --xd-control-border-width: 1px;
+  --xd-control-border-color: color-mix(in oklab, currentColor 55%, transparent);
+  --xd-control-height-md: 2rem;
+
+  --xd-color-focus: oklch(38% 0.09 152);
+  --xd-focus-ring-width: 2px;
+  --xd-focus-ring-offset: 0px;
+
+  --xd-shadow-sm: none;
+  --xd-shadow-md: none;
+  --xd-shadow-control: none;
+  --xd-shadow-control-active: none;
+  --xd-press-transform: none;
+
+  --xd-opacity-disabled: 0.5;
+  --xd-motion-fast: 60ms linear;
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-theme="terminal"]:not([data-mode="light"]) {
+    color-scheme: dark;
+
+    --xd-color-primary: oklch(80% 0.17 148);
+    --xd-on-primary: oklch(15% 0.02 155);
+    --xd-color-secondary: oklch(82% 0.02 155);
+    --xd-on-secondary: oklch(15% 0.02 155);
+    --xd-color-destructive: oklch(70% 0.16 25);
+    --xd-on-destructive: oklch(15% 0.02 155);
+
+    --xd-color-surface: oklch(16% 0.014 155);
+    --xd-color-surface-hover: oklch(21% 0.018 155);
+    --xd-color-text: oklch(92% 0.03 150);
+    --xd-color-text-muted: oklch(68% 0.032 152);
+
+    --xd-color-border: oklch(28% 0.02 155);
+    --xd-color-border-strong: oklch(50% 0.026 155);
+    --xd-color-focus: oklch(80% 0.17 148);
+
+    --xd-shadow-sm: none;
+    --xd-shadow-md: none;
+    --xd-shadow-control: none;
+    --xd-shadow-control-active: none;
+  }
+}
+
+[data-theme="terminal"][data-mode="dark"] {
+  color-scheme: dark;
+
+  --xd-color-primary: oklch(80% 0.17 148);
+  --xd-on-primary: oklch(15% 0.02 155);
+  --xd-color-secondary: oklch(82% 0.02 155);
+  --xd-on-secondary: oklch(15% 0.02 155);
+  --xd-color-destructive: oklch(70% 0.16 25);
+  --xd-on-destructive: oklch(15% 0.02 155);
+
+  --xd-color-surface: oklch(16% 0.014 155);
+  --xd-color-surface-hover: oklch(21% 0.018 155);
+  --xd-color-text: oklch(92% 0.03 150);
+  --xd-color-text-muted: oklch(68% 0.032 152);
+
+  --xd-color-border: oklch(28% 0.02 155);
+  --xd-color-border-strong: oklch(50% 0.026 155);
+  --xd-color-focus: oklch(80% 0.17 148);
+
+  --xd-shadow-sm: none;
+  --xd-shadow-md: none;
+  --xd-shadow-control: none;
+  --xd-shadow-control-active: none;
+}

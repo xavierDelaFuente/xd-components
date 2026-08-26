@@ -89,6 +89,48 @@
 
   /* ─── Motion ─── */
   --xd-motion-fast: 120ms ease-out;
+
+  /* ─── Typography — family (new) ───
+     Components read these with a system-ui/monospace fallback, so a
+     consumer importing nothing still gets today's look. */
+  --xd-font-family: system-ui, sans-serif;
+  --xd-font-family-mono: ui-monospace, monospace;
+  --xd-font-weight-medium: 500;
+  --xd-font-weight-bold: 700;
+  /* Label tracking/case as a theme property, not per-consumer copy. */
+  --xd-letter-spacing-label: 0;
+  --xd-text-transform-label: none;
+
+  /* ─── Spacing — extended for airier themes ─── */
+  --xd-space-3xl: 2rem;
+
+  /* ─── Border — second tier + what a filled control's own outline uses ─── */
+  --xd-border-width-thick: 2px;
+  /* What cards/popovers/listboxes read; defaults to the hairline so a
+     theme can thicken frames without thickening every hairline. */
+  --xd-frame-border-width: var(--xd-border-width-thin);
+  --xd-control-border-width: 0;
+  --xd-control-border-color: currentColor;
+
+  /* ─── Density ─── */
+  --xd-control-height-md: 2.25rem;
+
+  /* ─── Elevation — interactive-control tier, separate from surface
+     elevation (-shadow-sm/md). Lets a theme give buttons a hard offset
+     shadow that collapses on press without touching card/popover shadows. ─── */
+  --xd-shadow-control: none;
+  --xd-shadow-control-active: none;
+  --xd-press-transform: none;
+}
+
+/* Paints the root itself, not just components: a consumer who mounts
+   nothing but <ThemeProvider> still gets a themed page background,
+   text color and font, instead of a transparent shell relying on
+   every component to opt in individually. */
+:root {
+  background-color: var(--xd-color-surface);
+  color: var(--xd-color-text);
+  font-family: var(--xd-font-family);
 }
 
 /* --- Color -- dark mode, follows system ---

@@ -1,0 +1,141 @@
+/*
+ * asnewyla/tokens -- theme-block.css
+ *
+ * Block: thick ink frames, hard offset shadows, press displacement.
+ * Space Grotesk uppercase labels, 2px ink borders everywhere, 6px/3px hard offset shadows that collapse on press, no blur anywhere.
+ *
+ * Complete, standalone theme: every --xd-* token the library defines
+ * (including the font-family/letter-spacing/border/density/elevation
+ * additions below) is set here, so importing only this file gives every
+ * component a full working set of fallback values. Also paints
+ * background-color/color/font-family directly on the themed root, not
+ * just the custom properties -- a page that mounts only this theme
+ * (no per-component styling) still renders correctly, not transparent.
+ *
+ * Usage:
+ *   import '@asnewyla/tokens/theme-block.css';
+ *   <ThemeProvider theme="block">...
+ *   Light/dark follows prefers-color-scheme by default; data-mode="light"|"dark"
+ *   on <html> drives an explicit toggle independent of the active theme.
+ */
+
+[data-theme="block"] {
+  color-scheme: light;
+  background-color: var(--xd-color-surface);
+  color: var(--xd-color-text);
+  font-family: var(--xd-font-family);
+
+  --xd-color-primary: oklch(56% 0.2 35);
+  --xd-on-primary: oklch(99% 0 0);
+  --xd-color-secondary: oklch(48% 0.16 250);
+  --xd-on-secondary: oklch(99% 0 0);
+  --xd-color-destructive: oklch(48% 0.2 22);
+  --xd-on-destructive: oklch(99% 0 0);
+
+  --xd-color-surface: oklch(98% 0.006 90);
+  --xd-color-surface-hover: oklch(93% 0.022 85);
+  --xd-color-text: oklch(18% 0.01 60);
+  --xd-color-text-muted: oklch(42% 0.016 60);
+
+  --xd-space-xs: 0.25rem;
+  --xd-space-sm: 0.4375rem;
+  --xd-space-md: 0.5625rem;
+  --xd-space-lg: 0.875rem;
+  --xd-space-xl: 1.125rem;
+  --xd-space-2xl: 1.75rem;
+  --xd-space-3xl: 2.5rem;
+
+  --xd-radius-sm: 0;
+  --xd-radius-md: 0.125rem;
+  --xd-radius-lg: 0.25rem;
+  --xd-radius-full: 9999px;
+
+  --xd-font-family: "Space Grotesk", system-ui, sans-serif;
+  --xd-font-family-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --xd-font-size-sm: 0.8125rem;
+  --xd-font-size-md: 0.9375rem;
+  --xd-font-size-lg: 1.0625rem;
+  --xd-font-weight-regular: 500;
+  --xd-font-weight-medium: 600;
+  --xd-font-weight-semibold: 700;
+  --xd-font-weight-bold: 700;
+  --xd-line-height-normal: 1.25;
+  --xd-letter-spacing-label: 0.045em;
+  --xd-text-transform-label: uppercase;
+
+  --xd-color-border: oklch(18% 0.01 60);
+  --xd-color-border-strong: oklch(18% 0.01 60);
+  --xd-border-width-thin: 1px;
+  --xd-border-width-thick: 2px;
+  --xd-frame-border-width: 2px;
+  --xd-control-border-width: 2px;
+  --xd-control-border-color: oklch(18% 0.01 60);
+  --xd-control-height-md: 2.5rem;
+
+  --xd-color-focus: oklch(18% 0.01 60);
+  --xd-focus-ring-width: 3px;
+  --xd-focus-ring-offset: 3px;
+
+  --xd-shadow-sm: none;
+  --xd-shadow-md: 6px 6px 0 oklch(18% 0.01 60);
+  --xd-shadow-control: 3px 3px 0 oklch(18% 0.01 60);
+  --xd-shadow-control-active: 0 0 0 oklch(18% 0.01 60);
+  --xd-press-transform: translate(3px, 3px);
+
+  --xd-opacity-disabled: 0.5;
+  --xd-motion-fast: 110ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-theme="block"]:not([data-mode="light"]) {
+    color-scheme: dark;
+
+    --xd-color-primary: oklch(72% 0.17 40);
+    --xd-on-primary: oklch(16% 0.012 40);
+    --xd-color-secondary: oklch(70% 0.13 250);
+    --xd-on-secondary: oklch(16% 0.012 40);
+    --xd-color-destructive: oklch(70% 0.17 22);
+    --xd-on-destructive: oklch(16% 0.012 40);
+
+    --xd-color-surface: oklch(17% 0.008 60);
+    --xd-color-surface-hover: oklch(23% 0.016 60);
+    --xd-color-text: oklch(97% 0.006 90);
+    --xd-color-text-muted: oklch(74% 0.014 70);
+
+    --xd-color-border: oklch(97% 0.006 90);
+    --xd-color-border-strong: oklch(97% 0.006 90);
+    --xd-control-border-color: oklch(97% 0.006 90);
+    --xd-color-focus: oklch(97% 0.006 90);
+
+    --xd-shadow-sm: none;
+    --xd-shadow-md: 6px 6px 0 oklch(97% 0.006 90);
+    --xd-shadow-control: 3px 3px 0 oklch(97% 0.006 90);
+    --xd-shadow-control-active: 0 0 0 oklch(97% 0.006 90);
+  }
+}
+
+[data-theme="block"][data-mode="dark"] {
+  color-scheme: dark;
+
+  --xd-color-primary: oklch(72% 0.17 40);
+  --xd-on-primary: oklch(16% 0.012 40);
+  --xd-color-secondary: oklch(70% 0.13 250);
+  --xd-on-secondary: oklch(16% 0.012 40);
+  --xd-color-destructive: oklch(70% 0.17 22);
+  --xd-on-destructive: oklch(16% 0.012 40);
+
+  --xd-color-surface: oklch(17% 0.008 60);
+  --xd-color-surface-hover: oklch(23% 0.016 60);
+  --xd-color-text: oklch(97% 0.006 90);
+  --xd-color-text-muted: oklch(74% 0.014 70);
+
+  --xd-color-border: oklch(97% 0.006 90);
+  --xd-color-border-strong: oklch(97% 0.006 90);
+  --xd-control-border-color: oklch(97% 0.006 90);
+  --xd-color-focus: oklch(97% 0.006 90);
+
+  --xd-shadow-sm: none;
+  --xd-shadow-md: 6px 6px 0 oklch(97% 0.006 90);
+  --xd-shadow-control: 3px 3px 0 oklch(97% 0.006 90);
+  --xd-shadow-control-active: 0 0 0 oklch(97% 0.006 90);
+}

@@ -1,5 +1,9 @@
 .xd-button {
-  border: none;
+  box-sizing: border-box;
+  /* 0-width by default (see tokens.css), so this is inert until a theme
+     opts a filled control into a real outline (Block, Terminal). */
+  border: var(--xd-control-border-width, 0) solid
+    var(--xd-control-border-color, currentColor);
   margin: 0;
   font-family: inherit;
   cursor: pointer;
@@ -13,13 +17,24 @@
   border-radius: var(--xd-radius-md, 0.375rem);
   font-weight: var(--xd-font-weight-semibold, 600);
   line-height: var(--xd-line-height-normal, 1.25);
+  /* Neutral by default (see tokens.css) — a button's own visible text is
+     a "label" in the same sense --xd-*-label covers for form labels. */
+  letter-spacing: var(--xd-letter-spacing-label, 0);
+  text-transform: var(--xd-text-transform-label, none);
 
   background-color: var(--_bg);
   color: var(--_fg);
   --_bg-hover: color-mix(in srgb, var(--_bg) 88%, black);
   --_bg-active: color-mix(in srgb, var(--_bg) 76%, black);
 
-  transition: background-color var(--xd-motion-fast, 120ms ease-out);
+  /* Off by default (see tokens.css) — a theme opts into a press effect
+     (Block's hard offset shadow, Rubber's scale) via -active below. */
+  box-shadow: var(--xd-shadow-control, none);
+
+  transition:
+    background-color var(--xd-motion-fast, 120ms ease-out),
+    box-shadow var(--xd-motion-fast, 120ms ease-out),
+    transform var(--xd-motion-fast, 120ms ease-out);
   outline: none;
 }
 
@@ -36,6 +51,8 @@
 .xd-button:active:not([data-disabled="true"]),
 .xd-button[data-pressed="true"] {
   background-color: var(--_bg-active);
+  box-shadow: var(--xd-shadow-control-active, none);
+  transform: var(--xd-press-transform, none);
 }
 
 .xd-button[data-disabled="true"] {
@@ -101,6 +118,7 @@
 .xd-button[data-size="md"] {
   padding: var(--xd-space-md, 0.5rem) var(--xd-space-xl, 1rem);
   font-size: var(--xd-font-size-md, 0.875rem);
+  min-height: var(--xd-control-height-md, 2.25rem);
 }
 
 .xd-button[data-size="lg"] {

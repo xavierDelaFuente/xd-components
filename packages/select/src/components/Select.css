@@ -104,6 +104,8 @@
   font-size: var(--xd-font-size-sm, 0.8125rem);
   font-weight: var(--xd-font-weight-semibold, 600);
   line-height: var(--xd-line-height-normal, 1.25);
+  letter-spacing: var(--xd-letter-spacing-label, 0);
+  text-transform: var(--xd-text-transform-label, none);
   color: var(--xd-color-text, #0f172a);
 }
 
@@ -114,7 +116,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--xd-space-xs, 0.25rem);
-  min-height: 2.25rem;
+  min-height: var(--xd-control-height-md, 2.25rem);
 
   border: var(--xd-border-width-thin, 1px) solid
     var(--xd-color-border-strong, #6b7688);
@@ -293,7 +295,10 @@
   overflow-x: hidden;
   overscroll-behavior: contain;
 
-  border: var(--xd-border-width-thin, 1px) solid var(--xd-color-border, #cbd5e1);
+  /* A "frame" surface in the same sense Card's own border is — see
+     --xd-frame-border-width in tokens.css. Defaults to the hairline. */
+  border: var(--xd-frame-border-width, 1px) solid
+    var(--xd-color-border, #cbd5e1);
   border-radius: var(--xd-radius-md, 0.375rem);
   padding: var(--xd-space-xs, 0.25rem);
   background-color: var(--xd-color-surface, #ffffff);
