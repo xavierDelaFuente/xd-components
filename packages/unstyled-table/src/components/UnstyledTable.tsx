@@ -18,6 +18,7 @@ export type UnstyledTableProps<T> = {
   defaultSort?: SortState<T> | null;
   onSortChange?: (sort: SortState<T> | null) => void;
   filterable?: boolean;
+  getRowKey?: (row: T) => string | number;
 };
 
 function UnstyledTableInner<T>(
@@ -28,6 +29,7 @@ function UnstyledTableInner<T>(
     defaultSort,
     onSortChange,
     filterable,
+    getRowKey,
   }: UnstyledTableProps<T>,
   ref: ForwardedRef<HTMLTableElement>,
 ) {
@@ -57,7 +59,11 @@ function UnstyledTableInner<T>(
           sortState={sortState}
           onSort={handleSort}
         />
-        <TableBodyRows columns={columns} data={sortedData} />
+        <TableBodyRows
+          columns={columns}
+          data={sortedData}
+          getRowKey={getRowKey}
+        />
       </table>
     </>
   );
