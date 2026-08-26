@@ -1,1 +1,5 @@
-export { type UnstyledTableProps, type TableColumn, UnstyledTable } from './components'
+export {
+  type UnstyledTableProps,
+  type TableColumn,
+  UnstyledTable,
+} from './components';

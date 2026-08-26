@@ -1,68 +1,149 @@
-import { type ForwardedRef, forwardRef, type ReactNode } from 'react';
+import {
+  type ForwardedRef,
+  forwardRef,
+  type ReactNode,
+  useMemo,
+  useState,
+} from 'react';
+
+export type SortDirection = 'asc' | 'desc';
+
+export type SortState<T> = {
+  key: keyof T;
+  direction: SortDirection;
+};
 
 export type TableColumn<T> = {
-    key: keyof T;
-    header: string;
-    render?: (row: T) => ReactNode;
-}
+  key: keyof T;
+  header: string;
+  render?: (row: T) => ReactNode;
+  sortable?: boolean;
+};
 
 export type UnstyledTableProps<T> = {
-    columns: TableColumn<T>[];
-    data: T[];
+  columns: TableColumn<T>[];
+  data: T[];
+  sort?: SortState<T> | null;
+  defaultSort?: SortState<T> | null;
+  onSortChange?: (sort: SortState<T> | null) => void;
+};
+
+function TableHeader<T>({
+  column,
+  sortState,
+  onSort,
+}: {
+  column: TableColumn<T>;
+  sortState: SortState<T> | null;
+  onSort: (key: keyof T) => void;
+}) {
+  if (!column.sortable) {
+    return <th>{column.header}</th>;
+  }
+
+  const isActive = sortState?.key === column.key;
+  const ariaSort = isActive
+    ? sortState.direction === 'asc'
+      ? 'ascending'
+      : 'descending'
+    : 'none';
+
+  return (
+    <th aria-sort={ariaSort}>
+      <button type="button" onClick={() => onSort(column.key)}>
+        {column.header}
+      </button>
+    </th>
+  );
 }
 
-function TableHeader<T>({ column }: { column: TableColumn<T> }) {
-    return (
-        <th>
-            {column.header}
-        </th>
-    )
-}
-
-function Header<T>({ columns }: { columns: TableColumn<T>[] }) {
-    return (
-        <tr>
-            {
-                columns.map((column) => {
-                    return <TableHeader key={String(column.key)} column={column} />
-                })
-            }
-        </tr>
-    )
+function Header<T>({
+  columns,
+  sortState,
+  onSort,
+}: {
+  columns: TableColumn<T>[];
+  sortState: SortState<T> | null;
+  onSort: (key: keyof T) => void;
+}) {
+  return (
+    <thead>
+      <tr>
+        {columns.map((column) => {
+          return (
+            <TableHeader
+              key={String(column.key)}
+              column={column}
+              sortState={sortState}
+              onSort={onSort}
+            />
+          );
+        })}
+      </tr>
+    </thead>
+  );
 }
 
 function Body<T>({ columns, data }: { columns: TableColumn<T>[]; data: T[] }) {
-    return (
-        <>
-            {data.map((row, index) => (
-                <tr key={index}>
-                    {columns.map((column) => (
-                        <td key={String(column.key)}>
-                            {column.render ? column.render(row) : String(row[column.key])}
-                        </td>
-                    ))}
-                </tr>
-            ))}
-        </>
-    )
+  return (
+    <tbody>
+      {data.map((row, index) => (
+        <tr key={index}>
+          {columns.map((column) => (
+            <td key={String(column.key)}>
+              {column.render ? column.render(row) : String(row[column.key])}
+            </td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  );
 }
 
 function UnstyledTableInner<T>(
-    { columns, data }: UnstyledTableProps<T>,
-    ref: ForwardedRef<HTMLTableElement>,
+  { columns, data, sort, defaultSort, onSortChange }: UnstyledTableProps<T>,
+  ref: ForwardedRef<HTMLTableElement>,
 ) {
-    return (
-        <table ref={ref}>
-            <thead>
-                <Header columns={columns} />
-            </thead>
-            <tbody>
-                <Body columns={columns} data={data} />
-            </tbody>
-        </table>
-    )
+  const isControlled = sort !== undefined;
+  const [internalSort, setInternalSort] = useState<SortState<T> | null>(
+    defaultSort ?? null,
+  );
+  const sortState = isControlled ? sort : internalSort;
+
+  const handleSort = (key: keyof T) => {
+    let next: SortState<T> | null;
+    if (sortState?.key === key) {
+      next = sortState.direction === 'asc' ? { key, direction: 'desc' } : null;
+    } else {
+      next = { key, direction: 'asc' };
+    }
+
+    if (!isControlled) {
+      setInternalSort(next);
+    }
+    onSortChange?.(next);
+  };
+
+  const sortedData = useMemo(() => {
+    if (!sortState) {
+      return data;
+    }
+    const { key, direction } = sortState;
+    return [...data].sort((a, b) => {
+      if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
+      if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [data, sortState]);
+
+  return (
+    <table ref={ref}>
+      <Header columns={columns} sortState={sortState} onSort={handleSort} />
+      <Body columns={columns} data={sortedData} />
+    </table>
+  );
 }
 
-export const UnstyledTable = forwardRef(UnstyledTableInner) as <T, >(
-    props: UnstyledTableProps<T> & { ref?: ForwardedRef<HTMLTableElement> },
+export const UnstyledTable = forwardRef(UnstyledTableInner) as <T>(
+  props: UnstyledTableProps<T> & { ref?: ForwardedRef<HTMLTableElement> },
 ) => React.ReactElement;

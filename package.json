@@ -16,7 +16,7 @@
     "lint": "biome lint packages",
     "type-check": "tsc --noEmit",
     "format": "biome format --write packages",
-    "check": "pnpm lint && pnpm format && pnpm type-check",
+    "check": "pnpm format && pnpm lint && pnpm type-check",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build -o storybook-static",
     "changeset": "changeset",
