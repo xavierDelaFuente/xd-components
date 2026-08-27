@@ -94,6 +94,7 @@ When asked to close, output three blocks and nothing else:
 - Structure every test Arrange → Act → Assert, with the assertion last and singular where possible.
 - **Do not test CSS values.** Test that state produces the right class or `data-` attribute. Colors and spacing belong to visual review, not unit tests.
 - One behavior per test. A test name with "and" in it is usually two tests.
+- **Split a spec file by scope once it outgrows a single readable file.** Rule of thumb, not a mechanical trigger: ~200+ lines *and* several genuinely distinct behavioral scopes (e.g. a primitive's sorting vs. filtering vs. selection), not just "it has two `describe` blocks." One file per scope, named `Component-Scope.spec.tsx` (e.g. `UnstyledTable-Sorting.spec.tsx`), sibling to the base `Component.spec.tsx`. Setup genuinely duplicated across the split files (shared fixture data, not one-off local test data) moves to a sibling `fixtures.ts`/`fixtures.tsx` — scope-specific fixtures stay local to their own file. Don't split a small file just to have more files; the split earns its keep only when it makes something easier to find.
 
 ### Composition
 
