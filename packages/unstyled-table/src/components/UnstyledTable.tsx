@@ -1,7 +1,9 @@
-import { type ForwardedRef, forwardRef } from 'react';
+import { type ComponentPropsWithoutRef, type ForwardedRef, forwardRef } from 'react';
+import type { RowId } from './rowIdentity';
 import { TableBodyRows } from './TableBodyRows';
 import { type TableColumn, TableHeaderRow } from './TableHeaderRow';
 import { useTableFilter } from './useTableFilter';
+import { useTableSelection } from './useTableSelection';
 import { useTableSort } from './useTableSort';
 
 export type SortDirection = 'asc' | 'desc';
@@ -18,8 +20,12 @@ export type UnstyledTableProps<T> = {
   defaultSort?: SortState<T> | null;
   onSortChange?: (sort: SortState<T> | null) => void;
   filterable?: boolean;
-  getRowKey?: (row: T) => string | number;
-};
+  getRowKey?: (row: T) => RowId;
+  selectable?: boolean;
+  selected?: RowId[];
+  defaultSelected?: RowId[];
+  onSelectionChange?: (selected: RowId[]) => void;
+} & Omit<ComponentPropsWithoutRef<'table'>, 'children'>;
 
 function UnstyledTableInner<T>(
   {
@@ -30,6 +36,11 @@ function UnstyledTableInner<T>(
     onSortChange,
     filterable,
     getRowKey,
+    selectable,
+    selected,
+    defaultSelected,
+    onSelectionChange,
+    ...rest
   }: UnstyledTableProps<T>,
   ref: ForwardedRef<HTMLTableElement>,
 ) {
@@ -43,6 +54,14 @@ function UnstyledTableInner<T>(
     defaultSort,
     onSortChange,
   });
+  const { isRowSelected, toggleRow, toggleAll, allSelected, someSelected } =
+    useTableSelection({
+      data: sortedData,
+      getRowKey,
+      selected,
+      defaultSelected,
+      onSelectionChange,
+    });
 
   return (
     <>
@@ -53,16 +72,23 @@ function UnstyledTableInner<T>(
           onChange={(e) => setFilterQuery(e.target.value)}
         />
       )}
-      <table ref={ref}>
+      <table ref={ref} {...rest}>
         <TableHeaderRow
           columns={columns}
           sortState={sortState}
           onSort={handleSort}
+          selectable={selectable}
+          allSelected={allSelected}
+          someSelected={someSelected}
+          onToggleAll={toggleAll}
         />
         <TableBodyRows
           columns={columns}
           data={sortedData}
           getRowKey={getRowKey}
+          selectable={selectable}
+          isRowSelected={isRowSelected}
+          onToggleRow={toggleRow}
         />
       </table>
     </>
