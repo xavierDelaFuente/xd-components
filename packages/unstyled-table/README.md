@@ -1,8 +1,8 @@
 # @asnewyla/unstyled-table
 
 Unstyled, accessible table primitive. Renders rows and columns from plain
-data, with single-column sorting, client-side global search, and row
-selection, without imposing any visual styling.
+data, with single-column sorting, client-side global search, row
+selection, and pagination, without imposing any visual styling.
 
 ## Install
 
@@ -59,6 +59,14 @@ const columnsWithRender = [
   selected={selected}
   onSelectionChange={setSelected}
 />
+
+// Pagination — fixed page size, no built-in page-size selector
+<UnstyledTable
+  data={people}
+  columns={columns}
+  paginated
+  pageSize={10}
+/>
 ```
 
 ### Props
@@ -74,6 +82,10 @@ const columnsWithRender = [
 | `selectable` | `boolean` | `false` |
 | `selected` / `defaultSelected` | `RowId[]` | — |
 | `onSelectionChange` | `(selected: RowId[]) => void` | — |
+| `paginated` | `boolean` | `false` |
+| `pageSize` | `number` | `10` |
+| `page` / `defaultPage` | `number` | — |
+| `onPageChange` | `(page: number) => void` | — |
 
 Also accepts every native `<table>` attribute (`className`, `style`, `id`,
 etc.) via passthrough — `UnstyledTable` composes
@@ -125,6 +137,19 @@ acting on a selection is entirely the consumer's job, using `selected` +
 whatever action they wire up next to the table (see the
 `BulkDeleteSelectedRows` Storybook story).
 
+### Pagination
+
+`paginated` slices the final (filtered, then sorted) row set into pages of
+`pageSize` rows and renders a footer below the table: a
+`<button aria-label="Previous page">`, a plain-text `"Page X of Y"`
+indicator, and a `<button aria-label="Next page">` — both buttons use
+native `disabled` on the first/last page rather than just visual styling.
+There's no built-in page-size selector; `pageSize` is a fixed prop. The
+current page clamps automatically if the underlying row count shrinks out
+from under it (e.g. filtering down to fewer rows/pages than the page you
+were on) — this happens on every render as a plain derived value, not via
+an effect, so it can't ever momentarily show a page that no longer exists.
+
 ### Accessibility
 
 Renders a real semantic `<table>`/`<thead>`/`<tbody>` — row/column-header/
@@ -137,8 +162,6 @@ state (`"ascending"`, `"descending"`, or `"none"`).
 
 This primitive is still growing. Not implemented yet:
 
-- **Pagination** — no built-in page-size/page-index controls; all of
-  `data` renders at once.
 - **Native form participation** — nothing here submits through
   `FormData`.
 

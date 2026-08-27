@@ -125,17 +125,19 @@ function UnstyledTableInner<T>(
         <div>
           <button
             type="button"
-            aria-label="Previous page"
             onClick={goToPreviousPage}
             disabled={currentPage === 1}
-          />
+          >
+            Previous page
+          </button>
           {`Page ${currentPage} of ${totalPages}`}
           <button
             type="button"
-            aria-label="Next page"
             onClick={goToNextPage}
             disabled={currentPage === totalPages}
-          />
+          >
+            Next page
+          </button>
         </div>
       )}
     </>
