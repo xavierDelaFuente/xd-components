@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { type ReactNode, useEffect, useRef } from 'react';
 import type { SortState } from './UnstyledTable';
 
 export type TableColumn<T> = {
@@ -37,18 +37,63 @@ function TableHeaderCell<T>({
   );
 }
 
+function SelectAllHeaderCell({
+  checked,
+  indeterminate,
+  onToggle,
+}: {
+  checked: boolean;
+  indeterminate: boolean;
+  onToggle: () => void;
+}) {
+  const checkboxRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (checkboxRef.current) {
+      checkboxRef.current.indeterminate = indeterminate;
+    }
+  }, [indeterminate]);
+
+  return (
+    <th>
+      <input
+        ref={checkboxRef}
+        type="checkbox"
+        aria-label="Select all rows"
+        checked={checked}
+        onChange={onToggle}
+      />
+    </th>
+  );
+}
+
 export function TableHeaderRow<T>({
   columns,
   sortState,
   onSort,
+  selectable,
+  allSelected,
+  someSelected,
+  onToggleAll,
 }: {
   columns: TableColumn<T>[];
   sortState: SortState<T> | null;
   onSort: (key: keyof T) => void;
+  selectable?: boolean;
+  allSelected?: boolean;
+  someSelected?: boolean;
+  onToggleAll?: () => void;
 }) {
   return (
     <thead>
       <tr>
+        {selectable && (
+          <SelectAllHeaderCell
+            checked={!!allSelected}
+            indeterminate={!!someSelected && !allSelected}
+            onToggle={() => onToggleAll?.()}
+          />
+        )}
         {columns.map((column) => (
           <TableHeaderCell
             key={String(column.key)}

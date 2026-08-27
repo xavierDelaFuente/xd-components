@@ -1,8 +1,8 @@
 # @asnewyla/unstyled-table
 
 Unstyled, accessible table primitive. Renders rows and columns from plain
-data, with single-column sorting and client-side global search, without
-imposing any visual styling.
+data, with single-column sorting, client-side global search, row
+selection, and pagination, without imposing any visual styling.
 
 ## Install
 
@@ -49,6 +49,24 @@ const columnsWithRender = [
   { key: 'name', header: 'Name' },
   { key: 'age', header: 'Age', render: (row) => `${row.age} yrs` },
 ];
+
+// Row selection (controlled) — see "Row identity" below for getRowKey
+<UnstyledTable
+  data={people}
+  columns={columns}
+  getRowKey={(row) => row.id}
+  selectable
+  selected={selected}
+  onSelectionChange={setSelected}
+/>
+
+// Pagination — fixed page size, no built-in page-size selector
+<UnstyledTable
+  data={people}
+  columns={columns}
+  paginated
+  pageSize={10}
+/>
 ```
 
 ### Props
@@ -60,6 +78,19 @@ const columnsWithRender = [
 | `sort` / `defaultSort` | `{ key: keyof T; direction: 'asc' \| 'desc' } \| null` | — |
 | `onSortChange` | `(sort: SortState<T> \| null) => void` | — |
 | `filterable` | `boolean` | `false` |
+| `getRowKey` | `(row: T) => RowId` (`RowId = string \| number`) | — |
+| `selectable` | `boolean` | `false` |
+| `selected` / `defaultSelected` | `RowId[]` | — |
+| `onSelectionChange` | `(selected: RowId[]) => void` | — |
+| `paginated` | `boolean` | `false` |
+| `pageSize` | `number` | `10` |
+| `page` / `defaultPage` | `number` | — |
+| `onPageChange` | `(page: number) => void` | — |
+
+Also accepts every native `<table>` attribute (`className`, `style`, `id`,
+etc.) via passthrough — `UnstyledTable` composes
+`ComponentPropsWithoutRef<'table'>` like every other primitive in this
+library.
 
 `TableColumn<T>`:
 
@@ -90,6 +121,35 @@ its rendered output) — there's no async/remote search, matching the same
 client-side-only scope as `@asnewyla/unstyled-select`'s search. Filtering
 is always applied before sorting.
 
+### Row identity and selection
+
+`getRowKey` gives each row a stable identity — used both for React's own
+`key` (so a row's DOM state, like an uncontrolled input inside a custom
+`render`, stays attached to that row across a sort/filter reorder) and for
+tracking `selected`. Without it, identity falls back to
+`JSON.stringify(row)`, which works as long as rows are unique by content.
+
+`selectable` adds a checkbox column: a per-row checkbox plus a "select
+all" checkbox in the header (`aria-label="Select all rows"`, native
+`indeterminate` when some but not all *currently rendered* rows are
+selected). `UnstyledTable` never mutates `data` — deleting/exporting/
+acting on a selection is entirely the consumer's job, using `selected` +
+whatever action they wire up next to the table (see the
+`BulkDeleteSelectedRows` Storybook story).
+
+### Pagination
+
+`paginated` slices the final (filtered, then sorted) row set into pages of
+`pageSize` rows and renders a footer below the table: a
+`<button aria-label="Previous page">`, a plain-text `"Page X of Y"`
+indicator, and a `<button aria-label="Next page">` — both buttons use
+native `disabled` on the first/last page rather than just visual styling.
+There's no built-in page-size selector; `pageSize` is a fixed prop. The
+current page clamps automatically if the underlying row count shrinks out
+from under it (e.g. filtering down to fewer rows/pages than the page you
+were on) — this happens on every render as a plain derived value, not via
+an effect, so it can't ever momentarily show a page that no longer exists.
+
 ### Accessibility
 
 Renders a real semantic `<table>`/`<thead>`/`<tbody>` — row/column-header/
@@ -102,10 +162,6 @@ state (`"ascending"`, `"descending"`, or `"none"`).
 
 This primitive is still growing. Not implemented yet:
 
-- **Row selection** — no built-in checkbox column or selected-state
-  tracking.
-- **Pagination** — no built-in page-size/page-index controls; all of
-  `data` renders at once.
 - **Native form participation** — nothing here submits through
   `FormData`.
 

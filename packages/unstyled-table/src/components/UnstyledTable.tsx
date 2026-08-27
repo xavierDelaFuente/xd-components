@@ -1,7 +1,14 @@
-import { type ForwardedRef, forwardRef } from 'react';
+import {
+  type ComponentPropsWithoutRef,
+  type ForwardedRef,
+  forwardRef,
+} from 'react';
+import type { RowId } from './rowIdentity';
 import { TableBodyRows } from './TableBodyRows';
 import { type TableColumn, TableHeaderRow } from './TableHeaderRow';
 import { useTableFilter } from './useTableFilter';
+import { useTablePagination } from './useTablePagination';
+import { useTableSelection } from './useTableSelection';
 import { useTableSort } from './useTableSort';
 
 export type SortDirection = 'asc' | 'desc';
@@ -18,8 +25,17 @@ export type UnstyledTableProps<T> = {
   defaultSort?: SortState<T> | null;
   onSortChange?: (sort: SortState<T> | null) => void;
   filterable?: boolean;
-  getRowKey?: (row: T) => string | number;
-};
+  getRowKey?: (row: T) => RowId;
+  selectable?: boolean;
+  selected?: RowId[];
+  defaultSelected?: RowId[];
+  onSelectionChange?: (selected: RowId[]) => void;
+  paginated?: boolean;
+  pageSize?: number;
+  page?: number;
+  defaultPage?: number;
+  onPageChange?: (page: number) => void;
+} & Omit<ComponentPropsWithoutRef<'table'>, 'children'>;
 
 function UnstyledTableInner<T>(
   {
@@ -30,6 +46,16 @@ function UnstyledTableInner<T>(
     onSortChange,
     filterable,
     getRowKey,
+    selectable,
+    selected,
+    defaultSelected,
+    onSelectionChange,
+    paginated,
+    pageSize,
+    page,
+    defaultPage,
+    onPageChange,
+    ...rest
   }: UnstyledTableProps<T>,
   ref: ForwardedRef<HTMLTableElement>,
 ) {
@@ -43,6 +69,29 @@ function UnstyledTableInner<T>(
     defaultSort,
     onSortChange,
   });
+  const { isRowSelected, toggleRow, toggleAll, allSelected, someSelected } =
+    useTableSelection({
+      data: sortedData,
+      getRowKey,
+      selected,
+      defaultSelected,
+      onSelectionChange,
+    });
+
+  const {
+    currentPage,
+    totalPages,
+    paginatedData,
+    goToNextPage,
+    goToPreviousPage,
+  } = useTablePagination({
+    data: sortedData,
+    paginated,
+    pageSize,
+    page,
+    defaultPage,
+    onPageChange,
+  });
 
   return (
     <>
@@ -53,18 +102,44 @@ function UnstyledTableInner<T>(
           onChange={(e) => setFilterQuery(e.target.value)}
         />
       )}
-      <table ref={ref}>
+      <table ref={ref} {...rest}>
         <TableHeaderRow
           columns={columns}
           sortState={sortState}
           onSort={handleSort}
+          selectable={selectable}
+          allSelected={allSelected}
+          someSelected={someSelected}
+          onToggleAll={toggleAll}
         />
         <TableBodyRows
           columns={columns}
-          data={sortedData}
+          data={paginatedData}
           getRowKey={getRowKey}
+          selectable={selectable}
+          isRowSelected={isRowSelected}
+          onToggleRow={toggleRow}
         />
       </table>
+      {paginated && (
+        <div>
+          <button
+            type="button"
+            onClick={goToPreviousPage}
+            disabled={currentPage === 1}
+          >
+            Previous page
+          </button>
+          {`Page ${currentPage} of ${totalPages}`}
+          <button
+            type="button"
+            onClick={goToNextPage}
+            disabled={currentPage === totalPages}
+          >
+            Next page
+          </button>
+        </div>
+      )}
     </>
   );
 }

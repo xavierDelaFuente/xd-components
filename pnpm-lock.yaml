@@ -56,6 +56,9 @@ importers:
       '@asnewyla/unstyled-select':
         specifier: workspace:*
         version: link:packages/unstyled-select
+      '@asnewyla/unstyled-table':
+        specifier: workspace:*
+        version: link:packages/unstyled-table
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.5.9

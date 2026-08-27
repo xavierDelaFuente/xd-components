@@ -26,3 +26,19 @@ export function namesInOrder(): string[] {
 export function getSearchInput() {
   return screen.getByRole('textbox', { name: 'Search table' });
 }
+
+export function getSelectAllCheckbox(): HTMLElement {
+  return screen.getByRole('checkbox', { name: 'Select all rows' });
+}
+
+export function getRowCheckbox(row: HTMLElement): HTMLElement {
+  return within(row).getByRole('checkbox');
+}
+
+export function getNextPageButton(): HTMLElement {
+  return screen.getByRole('button', { name: 'Next page' });
+}
+
+export function getPreviousPageButton(): HTMLElement {
+  return screen.getByRole('button', { name: 'Previous page' });
+}
