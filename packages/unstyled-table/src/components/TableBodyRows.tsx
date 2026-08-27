@@ -1,6 +1,10 @@
 import { getRowIdentity, type RowId } from './rowIdentity';
 import type { TableColumn } from './TableHeaderRow';
 
+function booleanToString(value: boolean | undefined): string | undefined {
+  return value ? 'true' : undefined;
+}
+
 export function TableBodyRows<T>({
   columns,
   data,
@@ -26,6 +30,7 @@ export function TableBodyRows<T>({
                 type="checkbox"
                 checked={isRowSelected?.(row) ?? false}
                 onChange={() => onToggleRow?.(row)}
+                data-checked={booleanToString(isRowSelected?.(row))}
               />
             </td>
           )}

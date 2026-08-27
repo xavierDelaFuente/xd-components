@@ -84,6 +84,52 @@ describe('UnstyledTable selection', () => {
     expect(getRowCheckbox(rows[2])).not.toBeChecked();
   });
 
+  it("mirrors a row checkbox's checked state via data-checked, not just the native checked property", async () => {
+    render(
+      <UnstyledTable
+        data={selectionPeople}
+        columns={columns}
+        getRowKey={(row) => row.id}
+        selectable
+      />,
+    );
+    const rows = getBodyRows();
+
+    expect(getRowCheckbox(rows[0])).not.toHaveAttribute('data-checked');
+
+    await user.click(getRowCheckbox(rows[0]));
+
+    expect(getRowCheckbox(rows[0])).toHaveAttribute('data-checked', 'true');
+    expect(getRowCheckbox(rows[1])).not.toHaveAttribute('data-checked');
+  });
+
+  it("mirrors the select-all checkbox's checked/indeterminate state via data-* attributes", async () => {
+    render(
+      <UnstyledTable
+        data={selectionPeople}
+        columns={columns}
+        getRowKey={(row) => row.id}
+        selectable
+      />,
+    );
+
+    expect(getSelectAllCheckbox()).not.toHaveAttribute('data-checked');
+    expect(getSelectAllCheckbox()).not.toHaveAttribute('data-indeterminate');
+
+    await user.click(getRowCheckbox(getBodyRows()[0]));
+
+    expect(getSelectAllCheckbox()).not.toHaveAttribute('data-checked');
+    expect(getSelectAllCheckbox()).toHaveAttribute(
+      'data-indeterminate',
+      'true',
+    );
+
+    await user.click(getSelectAllCheckbox());
+
+    expect(getSelectAllCheckbox()).toHaveAttribute('data-checked', 'true');
+    expect(getSelectAllCheckbox()).not.toHaveAttribute('data-indeterminate');
+  });
+
   it('deselects a row when its already-checked checkbox is clicked again', async () => {
     render(
       <UnstyledTable
