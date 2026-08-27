@@ -1,5 +1,6 @@
 import type { TableColumn } from '@asnewyla/unstyled-table';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { createRef } from 'react';
 import { describe, expect, it } from 'vitest';
 import { Table } from '../components';
@@ -103,5 +104,24 @@ describe('Table', () => {
     expect(
       screen.getByRole('button', { name: 'Next page' }),
     ).toBeInTheDocument();
+  });
+
+  it('actually sorts data when the sort button is clicked, like the primitive', async () => {
+    const user = userEvent.setup();
+    const reversed: Person[] = [people[1], people[0]];
+    const sortableColumns: TableColumn<Person>[] = [
+      { key: 'name', header: 'Name', sortable: true },
+      { key: 'age', header: 'Age' },
+    ];
+    render(<Table data={reversed} columns={sortableColumns} />);
+
+    const rowsBefore = screen.getAllByRole('row').slice(1);
+    expect(rowsBefore[0]).toHaveTextContent('Alan Turing');
+
+    await user.click(screen.getByRole('button', { name: 'Name' }));
+
+    const rowsAfter = screen.getAllByRole('row').slice(1);
+    expect(rowsAfter[0]).toHaveTextContent('Ada Lovelace');
+    expect(rowsAfter[1]).toHaveTextContent('Alan Turing');
   });
 });
