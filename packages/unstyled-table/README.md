@@ -140,11 +140,15 @@ whatever action they wire up next to the table (see the
 ### Pagination
 
 `paginated` slices the final (filtered, then sorted) row set into pages of
-`pageSize` rows and renders a footer below the table: a
-`<button aria-label="Previous page">`, a plain-text `"Page X of Y"`
-indicator, and a `<button aria-label="Next page">` — both buttons use
-native `disabled` on the first/last page rather than just visual styling.
-There's no built-in page-size selector; `pageSize` is a fixed prop. The
+`pageSize` rows and renders a footer below the table: four buttons —
+"First page", "Previous page", "Next page", "Last page" (plain text
+content, which doubles as the accessible name) — around a plain-text
+`"Page X of Y"` indicator. First/Previous are disabled on the first page,
+Next/Last on the last page, via native `disabled` rather than just visual
+styling. Each button also carries `data-pagination-action="first" |
+"previous" | "next" | "last"`, a stable hook for consumers to style them
+(e.g. as icon buttons) without depending on their text content. There's no
+built-in page-size selector; `pageSize` is a fixed prop. The
 current page clamps automatically if the underlying row count shrinks out
 from under it (e.g. filtering down to fewer rows/pages than the page you
 were on) — this happens on every render as a plain derived value, not via

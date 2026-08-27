@@ -39,10 +39,8 @@ function DemoStyles() {
       .unstyled-table-demo th, .unstyled-table-demo td { border: 1px solid #94a3b8; padding: 6px 10px; text-align: left; }
       .unstyled-table-demo th[aria-sort] button { all: unset; cursor: pointer; font-weight: inherit; }
       .unstyled-table-demo input[aria-label="Search table"] { margin-bottom: 8px; padding: 6px 10px; border: 1px solid #94a3b8; }
-      .unstyled-table-demo button[aria-label="Previous page"],
-      .unstyled-table-demo button[aria-label="Next page"] { padding: 4px 10px; margin: 8px 4px 8px 0; border: 1px solid #94a3b8; cursor: pointer; }
-      .unstyled-table-demo button[aria-label="Previous page"]:disabled,
-      .unstyled-table-demo button[aria-label="Next page"]:disabled { cursor: not-allowed; opacity: 0.5; }
+      .unstyled-table-demo button[data-pagination-action] { padding: 4px 10px; margin: 8px 4px 8px 0; border: 1px solid #94a3b8; cursor: pointer; }
+      .unstyled-table-demo button[data-pagination-action]:disabled { cursor: not-allowed; opacity: 0.5; }
     `}</style>
   );
 }

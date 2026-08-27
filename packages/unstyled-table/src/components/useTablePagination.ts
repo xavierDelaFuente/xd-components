@@ -40,6 +40,8 @@ export function useTablePagination<T>({
   };
   const goToNextPage = () => goToPage(currentPage + 1);
   const goToPreviousPage = () => goToPage(currentPage - 1);
+  const goToFirstPage = () => goToPage(1);
+  const goToLastPage = () => goToPage(totalPages);
 
   return {
     currentPage,
@@ -47,5 +49,7 @@ export function useTablePagination<T>({
     paginatedData,
     goToNextPage,
     goToPreviousPage,
+    goToFirstPage,
+    goToLastPage,
   };
 }

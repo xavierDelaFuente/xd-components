@@ -84,6 +84,8 @@ function UnstyledTableInner<T>(
     paginatedData,
     goToNextPage,
     goToPreviousPage,
+    goToFirstPage,
+    goToLastPage,
   } = useTablePagination({
     data: sortedData,
     paginated,
@@ -125,6 +127,15 @@ function UnstyledTableInner<T>(
         <div>
           <button
             type="button"
+            data-pagination-action="first"
+            onClick={goToFirstPage}
+            disabled={currentPage === 1}
+          >
+            First page
+          </button>
+          <button
+            type="button"
+            data-pagination-action="previous"
             onClick={goToPreviousPage}
             disabled={currentPage === 1}
           >
@@ -133,10 +144,19 @@ function UnstyledTableInner<T>(
           {`Page ${currentPage} of ${totalPages}`}
           <button
             type="button"
+            data-pagination-action="next"
             onClick={goToNextPage}
             disabled={currentPage === totalPages}
           >
             Next page
+          </button>
+          <button
+            type="button"
+            data-pagination-action="last"
+            onClick={goToLastPage}
+            disabled={currentPage === totalPages}
+          >
+            Last page
           </button>
         </div>
       )}

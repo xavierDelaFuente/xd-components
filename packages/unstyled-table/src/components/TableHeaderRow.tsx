@@ -8,6 +8,10 @@ export type TableColumn<T> = {
   sortable?: boolean;
 };
 
+function booleanToString(value: boolean | undefined): string | undefined {
+  return value ? 'true' : undefined;
+}
+
 function TableHeaderCell<T>({
   column,
   sortState,
@@ -62,6 +66,8 @@ function SelectAllHeaderCell({
         aria-label="Select all rows"
         checked={checked}
         onChange={onToggle}
+        data-checked={booleanToString(checked)}
+        data-indeterminate={booleanToString(indeterminate)}
       />
     </th>
   );

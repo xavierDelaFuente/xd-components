@@ -1,4 +1,4 @@
-import type { Preview } from '@storybook/react-vite'
+import type { Preview } from '@storybook/react-vite';
 import '@asnewyla/tokens/tokens.css';
 import '@asnewyla/button/styles.css';
 import '@asnewyla/image/styles.css';
@@ -9,14 +9,15 @@ import '@asnewyla/card/styles.css';
 import '@asnewyla/checkbox/styles.css';
 import '@asnewyla/radio/styles.css';
 import '@asnewyla/select/styles.css';
+import '@asnewyla/table/styles.css';
 
 const preview: Preview = {
   parameters: {
     layout: 'centered',
     controls: {
       matchers: {
-       color: /(background|color)$/i,
-       date: /Date$/i,
+        color: /(background|color)$/i,
+        date: /Date$/i,
       },
     },
   },

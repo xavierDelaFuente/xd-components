@@ -1,0 +1,354 @@
+/*
+ * asnewyla/table -- Table.css
+ *
+ * DOM produced by UnstyledTable (Table.tsx only adds the class/ref):
+ *
+ *   input[aria-label="Search table"]   present only when filterable
+ *   table.xd-table
+ *   |- thead > tr
+ *   |  |- th > input[type="checkbox"]  select-all, present only when selectable
+ *   |  '- th[aria-sort]? > button      sortable columns only; plain th otherwise
+ *   |- tbody > tr
+ *   |  |- td > input[type="checkbox"]  row checkbox, present only when selectable
+ *   |  '- td                           one per column
+ *   '- div                             pagination controls, present only when paginated
+ *      |- button "Previous page"
+ *      '- button "Next page"
+ *
+ * `className` (and so `.xd-table`) lands on the <table> element only --
+ * UnstyledTable renders the search input and the pagination <div> as its
+ * siblings, not inside a shared wrapper. That makes the pagination div
+ * reachable from `.xd-table` (`table.xd-table + div`, an adjacent sibling
+ * that follows), but the search input is NOT: it renders BEFORE the table,
+ * and CSS has no "previous sibling" combinator. Scoping it would need
+ * UnstyledTable to wrap everything in a container div, which is out of
+ * scope for this pass (this package only adds className + CSS, no new
+ * props, no DOM changes upstream). Styled instead via its own aria-label
+ * attribute selector -- unscoped, so it also matches any other element on
+ * the page an app happens to give the same aria-label. Accepted for now;
+ * revisit if that ever collides in practice.
+ *
+ * Selection state has no data-* attribute of its own on <tr> -- only the
+ * row's checkbox carries data-checked. Reached here via :has(), which is
+ * fine: unlike the search input above, the checkbox is a genuine
+ * descendant of its row, not a preceding sibling.
+ */
+
+.xd-table,
+.xd-table * {
+  box-sizing: border-box;
+}
+
+table.xd-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  font-family: inherit;
+  font-size: var(--xd-font-size-md, 0.875rem);
+  line-height: var(--xd-line-height-normal, 1.25);
+  color: var(--xd-color-text, #0f172a);
+
+  background-color: var(--xd-color-surface, #ffffff);
+  border: var(--xd-frame-border-width, 1px) solid
+    var(--xd-color-border, #cbd5e1);
+  border-radius: var(--xd-radius-md, 0.375rem);
+}
+
+/* --- Header --- */
+
+table.xd-table thead th {
+  padding: var(--xd-space-sm, 0.375rem) var(--xd-space-md, 0.5rem);
+  border-bottom: var(--xd-border-width-thick, 2px) solid
+    var(--xd-color-border-strong, #6b7688);
+
+  text-align: left;
+  font-weight: var(--xd-font-weight-semibold, 600);
+
+  background-color: var(--xd-color-surface-hover, #f1f5f9);
+}
+
+table.xd-table thead th[aria-sort] {
+  padding: 0;
+}
+
+table.xd-table thead th[aria-sort] button {
+  display: flex;
+  align-items: center;
+  gap: var(--xd-space-xs, 0.25rem);
+  width: 100%;
+
+  border: none;
+  padding: var(--xd-space-sm, 0.375rem) var(--xd-space-md, 0.5rem);
+
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: var(--xd-font-weight-semibold, 600);
+  text-align: inherit;
+  cursor: pointer;
+
+  transition: background-color var(--xd-motion-fast, 120ms ease-out);
+}
+
+table.xd-table thead th[aria-sort] button:hover {
+  background-color: var(--xd-color-surface-hover, #f1f5f9);
+  /* Header th already carries the same fill; this only reads as a
+     visible change once the button's own background is distinguishable
+     from its parent, which needs a slightly different tone. */
+  filter: brightness(0.97);
+}
+
+table.xd-table thead th[aria-sort] button:focus-visible {
+  outline: var(--xd-focus-ring-width, 2px) solid var(--xd-color-focus, #0f766e);
+  outline-offset: -2px;
+}
+
+/* Sort direction indicator, drawn the same border-trick way as
+   Select's chevron. Always reserves its own space (opacity, not
+   display) so column headers don't shift width as sort state changes. */
+table.xd-table thead th[aria-sort] button::after {
+  content: "";
+  flex-shrink: 0;
+  width: 0.4em;
+  height: 0.4em;
+  margin-bottom: 0.15em;
+  border-right: var(--xd-border-width-thick, 2px) solid currentColor;
+  border-bottom: var(--xd-border-width-thick, 2px) solid currentColor;
+  transform: rotate(45deg);
+  opacity: 0.35;
+}
+
+table.xd-table thead th[aria-sort="ascending"] button::after {
+  transform: rotate(-135deg);
+  margin-bottom: 0;
+  margin-top: 0.2em;
+  opacity: 1;
+}
+
+table.xd-table thead th[aria-sort="descending"] button::after {
+  transform: rotate(45deg);
+  opacity: 1;
+}
+
+/* --- Body --- */
+
+table.xd-table tbody td {
+  padding: var(--xd-space-sm, 0.375rem) var(--xd-space-md, 0.5rem);
+  border-bottom: var(--xd-border-width-thin, 1px) solid
+    var(--xd-color-border, #cbd5e1);
+}
+
+table.xd-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+table.xd-table tbody tr:hover {
+  background-color: var(--xd-color-surface-hover, #f1f5f9);
+}
+
+table.xd-table tbody tr:has(input[data-checked="true"]) {
+  background-color: var(--xd-color-surface-hover, #f1f5f9);
+}
+
+/* --- Checkboxes (select-all + per-row) ---
+   Scoped under .xd-table, so this never reaches a checkbox elsewhere on
+   the page. Visual language matches @asnewyla/checkbox's own
+   data-checked/data-indeterminate convention. */
+
+table.xd-table input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  width: 1rem;
+  height: 1rem;
+  position: relative;
+  flex-shrink: 0;
+
+  border: var(--xd-border-width-thin, 1px) solid var(--xd-color-border, #cbd5e1);
+  border-radius: var(--xd-radius-sm, 0.25rem);
+  background-color: var(--xd-color-surface, #ffffff);
+  cursor: pointer;
+
+  transition:
+    background-color var(--xd-motion-fast, 120ms ease-out),
+    border-color var(--xd-motion-fast, 120ms ease-out);
+}
+
+table.xd-table input[type="checkbox"][data-checked="true"],
+table.xd-table input[type="checkbox"][data-indeterminate="true"] {
+  background-color: var(--xd-color-primary, #0d9488);
+  border-color: var(--xd-color-primary, #0d9488);
+}
+
+table.xd-table input[type="checkbox"][data-checked="true"]::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 0;
+  width: 4px;
+  height: 8px;
+  border: solid var(--xd-on-primary, #ffffff);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+table.xd-table input[type="checkbox"][data-indeterminate="true"]::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 6px;
+  width: 8px;
+  height: 2px;
+  background-color: var(--xd-on-primary, #ffffff);
+}
+
+table.xd-table input[type="checkbox"]:focus-visible {
+  outline: var(--xd-focus-ring-width, 2px) solid var(--xd-color-focus, #0f766e);
+  outline-offset: var(--xd-focus-ring-offset, 2px);
+}
+
+/* --- Search input (see file header -- not reachable from .xd-table) --- */
+
+input[aria-label="Search table"] {
+  display: block;
+  width: 100%;
+  margin-bottom: var(--xd-space-sm, 0.375rem);
+  padding: var(--xd-space-sm, 0.375rem) var(--xd-space-md, 0.5rem);
+
+  font-family: inherit;
+  font-size: var(--xd-font-size-md, 0.875rem);
+  line-height: var(--xd-line-height-normal, 1.25);
+  color: var(--xd-color-text, #0f172a);
+
+  background-color: var(--xd-color-surface, #ffffff);
+  border: var(--xd-border-width-thin, 1px) solid
+    var(--xd-color-border-strong, #6b7688);
+  border-radius: var(--xd-radius-md, 0.375rem);
+  box-sizing: border-box;
+
+  transition: border-color var(--xd-motion-fast, 120ms ease-out);
+}
+
+input[aria-label="Search table"]::placeholder {
+  color: var(--xd-color-text-muted, #475569);
+}
+
+input[aria-label="Search table"]:focus-visible {
+  outline: var(--xd-focus-ring-width, 2px) solid var(--xd-color-focus, #0f766e);
+  outline-offset: -1px;
+  border-color: transparent;
+}
+
+/* --- Pagination controls ---
+   Buttons are icon-only. The text content ("Previous page" etc.) stays in
+   the DOM as the accessible name — hidden with font-size: 0, not
+   display: none or visibility: hidden, so it's still exposed to screen
+   readers. Icons are plain CSS (the same border-trick as Select's
+   chevron), keyed off data-pagination-action so First/Previous/Next/Last
+   each draw the right shape — no icon asset, no new prop on the
+   primitive. Requires the primitive to set data-pagination-action; falls
+   back to a blank icon-shaped button (still fully usable, just unstyled)
+   on a primitive version that doesn't yet set it. */
+
+table.xd-table + div {
+  display: flex;
+  align-items: center;
+  /* Not a component prop -- override from any ancestor (a wrapping div
+     around <Table>, or :root for a page-wide default). Accepts any
+     justify-content value: flex-start | center | flex-end |
+     space-between | space-around | space-evenly. */
+  justify-content: var(--xd-table-pagination-justify, flex-end);
+  gap: var(--xd-space-sm, 0.375rem);
+  margin-top: var(--xd-space-sm, 0.375rem);
+
+  font-size: var(--xd-font-size-sm, 0.8125rem);
+  color: var(--xd-color-text-muted, #475569);
+}
+
+/* biome-ignore lint/style/noDescendingSpecificity: disjoint from the header's button rules -- table vs its sibling div, never the same element */
+table.xd-table + div button {
+  --xd-table-pagination-icon: 0.4em;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2em;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+
+  border: var(--xd-border-width-thin, 1px) solid
+    var(--xd-color-border-strong, #6b7688);
+  border-radius: var(--xd-radius-sm, 0.25rem);
+
+  font-size: 0;
+  color: var(--xd-color-text, #0f172a);
+  background-color: var(--xd-color-surface, #ffffff);
+  cursor: pointer;
+
+  transition: background-color var(--xd-motion-fast, 120ms ease-out);
+}
+
+table.xd-table + div button:hover:not(:disabled) {
+  background-color: var(--xd-color-surface-hover, #f1f5f9);
+}
+
+/* biome-ignore lint/style/noDescendingSpecificity: disjoint from the header's button rules -- table vs its sibling div, never the same element */
+table.xd-table + div button:focus-visible {
+  outline: var(--xd-focus-ring-width, 2px) solid var(--xd-color-focus, #0f766e);
+  outline-offset: 1px;
+}
+
+table.xd-table + div button:disabled {
+  opacity: var(--xd-opacity-disabled, 0.5);
+  cursor: not-allowed;
+}
+
+/* Chevron, shared by all four buttons — direction set per action below. */
+table.xd-table + div button[data-pagination-action]::before {
+  content: "";
+  width: var(--xd-table-pagination-icon);
+  height: var(--xd-table-pagination-icon);
+  border-right: var(--xd-border-width-thick, 2px) solid currentColor;
+  border-bottom: var(--xd-border-width-thick, 2px) solid currentColor;
+}
+
+/* First/Last additionally draw a stop bar next to the chevron. */
+table.xd-table + div button[data-pagination-action="first"]::after,
+table.xd-table + div button[data-pagination-action="last"]::after {
+  content: "";
+  width: var(--xd-border-width-thick, 2px);
+  height: var(--xd-table-pagination-icon);
+  background-color: currentColor;
+}
+
+table.xd-table + div button[data-pagination-action="previous"]::before,
+table.xd-table + div button[data-pagination-action="first"]::before {
+  transform: rotate(135deg);
+}
+
+table.xd-table + div button[data-pagination-action="next"]::before,
+table.xd-table + div button[data-pagination-action="last"]::before {
+  transform: rotate(-45deg);
+}
+
+/* Bar comes before the chevron in reading order for First (bar, then
+   chevron pointing left) — flip the flex order so it renders on the left. */
+table.xd-table + div button[data-pagination-action="first"]::after {
+  order: -1;
+}
+
+/* --- Motion preference --- */
+
+@media (prefers-reduced-motion: reduce) {
+  table.xd-table thead th[aria-sort] button,
+  table.xd-table input[type="checkbox"],
+  input[aria-label="Search table"] {
+    transition-duration: 1ms;
+  }
+
+  /* biome-ignore lint/style/noDescendingSpecificity: disjoint from the header's button rule above -- table vs its sibling div, never the same element */
+  table.xd-table + div button {
+    transition-duration: 1ms;
+  }
+}

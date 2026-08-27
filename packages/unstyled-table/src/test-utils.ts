@@ -42,3 +42,11 @@ export function getNextPageButton(): HTMLElement {
 export function getPreviousPageButton(): HTMLElement {
   return screen.getByRole('button', { name: 'Previous page' });
 }
+
+export function getFirstPageButton(): HTMLElement {
+  return screen.getByRole('button', { name: 'First page' });
+}
+
+export function getLastPageButton(): HTMLElement {
+  return screen.getByRole('button', { name: 'Last page' });
+}
