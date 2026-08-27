@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/unstyled-table",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Unstyled table primitive with sorting, row selection, and pagination",
   "license": "MIT",
   "repository": {

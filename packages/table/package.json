@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/table",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Styled table with sorting, filtering, row selection, and pagination",
   "license": "MIT",
   "repository": {
