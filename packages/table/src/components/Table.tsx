@@ -1,24 +1,25 @@
-import { TableColumn, UnstyledTable } from "@asnewyla/unstyled-table"
-import React, { forwardRef } from "react";
+import {
+  UnstyledTable,
+  type UnstyledTableProps,
+} from '@asnewyla/unstyled-table';
+import { type ForwardedRef, forwardRef } from 'react';
+import './Table.css';
 
-export type TableProps<T> = {
-  data: T[];
-  columns: TableColumn<T>[];
-  className?: string;
-  id?: string;
-}
+export type TableProps<T> = UnstyledTableProps<T>;
 
-function TableInner<T>({ data, columns, className, id, ...rest }: TableProps<T>, ref: React.ForwardedRef) {
+function TableInner<T>(
+  { className, ...rest }: TableProps<T>,
+  ref: ForwardedRef<HTMLTableElement>,
+) {
   return (
     <UnstyledTable
       {...rest}
-      id={id || 'table'}
-      data={data}
-      columns={columns}
-      className={className ? `${className} xd-table` : 'xd-table'}
+      className={className ? `xd-table ${className}` : 'xd-table'}
       ref={ref}
     />
-  )
+  );
 }
 
-export const Table = forwardRef(TableInner)
+export const Table = forwardRef(TableInner) as <T>(
+  props: TableProps<T> & { ref?: ForwardedRef<HTMLTableElement> },
+) => React.ReactElement;

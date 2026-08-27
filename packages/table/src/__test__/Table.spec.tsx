@@ -28,16 +28,16 @@ describe('Table', () => {
     expect(screen.getAllByRole('row')).toHaveLength(people.length + 1);
   });
 
-  it('merges a consumer className with the base xd-table class', () => {
-    render(<Table data={people} columns={columns} className="my-table" />);
-
-    expect(screen.getByRole('table')).toHaveClass('xd-table', 'my-table');
-  });
-
   it('applies the base xd-table class even without a consumer className', () => {
     render(<Table data={people} columns={columns} />);
 
     expect(screen.getByRole('table')).toHaveClass('xd-table');
+  });
+
+  it('merges a consumer className with the base xd-table class, base class first', () => {
+    render(<Table data={people} columns={columns} className="my-table" />);
+
+    expect(screen.getByRole('table').className).toBe('xd-table my-table');
   });
 
   it('forwards a ref to the underlying table element', () => {
@@ -49,28 +49,59 @@ describe('Table', () => {
   });
 
   it('passes through arbitrary native table attributes', () => {
+    render(<Table data={people} columns={columns} title="People" />);
+
+    expect(screen.getByRole('table')).toHaveAttribute('title', 'People');
+  });
+
+  it('does not invent an id when none is provided', () => {
+    render(<Table data={people} columns={columns} />);
+
+    expect(screen.getByRole('table')).not.toHaveAttribute('id');
+  });
+
+  it('respects an explicitly-provided id', () => {
     render(<Table data={people} columns={columns} id="people-table" />);
 
     expect(screen.getByRole('table')).toHaveAttribute('id', 'people-table');
   });
 
+  it('passes a sortable column straight through — renders a sort button', () => {
+    const sortableColumns: TableColumn<Person>[] = [
+      { key: 'name', header: 'Name', sortable: true },
+      { key: 'age', header: 'Age' },
+    ];
+    render(<Table data={people} columns={sortableColumns} />);
 
-  // it.each(['sortable', 'filterable', 'selectable', 'paginated'])
-  it('passes sortable/filterable/selectable/paginated straight through to the primitive', () => {
+    expect(screen.getByRole('button', { name: 'Name' })).toBeInTheDocument();
+  });
+
+  it('passes filterable straight through — renders a search input', () => {
+    render(<Table data={people} columns={columns} filterable />);
+
+    expect(
+      screen.getByRole('textbox', { name: 'Search table' }),
+    ).toBeInTheDocument();
+  });
+
+  it('passes selectable straight through — renders a row checkbox per row plus select-all', () => {
     render(
       <Table
         data={people}
-        columns={[
-          { key: 'name', header: 'Name', sortable: true },
-          { key: 'age', header: 'Age' },
-        ]}
-        filterable
+        columns={columns}
+        selectable
+        getRowKey={(row: Person) => row.id}
       />,
     );
 
-    expect(screen.getByRole('button', { name: 'Name' })).toBeInTheDocument();
+    expect(screen.getAllByRole('checkbox')).toHaveLength(people.length + 1);
+  });
+
+  it('passes paginated straight through — renders pagination controls', () => {
+    render(<Table data={people} columns={columns} paginated pageSize={1} />);
+
     expect(
-      screen.getByRole('textbox', { name: 'Search table' }),
+      screen.getByRole('button', { name: 'Next page' }),
     ).toBeInTheDocument();
   });
 });
