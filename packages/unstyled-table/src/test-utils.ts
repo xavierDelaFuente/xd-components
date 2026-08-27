@@ -34,3 +34,11 @@ export function getSelectAllCheckbox(): HTMLElement {
 export function getRowCheckbox(row: HTMLElement): HTMLElement {
   return within(row).getByRole('checkbox');
 }
+
+export function getNextPageButton(): HTMLElement {
+  return screen.getByRole('button', { name: 'Next page' });
+}
+
+export function getPreviousPageButton(): HTMLElement {
+  return screen.getByRole('button', { name: 'Previous page' });
+}

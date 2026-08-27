@@ -1,8 +1,13 @@
-import { type ComponentPropsWithoutRef, type ForwardedRef, forwardRef } from 'react';
+import {
+  type ComponentPropsWithoutRef,
+  type ForwardedRef,
+  forwardRef,
+} from 'react';
 import type { RowId } from './rowIdentity';
 import { TableBodyRows } from './TableBodyRows';
 import { type TableColumn, TableHeaderRow } from './TableHeaderRow';
 import { useTableFilter } from './useTableFilter';
+import { useTablePagination } from './useTablePagination';
 import { useTableSelection } from './useTableSelection';
 import { useTableSort } from './useTableSort';
 
@@ -25,6 +30,11 @@ export type UnstyledTableProps<T> = {
   selected?: RowId[];
   defaultSelected?: RowId[];
   onSelectionChange?: (selected: RowId[]) => void;
+  paginated?: boolean;
+  pageSize?: number;
+  page?: number;
+  defaultPage?: number;
+  onPageChange?: (page: number) => void;
 } & Omit<ComponentPropsWithoutRef<'table'>, 'children'>;
 
 function UnstyledTableInner<T>(
@@ -40,6 +50,11 @@ function UnstyledTableInner<T>(
     selected,
     defaultSelected,
     onSelectionChange,
+    paginated,
+    pageSize,
+    page,
+    defaultPage,
+    onPageChange,
     ...rest
   }: UnstyledTableProps<T>,
   ref: ForwardedRef<HTMLTableElement>,
@@ -63,6 +78,21 @@ function UnstyledTableInner<T>(
       onSelectionChange,
     });
 
+  const {
+    currentPage,
+    totalPages,
+    paginatedData,
+    goToNextPage,
+    goToPreviousPage,
+  } = useTablePagination({
+    data: sortedData,
+    paginated,
+    pageSize,
+    page,
+    defaultPage,
+    onPageChange,
+  });
+
   return (
     <>
       {filterable && (
@@ -84,13 +114,30 @@ function UnstyledTableInner<T>(
         />
         <TableBodyRows
           columns={columns}
-          data={sortedData}
+          data={paginatedData}
           getRowKey={getRowKey}
           selectable={selectable}
           isRowSelected={isRowSelected}
           onToggleRow={toggleRow}
         />
       </table>
+      {paginated && (
+        <div>
+          <button
+            type="button"
+            aria-label="Previous page"
+            onClick={goToPreviousPage}
+            disabled={currentPage === 1}
+          />
+          {`Page ${currentPage} of ${totalPages}`}
+          <button
+            type="button"
+            aria-label="Next page"
+            onClick={goToNextPage}
+            disabled={currentPage === totalPages}
+          />
+        </div>
+      )}
     </>
   );
 }
