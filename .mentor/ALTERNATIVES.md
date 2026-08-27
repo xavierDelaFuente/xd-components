@@ -45,6 +45,13 @@ Keep entries to five lines. If an entry needs more, it belongs in PROJECT.md.
 **Verdict**: working — all four packages live on the public registry, dependency resolution verified correct end to end
 **Generalise**: check real npm scope/org availability *before* committing to a name across a whole codebase, not after — this is the second full-codebase scope rename this project has done
 
+### 2026-08-27 · xd-components · Spec-file-splitting rule added directly to CODEX
+**CODEX said**: MENTOR_CODEX "changes rarely, only when a pattern has proven itself across 3+ projects" — normally routed through this file's own Promotion tracker, not edited directly.
+**I did**: Added the "split a spec file by scope" testing rule straight to `MENTOR_CODEX.md` (Part 2, Testing), skipping the tracker.
+**Because**: Explicit direct instruction ("update the directives so this tests requirement is always considered") after applying the pattern across two packages (`unstyled-table`, split into 6 files) and three more in the same session (`unstyled-select` → 5 files, `select` → 2, `radio` → 2) — proven repeatedly within this one project, just not yet across 3 separate projects.
+**Verdict**: working — applied consistently across 5 packages, `pnpm check`/`pnpm test` green throughout
+**Generalise**: if this rule turns out wrong in a future project (e.g. the size/scope threshold needs tuning), revise it in place rather than treating this entry as untouchable precedent — it was fast-tracked, not battle-tested elsewhere yet
+
 ---
 
 ## Promotion tracker
