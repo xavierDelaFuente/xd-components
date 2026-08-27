@@ -71,6 +71,27 @@ Override the CSS custom properties — defaults adapt automatically to
 }
 ```
 
+Pagination footer alignment defaults to right (`flex-end`) and isn't a
+component prop — override `--xd-table-pagination-justify` from any
+ancestor, either globally or per table:
+
+```css
+/* every <Table> on the page */
+:root {
+  --xd-table-pagination-justify: center;
+}
+```
+
+```tsx
+// just this one — wrap it in something that sets the variable
+<div style={{ '--xd-table-pagination-justify': 'space-between' } as CSSProperties}>
+  <Table data={data} columns={columns} paginated />
+</div>
+```
+
+Accepts any `justify-content` value: `flex-start`, `center`, `flex-end`,
+`space-between`, `space-around`, `space-evenly`.
+
 ### Not yet supported
 
 Inherits `@asnewyla/unstyled-table`'s own limitations — see its README:
@@ -83,6 +104,12 @@ pagination controls via an adjacent-sibling selector, the search input via
 its own `aria-label`), but the search input's styling isn't scoped to any
 one `<Table>` instance — it will also match any other element on the page
 an app happens to give the same `aria-label="Search table"`.
+
+Pagination buttons render as icons (CSS-drawn chevrons, no icon asset),
+keyed off a `data-pagination-action` attribute the primitive sets on each
+button. Requires `@asnewyla/unstyled-table` to have shipped first/last
+page navigation and that attribute — on an older primitive version the
+buttons still work, just as blank icon-shaped buttons.
 
 ## License
 

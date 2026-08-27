@@ -4,6 +4,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { UnstyledTable } from '../components';
 import {
   getBodyRows,
+  getFirstPageButton,
+  getLastPageButton,
   getNextPageButton,
   getPreviousPageButton,
   getSearchInput,
@@ -197,5 +199,119 @@ describe('UnstyledTable pagination', () => {
     expect(
       within(getBodyRows()[0]).getByRole('cell', { name: 'Person A' }),
     ).toBeInTheDocument();
+  });
+
+  it('disables the first-page button on the first page', () => {
+    render(
+      <UnstyledTable
+        data={paginationPeople}
+        columns={columns}
+        paginated
+        pageSize={2}
+      />,
+    );
+
+    expect(getFirstPageButton()).toBeDisabled();
+  });
+
+  it('disables the last-page button on the last page', async () => {
+    render(
+      <UnstyledTable
+        data={paginationPeople}
+        columns={columns}
+        paginated
+        pageSize={2}
+      />,
+    );
+
+    await user.click(getLastPageButton());
+
+    expect(getLastPageButton()).toBeDisabled();
+  });
+
+  it('jumps directly to the last page when last is clicked', async () => {
+    render(
+      <UnstyledTable
+        data={paginationPeople}
+        columns={columns}
+        paginated
+        pageSize={2}
+      />,
+    );
+
+    await user.click(getLastPageButton());
+
+    expect(screen.getByText('Page 3 of 3')).toBeInTheDocument();
+    expect(getBodyRows()).toHaveLength(1);
+    expect(
+      within(getBodyRows()[0]).getByRole('cell', { name: 'Person E' }),
+    ).toBeInTheDocument();
+  });
+
+  it('jumps directly back to the first page when first is clicked', async () => {
+    render(
+      <UnstyledTable
+        data={paginationPeople}
+        columns={columns}
+        paginated
+        pageSize={2}
+      />,
+    );
+
+    await user.click(getLastPageButton());
+    await user.click(getFirstPageButton());
+
+    expect(screen.getByText('Page 1 of 3')).toBeInTheDocument();
+    expect(
+      within(getBodyRows()[0]).getByRole('cell', { name: 'Person A' }),
+    ).toBeInTheDocument();
+  });
+
+  it('supports controlled pagination when jumping to the last page, without updating internally', async () => {
+    const handlePageChange = vi.fn();
+    render(
+      <UnstyledTable
+        data={paginationPeople}
+        columns={columns}
+        paginated
+        pageSize={2}
+        page={1}
+        onPageChange={handlePageChange}
+      />,
+    );
+
+    await user.click(getLastPageButton());
+
+    expect(handlePageChange).toHaveBeenCalledWith(3);
+    // still page 1 — nothing fed the new page back in via props
+    expect(screen.getByText('Page 1 of 3')).toBeInTheDocument();
+  });
+
+  it('marks each pagination button with a stable data-pagination-action hook for styling', () => {
+    render(
+      <UnstyledTable
+        data={paginationPeople}
+        columns={columns}
+        paginated
+        pageSize={2}
+      />,
+    );
+
+    expect(getFirstPageButton()).toHaveAttribute(
+      'data-pagination-action',
+      'first',
+    );
+    expect(getPreviousPageButton()).toHaveAttribute(
+      'data-pagination-action',
+      'previous',
+    );
+    expect(getNextPageButton()).toHaveAttribute(
+      'data-pagination-action',
+      'next',
+    );
+    expect(getLastPageButton()).toHaveAttribute(
+      'data-pagination-action',
+      'last',
+    );
   });
 });
