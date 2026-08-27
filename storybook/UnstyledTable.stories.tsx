@@ -47,7 +47,7 @@ function DemoStyles() {
   );
 }
 
-const meta = {
+const meta: Meta<typeof UnstyledTable<Person>> = {
   title: 'Primitives/UnstyledTable',
   component: UnstyledTable,
   tags: ['autodocs'],
@@ -59,12 +59,11 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof UnstyledTable<Person>>;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Default: StoryObj = {
   render: () => (
     <UnstyledTable
       data={people}
@@ -74,7 +73,7 @@ export const Default: Story = {
   ),
 };
 
-export const Sortable: Story = {
+export const Sortable: StoryObj = {
   render: () => (
     <UnstyledTable
       data={people}
@@ -84,7 +83,7 @@ export const Sortable: Story = {
   ),
 };
 
-export const Filterable: Story = {
+export const Filterable: StoryObj = {
   render: () => (
     <UnstyledTable
       data={people}
@@ -95,7 +94,7 @@ export const Filterable: Story = {
   ),
 };
 
-export const Selectable: Story = {
+export const Selectable: StoryObj = {
   render: () => (
     <UnstyledTable
       data={people}
@@ -107,7 +106,7 @@ export const Selectable: Story = {
   ),
 };
 
-export const Paginated: Story = {
+export const Paginated: StoryObj = {
   render: () => (
     <UnstyledTable
       data={people}
@@ -121,7 +120,7 @@ export const Paginated: Story = {
 
 // Sorting, filtering, selection, and pagination together — the full
 // feature set this primitive supports.
-export const FullFeatured: Story = {
+export const FullFeatured: StoryObj = {
   render: () => (
     <UnstyledTable
       data={people}
@@ -135,7 +134,7 @@ export const FullFeatured: Story = {
   ),
 };
 
-export const CustomCellRendering: Story = {
+export const CustomCellRendering: StoryObj = {
   render: () => (
     <UnstyledTable
       data={people}
@@ -196,6 +195,6 @@ function BulkDeleteDemo() {
   );
 }
 
-export const BulkDeleteSelectedRows: Story = {
+export const BulkDeleteSelectedRows: StoryObj = {
   render: () => <BulkDeleteDemo />,
 };
