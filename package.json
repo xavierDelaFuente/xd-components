@@ -39,7 +39,8 @@
     "@asnewyla/theme": "workspace:*",
     "@asnewyla/tokens": "workspace:*",
     "@asnewyla/unstyled-button": "workspace:*",
-    "@asnewyla/unstyled-select": "workspace:*"
+    "@asnewyla/unstyled-select": "workspace:*",
+    "@asnewyla/unstyled-table": "workspace:*"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.9",
