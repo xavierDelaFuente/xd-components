@@ -36,6 +36,7 @@
     "@asnewyla/radio": "workspace:*",
     "@asnewyla/radio-group": "workspace:*",
     "@asnewyla/select": "workspace:*",
+    "@asnewyla/switch": "workspace:*",
     "@asnewyla/table": "workspace:*",
     "@asnewyla/theme": "workspace:*",
     "@asnewyla/tokens": "workspace:*",
