@@ -1,8 +1,107 @@
-/* Placeholder — real visual design (track/thumb) is a follow-up pass. Just
-   enough here to make the package buildable and the `./styles.css` export
-   non-empty. */
 .xd-switch {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
+  gap: var(--xd-space-sm, 0.375rem);
+  flex-wrap: wrap;
+}
+
+/* Track — a real checkbox input, drawn as a pill. Sizes are fixed px-ish
+   rem values (2.25rem track, 1rem thumb, 2px inset both sides), not
+   tokens — nothing else in the library needs this exact geometry. The
+   2px-checked travel distance below is derived from these three numbers;
+   see the comment on data-checked. */
+.xd-switch-input {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  position: relative;
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 1.25rem;
+  border-radius: var(--xd-radius-full, 9999px);
+  border: var(--xd-border-width-thin, 1px) solid var(--xd-color-border, #cbd5e1);
+  background-color: var(--xd-color-surface-hover, #f1f5f9);
+  cursor: pointer;
+  transition:
+    background-color var(--xd-motion-fast, 120ms ease-out),
+    border-color var(--xd-motion-fast, 120ms ease-out);
+}
+
+/* Thumb, drawn from the track's own ::after — no extra DOM element. */
+.xd-switch-input::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background-color: var(--xd-color-surface, #ffffff);
+  box-shadow: var(--xd-shadow-sm, 0 1px 2px rgb(15 23 42 / 8%));
+  transform: translateY(-50%);
+  transition: transform var(--xd-motion-fast, 120ms ease-out);
+}
+
+.xd-switch-input[data-checked="true"] {
+  background-color: var(--xd-color-primary, #0d9488);
+  border-color: var(--xd-color-primary, #0d9488);
+}
+
+/* Travel distance = track width - thumb width - (2 * inset)
+   = 2.25rem - 1rem - 4px = 1rem, which is why this lands exactly on
+   1rem rather than needing a calc(). Change any of those three numbers
+   above and this needs to move with them. */
+.xd-switch-input[data-checked="true"]::after {
+  transform: translate(1rem, -50%);
+  background-color: var(--xd-on-primary, #ffffff);
+}
+
+.xd-switch-input:focus-visible {
+  outline: var(--xd-focus-ring-width, 2px) solid
+    var(--xd-color-focus, var(--xd-color-primary, #0d9488));
+  outline-offset: var(--xd-focus-ring-offset, 2px);
+}
+
+.xd-switch-label {
+  font-size: var(--xd-font-size-md, 0.875rem);
+  letter-spacing: var(--xd-letter-spacing-label, 0);
+  text-transform: var(--xd-text-transform-label, none);
+  cursor: pointer;
+}
+
+/* --- Invalid --- */
+
+.xd-switch-input[data-invalid="true"] {
+  border-color: var(--xd-color-destructive, #dc2626);
+}
+
+.xd-switch-input[data-invalid="true"]:focus-visible {
+  outline-color: var(--xd-color-destructive, #dc2626);
+}
+
+.xd-switch-error {
+  flex-basis: 100%;
+  font-size: var(--xd-font-size-sm, 0.8125rem);
+  color: var(--xd-color-destructive, #dc2626);
+}
+
+/* --- Disabled --- */
+
+.xd-switch-input:disabled {
+  opacity: var(--xd-opacity-disabled, 0.5);
+  cursor: not-allowed;
+}
+
+.xd-switch-input:disabled + .xd-switch-label {
+  opacity: var(--xd-opacity-disabled, 0.5);
+  cursor: not-allowed;
+}
+
+/* --- Motion preference --- */
+
+@media (prefers-reduced-motion: reduce) {
+  .xd-switch-input,
+  .xd-switch-input::after {
+    transition-duration: 1ms;
+  }
 }

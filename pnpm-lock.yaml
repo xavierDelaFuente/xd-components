@@ -44,6 +44,9 @@ importers:
       '@asnewyla/select':
         specifier: workspace:*
         version: link:packages/select
+      '@asnewyla/switch':
+        specifier: workspace:*
+        version: link:packages/switch
       '@asnewyla/table':
         specifier: workspace:*
         version: link:packages/table
