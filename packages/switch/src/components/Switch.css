@@ -1,0 +1,8 @@
+/* Placeholder — real visual design (track/thumb) is a follow-up pass. Just
+   enough here to make the package buildable and the `./styles.css` export
+   non-empty. */
+.xd-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
