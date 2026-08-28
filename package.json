@@ -45,7 +45,7 @@
     "@asnewyla/unstyled-table": "workspace:*"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.9",
+    "@biomejs/biome": "^2.5.10",
     "@changesets/cli": "^3.0.1",
     "@chromatic-com/storybook": "^5.3.0",
     "@storybook/addon-a11y": "^10.5.10",
