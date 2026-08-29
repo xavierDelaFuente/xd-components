@@ -18,6 +18,18 @@ describe('UnstyledTextarea', () => {
     expect(getTextarea().tagName).toBe('TEXTAREA');
   });
 
+  it('sets no explicit role — relies on the native implicit textbox role', () => {
+    render(<UnstyledTextarea aria-label="Bio" />);
+
+    expect(getTextarea()).not.toHaveAttribute('role');
+  });
+
+  it('keeps its own computed data-focused even if a same-named raw prop is also passed', () => {
+    render(<UnstyledTextarea aria-label="Bio" data-focused="true" />);
+
+    expect(getTextarea()).not.toHaveAttribute('data-focused');
+  });
+
   it('is uncontrolled by default — starts at defaultValue and updates as the user types', async () => {
     render(<UnstyledTextarea aria-label="Bio" defaultValue="Jo" />);
     const textarea = getTextarea();

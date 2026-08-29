@@ -1,2 +1,2 @@
-export type { UnstyledTextareaProps } from './components'
-export { UnstyledTextarea } from './components'
+export type { UnstyledTextareaProps } from './components';
+export { UnstyledTextarea } from './components';

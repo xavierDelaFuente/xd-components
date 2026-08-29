@@ -1,27 +1,32 @@
-import { ForwardedRef, forwardRef, useState } from "react";
+import { type ForwardedRef, forwardRef, useState } from 'react';
 
 export type UnstyledTextareaProps = {
+  defaultValue?: string;
+  value?: string;
   onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  onFocus?: (event: React.FocusEvent<HTMLTextAreaElement>) => void;
-  onBlur?: (event: React.FocusEvent<HTMLTextAreaElement>) => void;
   disabled?: boolean;
   invalid?: boolean;
-}
+} & Omit<
+  React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+  'defaultValue' | 'value' | 'onChange' | 'disabled' | 'invalid'
+>;
 
 function booleanToString(value: boolean | undefined): string | undefined {
   return value ? 'true' : undefined;
 }
 
-
-function UnstyledTextareaInner({
-  onChange,
-  onFocus,
-  onBlur,
-  disabled,
-  invalid,
-  ...rest
-}: UnstyledTextareaProps,
-  ref: ForwardedRef<HTMLTextAreaElement>
+function UnstyledTextareaInner(
+  {
+    defaultValue,
+    value,
+    onChange,
+    disabled,
+    invalid,
+    onFocus,
+    onBlur,
+    ...rest
+  }: UnstyledTextareaProps,
+  ref: ForwardedRef<HTMLTextAreaElement>,
 ) {
   const [focused, setFocused] = useState(false);
 
@@ -37,7 +42,10 @@ function UnstyledTextareaInner({
 
   return (
     <textarea
-      role="textbox"
+      {...rest}
+      ref={ref}
+      defaultValue={defaultValue}
+      value={value}
       onChange={onChange}
       data-focused={booleanToString(focused)}
       onFocus={handleFocus}
@@ -46,10 +54,11 @@ function UnstyledTextareaInner({
       data-disabled={booleanToString(disabled)}
       data-invalid={booleanToString(invalid)}
       aria-invalid={invalid ? 'true' : undefined}
-      ref={ref}
-      {...rest}
     />
-  )
+  );
 }
 
-export const UnstyledTextarea = forwardRef(UnstyledTextareaInner)
+export const UnstyledTextarea = forwardRef<
+  HTMLTextAreaElement,
+  UnstyledTextareaProps
+>(UnstyledTextareaInner);
