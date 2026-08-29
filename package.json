@@ -38,6 +38,7 @@
     "@asnewyla/select": "workspace:*",
     "@asnewyla/switch": "workspace:*",
     "@asnewyla/table": "workspace:*",
+    "@asnewyla/textarea": "workspace:*",
     "@asnewyla/theme": "workspace:*",
     "@asnewyla/tokens": "workspace:*",
     "@asnewyla/unstyled-button": "workspace:*",

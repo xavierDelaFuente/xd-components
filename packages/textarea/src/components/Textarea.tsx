@@ -1,40 +1,48 @@
-import { UnstyledTextarea, type UnstyledTextareaProps } from '@asnewyla/unstyled-textarea';
-import { ForwardedRef, forwardRef, useId } from 'react';
+import {
+  UnstyledTextarea,
+  type UnstyledTextareaProps,
+} from '@asnewyla/unstyled-textarea';
+import { type ForwardedRef, forwardRef, useId } from 'react';
+import './Textarea.css';
 
-export type TextareaProps = UnstyledTextareaProps & {
+export type TextareaProps = Omit<UnstyledTextareaProps, 'invalid'> & {
   label: string;
   error?: string;
-  className?: string;
 };
+
 function TextareaInner(
-  { label, id, error, className, ...rest }: TextareaProps,
-  ref: ForwardedRef<HTMLTextAreaElement>
+  { label, id, error, disabled, className, ...rest }: TextareaProps,
+  ref: ForwardedRef<HTMLTextAreaElement>,
 ) {
-  const generatedId = id ?? useId()
-  const errorId = `${generatedId}-error`
+  const generatedId = useId();
+  const textareaId = id ?? generatedId;
+  const errorId = `${textareaId}-error`;
 
   return (
-    <div>
+    <div className="xd-textarea">
+      <label className="xd-textarea-label" htmlFor={textareaId}>
+        {label}
+      </label>
       <UnstyledTextarea
+        id={textareaId}
         {...rest}
-        id={generatedId}
+        invalid={!!error}
+        disabled={disabled}
+        aria-describedby={error ? errorId : undefined}
         className={
           className ? `xd-textarea-input ${className}` : 'xd-textarea-input'
         }
         ref={ref}
-        invalid={!!error}
-        aria-describedby={error ? errorId : undefined}
       />
-      <label htmlFor={generatedId} >
-        {label}
-      </label>
       {error && (
-        <div id={errorId}>
+        <div className="xd-textarea-error" id={errorId}>
           {error}
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export const Textarea = forwardRef(TextareaInner)
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
+  TextareaInner,
+);

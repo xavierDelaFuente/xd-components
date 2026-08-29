@@ -50,6 +50,9 @@ importers:
       '@asnewyla/table':
         specifier: workspace:*
         version: link:packages/table
+      '@asnewyla/textarea':
+        specifier: workspace:*
+        version: link:packages/textarea
       '@asnewyla/theme':
         specifier: workspace:*
         version: link:packages/theme

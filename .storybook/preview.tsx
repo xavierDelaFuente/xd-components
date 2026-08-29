@@ -11,6 +11,7 @@ import '@asnewyla/radio/styles.css';
 import '@asnewyla/select/styles.css';
 import '@asnewyla/switch/styles.css';
 import '@asnewyla/table/styles.css';
+import '@asnewyla/textarea/styles.css';
 
 const preview: Preview = {
   parameters: {
