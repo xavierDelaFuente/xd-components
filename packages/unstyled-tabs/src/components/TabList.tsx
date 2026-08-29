@@ -1,8 +1,8 @@
 import {
   type ComponentPropsWithoutRef,
   type ForwardedRef,
-  type KeyboardEvent,
   forwardRef,
+  type KeyboardEvent,
   useRef,
 } from 'react';
 import { useTabsContext } from './TabsContext';

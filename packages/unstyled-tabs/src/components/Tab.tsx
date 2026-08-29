@@ -1,8 +1,8 @@
 import {
   type ComponentPropsWithoutRef,
   type ForwardedRef,
-  type MouseEvent,
   forwardRef,
+  type MouseEvent,
 } from 'react';
 import { getPanelId, getTabId, useTabsContext } from './TabsContext';
 
