@@ -1,0 +1,6 @@
+/* Placeholder — real visual design is a follow-up pass. Just enough here
+   to make the package buildable and the `./styles.css` export non-empty. */
+.xd-tabs {
+  display: flex;
+  flex-direction: column;
+}
