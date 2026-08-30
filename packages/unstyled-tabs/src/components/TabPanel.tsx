@@ -28,6 +28,8 @@ function TabPanelInner(
       role="tabpanel"
       id={getPanelId(baseId, value)}
       aria-labelledby={getTabId(baseId, value)}
+      // biome-ignore lint/a11y/noNoninteractiveTabindex: role="tabpanel" makes this a real WAI-ARIA interactive landmark, not a plain div
+      tabIndex={0}
     />
   );
 }
