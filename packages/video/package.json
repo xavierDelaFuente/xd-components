@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/video",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Video player with org styling, aspect ratio, and load-error fallback, wrapping the native <video> element",
   "license": "MIT",
   "repository": {

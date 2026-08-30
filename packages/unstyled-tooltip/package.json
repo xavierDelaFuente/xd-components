@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/unstyled-tooltip",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Unstyled tooltip primitive — hover/focus open with delay, Escape to dismiss, accessible aria-describedby wiring",
   "license": "MIT",
   "repository": {
