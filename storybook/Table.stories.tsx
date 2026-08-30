@@ -1,5 +1,6 @@
-import type { RowId, TableColumn } from '@asnewyla/unstyled-table';
+import { Button } from '@asnewyla/button';
 import { Table } from '@asnewyla/table';
+import type { RowId, TableColumn } from '@asnewyla/unstyled-table';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
@@ -117,13 +118,14 @@ function BulkDeleteDemo() {
     <div>
       <p>
         {selected.length} selected{' '}
-        <button
-          type="button"
+        <Button
+          size="sm"
+          variant="destructive"
           disabled={selected.length === 0}
           onClick={handleDelete}
         >
           Delete selected
-        </button>
+        </Button>
       </p>
       <Table
         data={data}

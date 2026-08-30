@@ -1,3 +1,4 @@
+import { Button } from '@asnewyla/button';
 import {
   type RowId,
   type TableColumn,
@@ -173,13 +174,14 @@ function BulkDeleteDemo() {
     <div>
       <p>
         {selected.length} selected{' '}
-        <button
-          type="button"
+        <Button
+          size="sm"
+          variant="destructive"
           disabled={selected.length === 0}
           onClick={handleDelete}
         >
           Delete selected
-        </button>
+        </Button>
       </p>
       <UnstyledTable
         data={data}

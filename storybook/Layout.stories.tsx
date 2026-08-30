@@ -1,10 +1,7 @@
+import { Group, Layout } from '@asnewyla/layout';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Layout } from '@asnewyla/layout';
 
 const chipStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
   width: 64,
   height: 40,
   background: 'var(--xd-color-secondary, #64748b)',
@@ -13,7 +10,9 @@ const chipStyle: React.CSSProperties = {
 };
 
 const Chip = ({ children }: { children: React.ReactNode }) => (
-  <div style={chipStyle}>{children}</div>
+  <Group align="center" justify="center" style={chipStyle}>
+    {children}
+  </Group>
 );
 
 const meta = {

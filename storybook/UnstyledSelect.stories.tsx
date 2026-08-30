@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { UnstyledSelect } from '@asnewyla/unstyled-select';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { CSSProperties } from 'react';
 
 // Genuinely unstyled — no CSS at all. This inline style exists only so the
@@ -78,7 +78,9 @@ export const Invalid: Story = {
 
 // `renderValue` is the hook `@asnewyla/select`'s chips are built on — this
 // shows the primitive's own contract for it, with the plainest possible
-// rendering (no styling, just text and a native "×" button per option).
+// rendering. The `<button>` here is native ON PURPOSE: the whole point of the
+// story is what you get from the unstyled primitive with zero component help.
+// (Stories otherwise use @asnewyla components, not raw elements — see PROJECT.md.)
 export const CustomRenderValue: StoryObj = {
   render: () => (
     <UnstyledSelect
