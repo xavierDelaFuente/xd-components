@@ -42,6 +42,7 @@
     "@asnewyla/textarea": "workspace:*",
     "@asnewyla/theme": "workspace:*",
     "@asnewyla/tokens": "workspace:*",
+    "@asnewyla/tooltip": "workspace:*",
     "@asnewyla/video": "workspace:*",
     "@asnewyla/unstyled-button": "workspace:*",
     "@asnewyla/unstyled-select": "workspace:*",

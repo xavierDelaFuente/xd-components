@@ -1,0 +1,91 @@
+/* The wrapper (.xd-tooltip-root) is a shrink-wrapped positioning context — the
+   primitive's own inline styles already set position/display, so no rule is
+   needed here; the class exists only as a consumer styling hook. */
+
+/* --- The bubble ---
+   Positioned absolutely against .xd-tooltip-root. No collision detection for
+   v0.x: an explicit `side` that runs off-screen stays off-screen. Token
+   fallbacks kept in sync with @asnewyla/tokens (soft dependency). */
+
+.xd-tooltip {
+  position: absolute;
+  z-index: 40;
+  max-width: 16rem;
+  width: max-content;
+  padding: var(--xd-space-xs, 0.25rem) var(--xd-space-sm, 0.375rem);
+  border-radius: var(--xd-radius-sm, 0.25rem);
+  background-color: var(--xd-color-text, #0f172a);
+  color: var(--xd-color-surface, #ffffff);
+  font-family: var(--xd-font-family, system-ui, sans-serif);
+  font-size: var(--xd-font-size-sm, 0.75rem);
+  line-height: var(--xd-line-height-normal, 1.25);
+  box-shadow: var(--xd-shadow-sm, 0 1px 2px rgb(0 0 0 / 0.12));
+  /* The pointer never interacts with the bubble — it isn't hoverable in v0.x. */
+  pointer-events: none;
+}
+
+/* --- Placement per side ---
+   8px gap between the trigger and the bubble, plus a centered arrow. */
+
+.xd-tooltip[data-side="top"] {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 0.5rem;
+}
+
+.xd-tooltip[data-side="bottom"] {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 0.5rem;
+}
+
+.xd-tooltip[data-side="left"] {
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-right: 0.5rem;
+}
+
+.xd-tooltip[data-side="right"] {
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 0.5rem;
+}
+
+/* --- Arrow --- a 6px square rotated 45deg, half-tucked under the bubble edge */
+
+.xd-tooltip::after {
+  content: "";
+  position: absolute;
+  width: 0.375rem;
+  height: 0.375rem;
+  background-color: inherit;
+  transform: rotate(45deg);
+}
+
+.xd-tooltip[data-side="top"]::after {
+  bottom: -0.1875rem;
+  left: 50%;
+  margin-left: -0.1875rem;
+}
+
+.xd-tooltip[data-side="bottom"]::after {
+  top: -0.1875rem;
+  left: 50%;
+  margin-left: -0.1875rem;
+}
+
+.xd-tooltip[data-side="left"]::after {
+  right: -0.1875rem;
+  top: 50%;
+  margin-top: -0.1875rem;
+}
+
+.xd-tooltip[data-side="right"]::after {
+  left: -0.1875rem;
+  top: 50%;
+  margin-top: -0.1875rem;
+}
