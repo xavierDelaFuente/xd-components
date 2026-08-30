@@ -6,6 +6,7 @@ import {
   useState,
   type VideoHTMLAttributes,
 } from 'react';
+import './Video.css';
 
 export type VideoFit = 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
 export type VideoRadius = 'sm' | 'md' | 'lg' | 'full';

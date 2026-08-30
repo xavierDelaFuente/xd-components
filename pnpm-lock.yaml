@@ -71,6 +71,9 @@ importers:
       '@asnewyla/unstyled-table':
         specifier: workspace:*
         version: link:packages/unstyled-table
+      '@asnewyla/video':
+        specifier: workspace:*
+        version: link:packages/video
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.5.10
