@@ -1,6 +1,72 @@
-/* Placeholder — real visual design is a follow-up pass. Just enough here
-   to make the package buildable and the `./styles.css` export non-empty. */
 .xd-tabs {
   display: flex;
   flex-direction: column;
+  gap: var(--xd-space-md, 0.5rem);
+}
+
+.xd-tab-list {
+  display: flex;
+  gap: var(--xd-space-sm, 0.375rem);
+  border-bottom: var(--xd-border-width-thin, 1px) solid
+    var(--xd-color-border, #cbd5e1);
+}
+
+.xd-tab {
+  position: relative;
+  /* Sits flush against the tablist's own border, so the active tab's
+     indicator below overlaps it exactly at the seam instead of leaving
+     a visible gap or double line. */
+  margin-bottom: -1px;
+  padding: var(--xd-space-sm, 0.375rem) var(--xd-space-md, 0.5rem);
+  border: none;
+  border-bottom: var(--xd-border-width-thick, 2px) solid transparent;
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--xd-font-size-md, 0.875rem);
+  font-weight: var(--xd-font-weight-medium, 500);
+  color: var(--xd-color-text-muted, #475569);
+  cursor: pointer;
+  transition:
+    color var(--xd-motion-fast, 120ms ease-out),
+    border-color var(--xd-motion-fast, 120ms ease-out);
+}
+
+.xd-tab:hover:not(:disabled) {
+  color: var(--xd-color-text, #0f172a);
+}
+
+.xd-tab[aria-selected="true"] {
+  color: var(--xd-color-primary, #0d9488);
+  border-bottom-color: var(--xd-color-primary, #0d9488);
+}
+
+.xd-tab:focus-visible {
+  outline: var(--xd-focus-ring-width, 2px) solid
+    var(--xd-color-focus, var(--xd-color-primary, #0d9488));
+  outline-offset: -2px;
+}
+
+.xd-tab:disabled {
+  opacity: var(--xd-opacity-disabled, 0.5);
+  cursor: not-allowed;
+}
+
+.xd-tab-panel {
+  font-size: var(--xd-font-size-md, 0.875rem);
+  line-height: var(--xd-line-height-normal, 1.25);
+  color: var(--xd-color-text, #0f172a);
+}
+
+.xd-tab-panel:focus-visible {
+  outline: var(--xd-focus-ring-width, 2px) solid
+    var(--xd-color-focus, var(--xd-color-primary, #0d9488));
+  outline-offset: var(--xd-focus-ring-offset, 2px);
+}
+
+/* --- Motion preference --- */
+
+@media (prefers-reduced-motion: reduce) {
+  .xd-tab {
+    transition-duration: 1ms;
+  }
 }

@@ -37,6 +37,12 @@ describe('UnstyledTabs', () => {
     expect(getAllTabs()).toHaveLength(3);
   });
 
+  it('makes the active panel focusable, for keyboard users when it has no focusable content of its own', () => {
+    renderTabs();
+
+    expect(getPanel('Profile')).toHaveAttribute('tabindex', '0');
+  });
+
   it('renders only the active panel — inactive panels are not in the DOM', () => {
     renderTabs();
 
