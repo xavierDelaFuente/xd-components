@@ -13,6 +13,7 @@ import '@asnewyla/switch/styles.css';
 import '@asnewyla/table/styles.css';
 import '@asnewyla/tabs/styles.css';
 import '@asnewyla/textarea/styles.css';
+import '@asnewyla/tooltip/styles.css';
 import '@asnewyla/video/styles.css';
 
 const preview: Preview = {
