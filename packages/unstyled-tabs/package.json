@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/unstyled-tabs",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Unstyled tabs primitive with roving-focus keyboard navigation and accessibility",
   "license": "MIT",
   "repository": {

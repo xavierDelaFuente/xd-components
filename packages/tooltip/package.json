@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/tooltip",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Styled tooltip built on @asnewyla/unstyled-tooltip — CSS positioning per side, theme-aware bubble",
   "license": "MIT",
   "repository": {
