@@ -1,3 +1,4 @@
+import { Button } from '@asnewyla/button';
 import { Tab, TabList, TabPanel, Tabs } from '@asnewyla/tabs';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
@@ -55,7 +56,7 @@ export const WithDisabledTab: StoryObj = {
 };
 
 // Controlled usage — the consumer owns `value` and can drive it from
-// anywhere, not just clicks on the tabs themselves (here, a plain button).
+// anywhere, not just clicks on the tabs themselves (here, a separate button).
 function ControlledDemo() {
   const [active, setActive] = useState('profile');
 
@@ -63,9 +64,9 @@ function ControlledDemo() {
     <div style={{ width: 360 }}>
       <p>
         Active: <strong>{active}</strong>{' '}
-        <button type="button" onClick={() => setActive('billing')}>
+        <Button size="sm" onClick={() => setActive('billing')}>
           Jump to Billing
-        </button>
+        </Button>
       </p>
       <Tabs value={active} onValueChange={setActive}>
         <TabList aria-label="Account settings">

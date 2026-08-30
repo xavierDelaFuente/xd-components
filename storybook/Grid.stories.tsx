@@ -1,11 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Card } from '@asnewyla/card';
-import { Grid } from '@asnewyla/layout';
+import { Grid, Group } from '@asnewyla/layout';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const chipStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
   height: 48,
   background: 'var(--xd-color-secondary, #64748b)',
   color: 'var(--xd-on-secondary, #fff)',
@@ -13,7 +10,9 @@ const chipStyle: React.CSSProperties = {
 };
 
 const Chip = ({ children }: { children: React.ReactNode }) => (
-  <div style={chipStyle}>{children}</div>
+  <Group align="center" justify="center" style={chipStyle}>
+    {children}
+  </Group>
 );
 
 const meta = {
