@@ -4,10 +4,7 @@ import { screen } from '@testing-library/react';
 // is inert / not in the accessibility tree), so query with the *query* form
 // when asserting it is absent.
 export function getDialog(name?: string | RegExp): HTMLElement {
-  return screen.getByRole(
-    'dialog',
-    name === undefined ? undefined : { name },
-  );
+  return screen.getByRole('dialog', name === undefined ? undefined : { name });
 }
 
 export function queryDialog(): HTMLElement | null {
