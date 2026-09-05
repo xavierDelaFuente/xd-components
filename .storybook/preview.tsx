@@ -7,6 +7,7 @@ import '@asnewyla/input/styles.css';
 import '@asnewyla/form/styles.css';
 import '@asnewyla/card/styles.css';
 import '@asnewyla/checkbox/styles.css';
+import '@asnewyla/dialog/styles.css';
 import '@asnewyla/radio/styles.css';
 import '@asnewyla/select/styles.css';
 import '@asnewyla/switch/styles.css';
