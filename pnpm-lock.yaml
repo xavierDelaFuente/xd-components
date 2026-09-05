@@ -20,6 +20,9 @@ importers:
       '@asnewyla/checkbox':
         specifier: workspace:*
         version: link:packages/checkbox
+      '@asnewyla/dialog':
+        specifier: workspace:*
+        version: link:packages/dialog
       '@asnewyla/form':
         specifier: workspace:*
         version: link:packages/form

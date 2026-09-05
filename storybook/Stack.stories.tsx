@@ -1,12 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Input } from '@asnewyla/input';
 import { Stack } from '@asnewyla/layout';
-
-const fieldStyle: React.CSSProperties = {
-  padding: '0.5rem 0.75rem',
-  border: '1px solid #cbd5e1',
-  borderRadius: 'var(--xd-radius-sm, 4px)',
-  width: 220,
-};
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
   title: 'Components/Stack',
@@ -26,11 +20,12 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     gap: 'md',
+    style: { width: 220 },
     children: (
       <>
-        <div style={fieldStyle}>Name</div>
-        <div style={fieldStyle}>Email</div>
-        <div style={fieldStyle}>Password</div>
+        <Input label="Name" />
+        <Input label="Email" type="email" />
+        <Input label="Password" type="password" />
       </>
     ),
   },
@@ -40,10 +35,10 @@ export const GapSizes: StoryObj = {
   render: () => (
     <Stack gap="lg">
       {(['sm', 'md', 'lg'] as const).map((gap) => (
-        <Stack key={gap} gap={gap}>
+        <Stack key={gap} gap={gap} style={{ width: 220 }}>
           <code>{gap}</code>
-          <div style={fieldStyle}>Name</div>
-          <div style={fieldStyle}>Email</div>
+          <Input label="Name" />
+          <Input label="Email" type="email" />
         </Stack>
       ))}
     </Stack>

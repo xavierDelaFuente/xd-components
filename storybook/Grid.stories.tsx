@@ -9,8 +9,14 @@ const chipStyle: React.CSSProperties = {
   borderRadius: 'var(--xd-radius-sm, 4px)',
 };
 
-const Chip = ({ children }: { children: React.ReactNode }) => (
-  <Group align="center" justify="center" style={chipStyle}>
+const Chip = ({
+  children,
+  style,
+}: {
+  children: React.ReactNode;
+  style?: React.CSSProperties;
+}) => (
+  <Group align="center" justify="center" style={{ ...chipStyle, ...style }}>
     {children}
   </Group>
 );
@@ -88,8 +94,8 @@ export const AlignAndJustify: StoryObj = {
         justify="center"
         style={{ height: 160 }}
       >
-        <div style={{ ...chipStyle, width: 40 }}>A</div>
-        <div style={{ ...chipStyle, width: 60, height: 60 }}>B</div>
+        <Chip style={{ width: 40 }}>A</Chip>
+        <Chip style={{ width: 60, height: 60 }}>B</Chip>
       </Grid>
     </div>
   ),
