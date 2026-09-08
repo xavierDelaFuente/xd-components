@@ -1,0 +1,78 @@
+.xd-spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--xd-color-primary, #0f766e);
+}
+
+/* The visible ring. Decorative — the accessible name lives on .xd-spinner-label. */
+.xd-spinner-indicator {
+  box-sizing: border-box;
+  display: block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: var(--xd-radius-full, 9999px);
+  animation: xd-spinner-spin 0.6s linear infinite;
+}
+
+/* --- Size --- */
+
+.xd-spinner[data-size="sm"] .xd-spinner-indicator {
+  width: 1rem;
+  height: 1rem;
+  border-width: 2px;
+}
+
+.xd-spinner[data-size="md"] .xd-spinner-indicator {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-width: 2px;
+}
+
+.xd-spinner[data-size="lg"] .xd-spinner-indicator {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-width: 3px;
+}
+
+/* Screen-reader-only text — visible to assistive tech, clipped for sighted users.
+   Not `display: none`, which would drop it from the accessibility tree too. */
+.xd-spinner-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes xd-spinner-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Rotation is a vestibular trigger; a low-frequency opacity pulse is the
+   accepted reduced-motion substitute — the control still reads as "busy". */
+@media (prefers-reduced-motion: reduce) {
+  .xd-spinner-indicator {
+    border-top-color: currentColor;
+    animation: xd-spinner-pulse 1.2s ease-in-out infinite;
+  }
+
+  @keyframes xd-spinner-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.35;
+    }
+  }
+}
