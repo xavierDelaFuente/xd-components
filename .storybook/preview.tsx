@@ -10,6 +10,7 @@ import '@asnewyla/checkbox/styles.css';
 import '@asnewyla/dialog/styles.css';
 import '@asnewyla/radio/styles.css';
 import '@asnewyla/select/styles.css';
+import '@asnewyla/spinner/styles.css';
 import '@asnewyla/switch/styles.css';
 import '@asnewyla/table/styles.css';
 import '@asnewyla/tabs/styles.css';

@@ -8,7 +8,10 @@ import './Spinner.css';
 
 export type SpinnerSize = 'sm' | 'md' | 'lg';
 
-export type SpinnerProps = Omit<ComponentPropsWithoutRef<'span'>, 'children'> & {
+export type SpinnerProps = Omit<
+  ComponentPropsWithoutRef<'span'>,
+  'children'
+> & {
   /** Accessible name announced by assistive tech. Defaults to `'Loading'`. */
   label?: string;
   size?: SpinnerSize;

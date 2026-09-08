@@ -47,6 +47,9 @@ importers:
       '@asnewyla/select':
         specifier: workspace:*
         version: link:packages/select
+      '@asnewyla/spinner':
+        specifier: workspace:*
+        version: link:packages/spinner
       '@asnewyla/switch':
         specifier: workspace:*
         version: link:packages/switch

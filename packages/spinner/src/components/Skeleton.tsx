@@ -46,4 +46,6 @@ function SkeletonInner(
   );
 }
 
-export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(SkeletonInner);
+export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(
+  SkeletonInner,
+);
