@@ -82,12 +82,55 @@ The summary only appears after a submit has actually been attempted — a
 field that's invalid purely from blur-driven validation (nobody has tried
 to submit yet) shows its own inline error only.
 
+### Form actions and no-JS forms
+
+`Form` passes every native `<form>` prop through (`action`, `method`,
+`encType`, `aria-*`, `id`, `className`, ...) and forwards `ref` to the
+`<form>` element. Validation runs first on every submit, and an invalid
+submit is always blocked. A valid submit goes ahead natively unless you
+handle it on the client:
+
+| Props | Valid submit |
+|---|---|
+| `onSubmit` only | Prevented; `onSubmit(values)` is called (client-only form) |
+| `action` (with or without `onSubmit`) | Not prevented: the browser posts, or React 19 runs the action. `onSubmit(values)` is still called if given |
+| neither | Not prevented: a plain form posting to its URL |
+
+With a React 19 server action:
+
+```tsx
+// actions.ts
+'use server';
+export async function signIn(formData: FormData) { /* ... */ }
+```
+
+```tsx
+// page.tsx: a server component, no wrapper needed
+import { Button } from '@asnewyla/button';
+import { Form, FormFieldInput } from '@asnewyla/form';
+import { signIn } from './actions';
+
+<Form action={signIn} aria-label="Sign in">
+  <FormFieldInput label="Email" name="email" type="email" required />
+  <Button type="submit">Sign in</Button>
+</Form>
+```
+
+Before JavaScript loads, the browser's own submit is used, so keep
+server-side validation. `noValidate` defaults to `true` so `Form`'s
+validation and error summary can run. Pass `noValidate={false}` to
+turn the browser's native validation UI back on.
+
 ### Props
+
+Every native `<form>` prop, plus:
 
 | Prop | Type |
 |---|---|
 | `children` | `React.ReactNode` (**required**) |
-| `onSubmit` | `(values: Record<string, string>) => void` (**required**) |
+| `onSubmit` | `(values: Record<string, string>) => void` (optional) |
+| `noValidate` | `boolean` (default `true`) |
+| `ref` | `Ref<HTMLFormElement>` |
 
 ## License
 

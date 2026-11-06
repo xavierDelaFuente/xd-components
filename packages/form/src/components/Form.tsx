@@ -1,16 +1,28 @@
 import { FormFieldProvider } from '@asnewyla/input';
-import { useMemo, useRef, useState } from 'react';
+import {
+  type ComponentPropsWithoutRef,
+  type ForwardedRef,
+  forwardRef,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { flushSync } from 'react-dom';
 import { FormErrorSummary } from './FormErrorSummary';
 import { type InvalidField, useFieldRegistry } from './useFieldRegistry';
 
-export type FormProps = {
+export type FormProps = Omit<ComponentPropsWithoutRef<'form'>, 'onSubmit'> & {
   children: React.ReactNode;
-  onSubmit: (values: Record<string, string>) => void;
+  onSubmit?: (values: Record<string, string>) => void;
 };
 
-export function Form({ children, onSubmit }: FormProps) {
+function FormInner(
+  { children, onSubmit, noValidate = true, ...restProps }: FormProps,
+  ref: ForwardedRef<HTMLFormElement>,
+) {
   const formRef = useRef<HTMLFormElement>(null);
+  useImperativeHandle(ref, () => formRef.current as HTMLFormElement);
   const summaryRef = useRef<HTMLDivElement>(null);
   const {
     errors,
@@ -24,8 +36,6 @@ export function Form({ children, onSubmit }: FormProps) {
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
     let hasError = false;
     // flushSync commits the validation state synchronously, so the
     // summary is already in the DOM by the time we call .focus() below.
@@ -36,9 +46,14 @@ export function Form({ children, onSubmit }: FormProps) {
       setHasAttemptedSubmit(true);
     });
     if (hasError) {
+      event.preventDefault();
       summaryRef.current?.focus();
       return;
     }
+
+    if (!onSubmit) return;
+    // With an action, the native submit (or a React 19 form action) goes ahead.
+    if (restProps.action === undefined) event.preventDefault();
 
     const values: Record<string, string> = {};
     for (const [key, value] of new FormData(event.currentTarget).entries()) {
@@ -55,7 +70,12 @@ export function Form({ children, onSubmit }: FormProps) {
   );
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} noValidate>
+    <form
+      {...restProps}
+      ref={formRef}
+      onSubmit={handleSubmit}
+      noValidate={noValidate}
+    >
       {invalid.length > 0 && (
         <FormErrorSummary ref={summaryRef} invalidFields={invalid} />
       )}
@@ -63,3 +83,5 @@ export function Form({ children, onSubmit }: FormProps) {
     </form>
   );
 }
+
+export const Form = forwardRef(FormInner);
