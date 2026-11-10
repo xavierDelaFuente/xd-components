@@ -42,6 +42,7 @@
     "@asnewyla/table": "workspace:*",
     "@asnewyla/tabs": "workspace:*",
     "@asnewyla/textarea": "workspace:*",
+    "@asnewyla/toggle-group": "workspace:*",
     "@asnewyla/theme": "workspace:*",
     "@asnewyla/tokens": "workspace:*",
     "@asnewyla/tooltip": "workspace:*",
