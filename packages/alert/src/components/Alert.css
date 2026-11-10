@@ -1,0 +1,70 @@
+/* A tinted panel with normal text and an accent border. Each tone sets
+   --_accent (border) and --_tint (background) from the status tokens;
+   their contrast is tested in @asnewyla/tokens. Fallbacks are the
+   tokens.css light values, for use without tokens. */
+.xd-alert {
+  --_accent: var(--xd-color-info, #1678c9);
+  --_tint: var(--xd-color-info-subtle, #daeeff);
+
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--xd-space-xs, 0.25rem);
+  padding: var(--xd-space-lg, 0.75rem) var(--xd-space-xl, 1rem);
+  border: var(--xd-frame-border-width, 1px) solid var(--_accent);
+  /* A thicker leading edge marks the tone without relying on colour alone
+     to separate the panel from the page. Fixed px, like the other border
+     widths. */
+  border-inline-start-width: 4px;
+  border-radius: var(--xd-radius-md, 0.375rem);
+  background-color: var(--_tint);
+  color: var(--xd-color-text, #0f172a);
+  font-size: var(--xd-font-size-md, 0.875rem);
+  line-height: var(--xd-line-height-normal, 1.25);
+}
+
+.xd-alert[data-tone="error"] {
+  --_accent: var(--xd-color-destructive, #dc2626);
+  --_tint: var(--xd-color-destructive-subtle, #ffe3df);
+}
+
+.xd-alert[data-tone="success"] {
+  --_accent: var(--xd-color-success, #00863c);
+  --_tint: var(--xd-color-success-subtle, #dcf2df);
+}
+
+.xd-alert[data-tone="info"] {
+  --_accent: var(--xd-color-info, #1678c9);
+  --_tint: var(--xd-color-info-subtle, #daeeff);
+}
+
+.xd-alert[data-tone="warning"] {
+  --_accent: var(--xd-color-warning, #a26700);
+  --_tint: var(--xd-color-warning-subtle, #fde8c6);
+}
+
+.xd-alert-title {
+  margin: 0;
+  font-weight: var(--xd-font-weight-semibold, 600);
+}
+
+.xd-alert-body > :first-child {
+  margin-top: 0;
+}
+
+.xd-alert-body > :last-child {
+  margin-bottom: 0;
+}
+
+/* Text on the tint meets 4.5:1, so links keep the text colour and are
+   told apart by their underline. */
+.xd-alert a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.xd-alert a:focus-visible {
+  outline: var(--xd-focus-ring-width, 2px) solid
+    var(--xd-color-focus, currentColor);
+  outline-offset: var(--xd-focus-ring-offset, 2px);
+}
