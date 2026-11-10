@@ -26,6 +26,7 @@
   "dependencies": {
     "@asnewyla/button": "workspace:*",
     "@asnewyla/button-group": "workspace:*",
+    "@asnewyla/alert": "workspace:*",
     "@asnewyla/card": "workspace:*",
     "@asnewyla/checkbox": "workspace:*",
     "@asnewyla/dialog": "workspace:*",
