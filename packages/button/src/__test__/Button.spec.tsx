@@ -32,6 +32,11 @@ describe('Button', () => {
     expect(getButton()).toHaveAttribute('data-variant', 'destructive');
   });
 
+  it('applies outline variant when specified', () => {
+    render(<Button variant="outline">Outline</Button>);
+    expect(getButton()).toHaveAttribute('data-variant', 'outline');
+  });
+
   it('applies md size by default', () => {
     render(<Button>Medium</Button>);
     expect(getButton()).toHaveAttribute('data-size', 'md');

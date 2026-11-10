@@ -82,6 +82,24 @@
   --_fg: var(--xd-on-destructive, #ffffff);
 }
 
+/* Low emphasis: no fill, a border-strong frame (≥3:1 on surface in every
+   theme). The frame width follows the theme's frame weight, so Block gets
+   its 2px edge. Hover/active fill from surface-hover, not a mix of the
+   transparent --_bg. */
+.xd-button[data-variant="outline"] {
+  --_bg: transparent;
+  --_fg: var(--xd-color-text, #0f172a);
+  --_bg-hover: var(--xd-color-surface-hover, #f1f5f9);
+  --_bg-active: color-mix(in srgb, var(--_bg-hover) 88%, black);
+  border-width: var(--xd-frame-border-width, 1px);
+  border-color: var(--xd-color-border-strong, #6b7688);
+}
+
+/* The base ring falls back to --_bg, which is transparent here. */
+.xd-button[data-variant="outline"]:focus-visible {
+  outline-color: var(--xd-color-focus, currentColor);
+}
+
 /* ─── Variants — dark mode ───
    Only the fallback hex changes; a consumer-set --xd-color-* custom
    property still wins in both modes. */
@@ -105,6 +123,13 @@
   .xd-button[data-variant="destructive"] {
     --_bg: var(--xd-color-destructive, #f87171);
     --_fg: var(--xd-on-destructive, #000000);
+  }
+
+  .xd-button[data-variant="outline"] {
+    --_fg: var(--xd-color-text, #f1f5f9);
+    --_bg-hover: var(--xd-color-surface-hover, #1e293b);
+    --_bg-active: color-mix(in srgb, var(--_bg-hover) 85%, white);
+    border-color: var(--xd-color-border-strong, #64748b);
   }
 }
 
