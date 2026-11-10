@@ -57,6 +57,14 @@ The group gives every item its `name`, so the clicked item submits
 `mode=<value>`. Items default to `type="button"`, so they never submit by
 accident.
 
+### Keyboard
+
+Native button behaviour, with one tab stop per item: Tab / Shift+Tab move
+between items (disabled ones are skipped), and Enter or Space selects the
+focused item, or submits it if it's a `type="submit"` item. There's no
+roving tabindex and no arrow keys. The group has to work before JavaScript
+loads, and it's a set of toggle buttons, not a radio group.
+
 ### Props
 
 `ToggleGroup`: every native `<div>` prop, plus:
