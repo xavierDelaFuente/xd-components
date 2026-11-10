@@ -22,4 +22,14 @@ describe('ToggleGroup.css', () => {
   it('spaces items with a theme spacing token, so they never touch', () => {
     expect(group).toContain('gap: var(--xd-space-sm');
   });
+
+  it.each([
+    ['md', '--xd-space-md'],
+    ['lg', '--xd-space-lg'],
+  ])('maps gap="%s" to %s, like ButtonGroup and Stack/Group', (gap, token) => {
+    const rule =
+      css.split(`.xd-toggle-group[data-gap="${gap}"] {`)[1]?.split('}')[0] ??
+      '';
+    expect(rule).toContain(`gap: var(${token}`);
+  });
 });

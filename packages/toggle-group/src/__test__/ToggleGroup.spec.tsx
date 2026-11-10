@@ -136,6 +136,18 @@ describe('ToggleGroupItem — native button props', () => {
   });
 });
 
+describe('ToggleGroup — gap', () => {
+  it('uses the sm gap by default', () => {
+    render(<ModeGroup />);
+    expect(screen.getByRole('group')).toHaveAttribute('data-gap', 'sm');
+  });
+
+  it.each(['sm', 'md', 'lg'] as const)('sets data-gap="%s"', (gap) => {
+    render(<ModeGroup gap={gap} />);
+    expect(screen.getByRole('group')).toHaveAttribute('data-gap', gap);
+  });
+});
+
 describe('ToggleGroup — size and disabled', () => {
   it('sizes items md by default, like Button', () => {
     render(<ModeGroup />);
