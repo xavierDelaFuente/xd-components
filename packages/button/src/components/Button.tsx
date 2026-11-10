@@ -9,7 +9,7 @@ import type { OverridableProps } from './types';
 import { useButtonGroupContext } from './ButtonGroupContext';
 import './Button.css';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'destructive';
+export type ButtonVariant = 'primary' | 'secondary' | 'destructive' | 'outline';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonOwnProps<T extends ElementType = 'button'> {

@@ -9,7 +9,7 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'destructive'],
+      options: ['primary', 'secondary', 'destructive', 'outline'],
     },
     size: {
       control: 'select',
@@ -43,6 +43,22 @@ export const Destructive: Story = {
     children: 'Delete account',
     variant: 'destructive',
   },
+};
+
+export const Outline: Story = {
+  args: {
+    children: 'Export',
+    variant: 'outline',
+  },
+};
+
+export const Emphasis: Story = {
+  render: () => (
+    <Group gap="md" align="center">
+      <Button variant="primary">Save</Button>
+      <Button variant="outline">Preview</Button>
+    </Group>
+  ),
 };
 
 export const Sizes: Story = {

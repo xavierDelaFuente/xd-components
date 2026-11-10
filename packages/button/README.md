@@ -22,6 +22,7 @@ import { Button } from '@asnewyla/button';
 
 <Button variant="primary" size="md">Save changes</Button>
 <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+<Button variant="outline">Preview</Button>
 <Button as="a" href="/profile">Go to profile</Button>
 <Button startIcon={<SaveIcon />}>Save</Button>
 ```
@@ -30,7 +31,7 @@ import { Button } from '@asnewyla/button';
 
 | Prop | Type | Default |
 |---|---|---|
-| `variant` | `'primary' \| 'secondary' \| 'destructive'` | `'primary'` |
+| `variant` | `'primary' \| 'secondary' \| 'destructive' \| 'outline'` | `'primary'` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
 | `disabled` | `boolean` | `false` |
 | `startIcon` / `endIcon` | `ReactNode` | — |
