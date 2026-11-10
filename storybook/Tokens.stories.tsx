@@ -11,7 +11,35 @@ const colorTokens = [
   ['--xd-color-primary', '--xd-on-primary'],
   ['--xd-color-secondary', '--xd-on-secondary'],
   ['--xd-color-destructive', '--xd-on-destructive'],
+  ['--xd-color-success', '--xd-on-success'],
+  ['--xd-color-info', '--xd-on-info'],
+  ['--xd-color-warning', '--xd-on-warning'],
 ] as const;
+
+const statusTones = ['destructive', 'success', 'info', 'warning'] as const;
+
+/** Each tone's tint with normal text and an accent border: the Alert look. */
+export const StatusTints: StoryObj = {
+  render: () => (
+    <div style={{ display: 'grid', gap: '0.75rem', minWidth: '20rem' }}>
+      {statusTones.map((tone) => (
+        <div
+          key={tone}
+          style={{
+            background: `var(--xd-color-${tone}-subtle)`,
+            color: 'var(--xd-color-text)',
+            borderInlineStart: `4px solid var(--xd-color-${tone})`,
+            padding: '0.75rem 1rem',
+            borderRadius: 'var(--xd-radius-md)',
+            fontSize: 'var(--xd-font-size-md)',
+          }}
+        >
+          --xd-color-{tone}-subtle
+        </div>
+      ))}
+    </div>
+  ),
+};
 
 export const Colors: StoryObj = {
   render: () => (

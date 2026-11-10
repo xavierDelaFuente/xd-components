@@ -34,6 +34,37 @@ function declarationsAfter(css: string, marker: string): Tokens {
 }
 
 /**
+ * The raw declarations of each file's three colour blocks (light, dark under
+ * prefers-color-scheme, explicit data-mode="dark"), with no inheritance, to
+ * check that a file declares a token itself.
+ */
+export function colourBlocks() {
+  const files = [
+    {
+      name: 'tokens.css',
+      light: ':root {',
+      mediaDark: ':root:not([data-mode="light"]) {',
+      explicitDark: ':root[data-mode="dark"] {',
+    },
+    ...THEME_NAMES.map((theme) => ({
+      name: `theme-${theme}.css`,
+      light: `[data-theme="${theme}"] {`,
+      mediaDark: `[data-theme="${theme}"]:not([data-mode="light"]) {`,
+      explicitDark: `[data-theme="${theme}"][data-mode="dark"] {`,
+    })),
+  ];
+  return files.map(({ name, light, mediaDark, explicitDark }) => {
+    const css = read(name);
+    return {
+      file: name,
+      light: declarationsAfter(css, light),
+      mediaDark: declarationsAfter(css, mediaDark),
+      explicitDark: declarationsAfter(css, explicitDark),
+    };
+  });
+}
+
+/**
  * Resolved colour tokens for every theme and mode, read from the CSS files.
  * A theme inherits whatever it doesn't redeclare from tokens.css, and dark
  * mode inherits whatever it doesn't redeclare from light.

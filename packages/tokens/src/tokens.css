@@ -18,6 +18,17 @@
   --xd-on-secondary: #ffffff;
   --xd-color-destructive: #dc2626;
   --xd-on-destructive: #ffffff;
+  --xd-color-destructive-subtle: #ffe3df;
+
+  --xd-color-success: #00863c;
+  --xd-on-success: #ffffff;
+  --xd-color-success-subtle: #dcf2df;
+  --xd-color-info: #1678c9;
+  --xd-on-info: #ffffff;
+  --xd-color-info-subtle: #daeeff;
+  --xd-color-warning: #a26700;
+  --xd-on-warning: #ffffff;
+  --xd-color-warning-subtle: #fde8c6;
 
   /* ─── Surface & text ───
      surface       page and popover background
@@ -148,6 +159,17 @@
     --xd-on-secondary: #000000;
     --xd-color-destructive: #f87171;
     --xd-on-destructive: #000000;
+    --xd-color-destructive-subtle: #3e1e1d;
+
+    --xd-color-success: #63b777;
+    --xd-on-success: #000000;
+    --xd-color-success-subtle: #172f1c;
+    --xd-color-info: #61a7ec;
+    --xd-on-info: #000000;
+    --xd-color-info-subtle: #162a3e;
+    --xd-color-warning: #cf961a;
+    --xd-on-warning: #000000;
+    --xd-color-warning-subtle: #352507;
 
     --xd-color-surface: #0f172a;
     --xd-color-surface-hover: #1e293b;
@@ -175,6 +197,17 @@
   --xd-on-secondary: #000000;
   --xd-color-destructive: #f87171;
   --xd-on-destructive: #000000;
+  --xd-color-destructive-subtle: #3e1e1d;
+
+  --xd-color-success: #63b777;
+  --xd-on-success: #000000;
+  --xd-color-success-subtle: #172f1c;
+  --xd-color-info: #61a7ec;
+  --xd-on-info: #000000;
+  --xd-color-info-subtle: #162a3e;
+  --xd-color-warning: #cf961a;
+  --xd-on-warning: #000000;
+  --xd-color-warning-subtle: #352507;
 
   --xd-color-surface: #0f172a;
   --xd-color-surface-hover: #1e293b;

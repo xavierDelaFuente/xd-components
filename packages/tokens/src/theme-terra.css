@@ -31,6 +31,17 @@
   --xd-on-secondary: oklch(98% 0.012 85);
   --xd-color-destructive: oklch(50% 0.17 27);
   --xd-on-destructive: oklch(98% 0.012 85);
+  --xd-color-destructive-subtle: oklch(92.5% 0.035 27);
+
+  --xd-color-success: oklch(50% 0.128 150);
+  --xd-on-success: oklch(98% 0.012 85);
+  --xd-color-success-subtle: oklch(92.5% 0.035 150);
+  --xd-color-info: oklch(50% 0.128 250);
+  --xd-on-info: oklch(98% 0.012 85);
+  --xd-color-info-subtle: oklch(92.5% 0.035 250);
+  --xd-color-warning: oklch(50% 0.145 80);
+  --xd-on-warning: oklch(98% 0.012 85);
+  --xd-color-warning-subtle: oklch(92.5% 0.05 80);
 
   --xd-color-surface: oklch(96.5% 0.018 75);
   --xd-color-surface-hover: oklch(92% 0.028 72);
@@ -96,6 +107,17 @@
     --xd-on-secondary: oklch(19% 0.02 50);
     --xd-color-destructive: oklch(70% 0.15 27);
     --xd-on-destructive: oklch(19% 0.02 50);
+    --xd-color-destructive-subtle: oklch(28% 0.05 27);
+
+    --xd-color-success: oklch(70% 0.112 150);
+    --xd-on-success: oklch(19% 0.02 50);
+    --xd-color-success-subtle: oklch(28% 0.045 150);
+    --xd-color-info: oklch(70% 0.112 250);
+    --xd-on-info: oklch(19% 0.02 50);
+    --xd-color-info-subtle: oklch(28% 0.045 250);
+    --xd-color-warning: oklch(70% 0.128 80);
+    --xd-on-warning: oklch(19% 0.02 50);
+    --xd-color-warning-subtle: oklch(28% 0.05 80);
 
     --xd-color-surface: oklch(21% 0.018 55);
     --xd-color-surface-hover: oklch(26% 0.026 55);
@@ -122,6 +144,17 @@
   --xd-on-secondary: oklch(19% 0.02 50);
   --xd-color-destructive: oklch(70% 0.15 27);
   --xd-on-destructive: oklch(19% 0.02 50);
+  --xd-color-destructive-subtle: oklch(28% 0.05 27);
+
+  --xd-color-success: oklch(70% 0.112 150);
+  --xd-on-success: oklch(19% 0.02 50);
+  --xd-color-success-subtle: oklch(28% 0.045 150);
+  --xd-color-info: oklch(70% 0.112 250);
+  --xd-on-info: oklch(19% 0.02 50);
+  --xd-color-info-subtle: oklch(28% 0.045 250);
+  --xd-color-warning: oklch(70% 0.128 80);
+  --xd-on-warning: oklch(19% 0.02 50);
+  --xd-color-warning-subtle: oklch(28% 0.05 80);
 
   --xd-color-surface: oklch(21% 0.018 55);
   --xd-color-surface-hover: oklch(26% 0.026 55);

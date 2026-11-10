@@ -34,6 +34,7 @@ import '@asnewyla/tokens/tokens.css';
 | Group | Tokens |
 |---|---|
 | Color | `--xd-color-{primary,secondary,destructive}`, `--xd-on-{primary,secondary,destructive}` — light mode by default, overridden under `prefers-color-scheme: dark` |
+| Status | `--xd-color-{success,info,warning}` (an accent: a border, an icon or a fill), `--xd-on-{success,info,warning}` (text on that fill), `--xd-color-{destructive,success,info,warning}-subtle` (a tinted background for normal `--xd-color-text`). Every theme and mode meets: `on-*` on its fill 4.5:1; the accent on the surface and on its own tint 3:1; text on a tint 4.5:1. `destructive` doubles as the error tone |
 | Surface & text | `--xd-color-surface`, `--xd-color-surface-hover`, `--xd-color-text`, `--xd-color-text-muted` — page/popover background and text; `-text-muted` is placeholder/secondary text, still held to 4.5:1 |
 | Spacing | `--xd-space-{xs,sm,md,lg,xl,2xl,3xl}` (0.25rem → 2rem) |
 | Radius | `--xd-radius-{sm,md,lg}` in rem (0.25rem → 0.625rem), `--xd-radius-full` (`9999px`, a fixed pill/circle trick value, not on the rem scale) |
