@@ -9,20 +9,75 @@ switches the active `--xd-*` token set at runtime.
 npm install @asnewyla/theme
 ```
 
-## Usage
+## Server rendering / Next.js
+
+`ThemeProvider` sets the attributes in an effect, so a server-rendered page
+first paints with no theme and switches after hydration. If you render on
+the server, put the attributes on `<html>` in the server output instead.
+The CSS needs nothing else, and no `ThemeProvider` is needed:
+
+```tsx
+// app/layout.tsx: a server component
+import '@asnewyla/tokens/tokens.css';
+import '@asnewyla/tokens/theme-terra.css';
+import { isMode } from '@asnewyla/theme/constants';
+import { cookies } from 'next/headers';
+
+export default async function RootLayout({ children }) {
+  const stored = (await cookies()).get('mode')?.value;
+  const mode = isMode(stored) ? stored : undefined;
+
+  return (
+    <html lang="en" data-theme="terra" data-mode={mode}>
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+- `data-theme="terra"` picks the theme. Import its stylesheet.
+- `data-mode="light"` or `"dark"` forces a mode, e.g. from a cookie the user
+  set. Validate the stored value with `isMode`: an unknown value would match
+  no CSS.
+- **No `data-mode`** follows the OS setting (`prefers-color-scheme`). That's
+  the right default; don't set `"light"` just to have a value.
+
+Import the constants from **`@asnewyla/theme/constants`** in server code.
+The main entry is a client module (`'use client'`), and a server component
+that imports a value from a client module gets a reference, not the value,
+so `THEMES.includes(...)` would fail there. The main entry re-exports the
+same constants for client code.
+
+`ThemeProvider` is for client-only apps (no server rendering) and for
+switching theme or mode at runtime, without a reload.
+
+## Constants
+
+```ts
+import { THEMES, MODES, isTheme, isMode, type Theme, type Mode } from '@asnewyla/theme/constants';
+
+THEMES; // ['terra', 'almanac', 'block', 'graphite', 'rubber', 'terminal']
+MODES;  // ['light', 'dark']
+isTheme(value); // value is Theme: safe for an untrusted stored string
+isMode(value);  // value is Mode
+```
+
+`THEMES` is tested against the `theme-*.css` files `@asnewyla/tokens`
+ships, so it can't drift.
+
+## Usage (client-only apps)
 
 Import the theme stylesheets you want to offer (see `@asnewyla/tokens`),
 then wrap your app:
 
 ```tsx
-import '@asnewyla/tokens/theme-paper.css';
-import '@asnewyla/tokens/theme-sand.css';
-import '@asnewyla/tokens/theme-lavender.css';
-import { ThemeProvider } from '@asnewyla/theme';
+import '@asnewyla/tokens/theme-terra.css';
+import '@asnewyla/tokens/theme-graphite.css';
+import { ThemeProvider, type Mode } from '@asnewyla/theme';
 
 function App() {
-  const [theme, setTheme] = useState<'paper' | 'sand' | 'lavender'>('paper');
-  const [mode, setMode] = useState<'light' | 'dark'>();
+  const [theme, setTheme] = useState<'terra' | 'graphite'>('terra');
+  const [mode, setMode] = useState<Mode>();
 
   return (
     <ThemeProvider theme={theme} mode={mode}>
@@ -41,15 +96,13 @@ theme's bare fallback (or `@asnewyla/tokens/tokens.css`) apply.
 
 | Prop | Type | Default |
 |---|---|---|
-| `theme` | `string` | — (unset: no theme override) |
-| `mode` | `'light' \| 'dark'` | — (unset: follows `prefers-color-scheme`) |
+| `theme` | `Theme \| (string & {})` | — (unset: no theme override) |
+| `mode` | `Mode` (`'light' \| 'dark'`) | — (unset: follows `prefers-color-scheme`) |
 | `children` | `React.ReactNode` | — (required) |
 
-`theme` is a plain `string`, not a union of the example theme names above —
-`@asnewyla/theme` has no knowledge of which themes exist. It just sets
-whatever value you give it as `data-theme` on `<html>`; the theme names
-themselves are defined entirely by whichever `--xd-*` stylesheets you
-import (`@asnewyla/tokens`'s or your own). `mode` is a real union, since
+`theme` autocompletes the shipped themes (`Theme`) but accepts any string,
+so a theme stylesheet of your own works too. `ThemeProvider` just sets the
+value as `data-theme` on `<html>`. `mode` is a real union, since
 every `@asnewyla/tokens` theme file only ever matches `data-mode="light"`
 or `"dark"` — anything else would silently match nothing.
 

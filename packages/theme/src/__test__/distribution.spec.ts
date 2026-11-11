@@ -15,4 +15,23 @@ describe('distribution', () => {
       expect(read(file).startsWith("'use client';")).toBe(true);
     },
   );
+
+  // A server component that imports a value from a 'use client' module gets
+  // a client reference, not the value, so `THEMES.includes(...)` would break
+  // there. The constants entry must stay a plain module.
+  it.each(['dist/constants.mjs', 'dist/constants.js'])(
+    "%s has no 'use client' directive, so server code gets the real values",
+    (file) => {
+      expect(read(file)).not.toMatch(/['"]use client['"]/);
+    },
+  );
+
+  it('exports ./constants from package.json', () => {
+    const pkg = JSON.parse(read('package.json'));
+    expect(pkg.exports['./constants']).toEqual({
+      types: './dist/constants.d.ts',
+      import: './dist/constants.mjs',
+      require: './dist/constants.js',
+    });
+  });
 });
