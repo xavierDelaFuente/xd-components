@@ -84,4 +84,46 @@ describe('ButtonGroup', () => {
     );
     expect(ref.current).toBeInstanceOf(HTMLDivElement);
   });
+
+  it('has the xd-button-group class, with a clean class attribute when no className is given', () => {
+    render(
+      <ButtonGroup aria-label="Actions">
+        <Button>Save</Button>
+      </ButtonGroup>,
+    );
+    expect(screen.getByRole('group')).toHaveAttribute(
+      'class',
+      'xd-button-group',
+    );
+  });
+
+  it('merges a consumer className with xd-button-group', () => {
+    render(
+      <ButtonGroup aria-label="Actions" className="toolbar">
+        <Button>Save</Button>
+      </ButtonGroup>,
+    );
+    expect(screen.getByRole('group')).toHaveAttribute(
+      'class',
+      'xd-button-group toolbar',
+    );
+  });
+
+  it('uses the sm gap by default', () => {
+    render(
+      <ButtonGroup aria-label="Actions">
+        <Button>Save</Button>
+      </ButtonGroup>,
+    );
+    expect(screen.getByRole('group')).toHaveAttribute('data-gap', 'sm');
+  });
+
+  it.each(['sm', 'md', 'lg'] as const)('sets data-gap="%s"', (gap) => {
+    render(
+      <ButtonGroup aria-label="Actions" gap={gap}>
+        <Button>Save</Button>
+      </ButtonGroup>,
+    );
+    expect(screen.getByRole('group')).toHaveAttribute('data-gap', gap);
+  });
 });
