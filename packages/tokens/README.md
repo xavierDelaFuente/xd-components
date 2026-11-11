@@ -100,6 +100,49 @@ on its own `[data-theme="name"]` element, not just the custom properties
 — a page that mounts only a theme file, with no other component styling,
 still renders correctly rather than transparent.
 
+For server-rendered apps (e.g. Next.js), set `data-theme` and `data-mode`
+on `<html>` in the server output rather than with `ThemeProvider`, to avoid
+an unthemed first paint. See `@asnewyla/theme`'s "Server rendering" section.
+
+## Fonts
+
+Themes **name** fonts but don't load them. Loading them is the app's job.
+When a named font isn't loaded, the browser falls back along the stack, and
+every stack ends in a generic family (tested), so the page still renders,
+just in a different face.
+
+| Theme | `--xd-font-family` | `--xd-font-family-mono` |
+|---|---|---|
+| default (`tokens.css`) | `system-ui, sans-serif` (nothing to load) | `ui-monospace, monospace` |
+| `terra` | **Plus Jakarta Sans**, then `system-ui, sans-serif` | **IBM Plex Mono**, then `ui-monospace, monospace` |
+| `almanac` | **Source Serif 4**, then `Georgia, "Times New Roman", serif` | **IBM Plex Mono** |
+| `block` | **Space Grotesk**, then `system-ui, sans-serif` | **IBM Plex Mono** |
+| `graphite` | **IBM Plex Sans**, then `system-ui, sans-serif` | **IBM Plex Mono** |
+| `rubber` | **Plus Jakarta Sans**, then `system-ui, sans-serif` | **IBM Plex Mono** |
+| `terminal` | **JetBrains Mono**, then `ui-monospace, "SFMono-Regular", monospace` | **JetBrains Mono** |
+
+The bold names are the fonts to load. All are free on Google Fonts. With
+Next.js, `next/font` loads them and gives you a family name; point the
+token at it:
+
+```tsx
+import { Plus_Jakarta_Sans } from 'next/font/google';
+
+const sans = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-sans' });
+
+<html data-theme="terra" className={sans.variable}>
+```
+
+```css
+[data-theme="terra"] {
+  --xd-font-family: var(--font-sans), system-ui, sans-serif;
+}
+```
+
+To keep the system font instead, don't load anything: the stack falls back
+on its own. Or set `--xd-font-family: system-ui, sans-serif;` to skip the
+named font entirely.
+
 ## License
 
 MIT

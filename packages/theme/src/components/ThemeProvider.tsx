@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
+import type { Mode, Theme } from '../constants';
 
 export type ThemeProviderProps = {
   children: React.ReactNode;
-  theme?: string;
-  mode?: 'light' | 'dark';
+  /** A shipped theme (autocompleted) or the name of your own theme stylesheet. */
+  theme?: Theme | (string & {});
+  mode?: Mode;
 };
 
 export function ThemeProvider({ children, theme, mode }: ThemeProviderProps) {
