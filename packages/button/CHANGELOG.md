@@ -1,5 +1,17 @@
 # @asnewyla/button
 
+## 0.3.0
+
+### Minor Changes
+
+- 89225c4: Add `variant="outline"`: a low-emphasis button with no fill, the theme text colour and a `--xd-color-border-strong` frame at the theme's `--xd-frame-border-width`. Hover and active fill from `--xd-color-surface-hover`. Uses existing tokens only. The border meets 3:1 and the label 4.5:1 against the surface in every theme and mode.
+
+### Patch Changes
+
+- fcc4718: Ship `'use client';` as the first statement of the built JS (ESM and CJS), so these components can be imported directly from a React Server Component (e.g. a Next.js App Router page) with no app-side `'use client'` re-export. Server-safe packages (`tokens`, `layout`, `card`, `table`, `spinner`, `button-group`, `icon-button`, `tabs`, `tooltip`, `dialog`) stay without the directive; their client boundary is the package they import.
+- Updated dependencies [fcc4718]
+  - @asnewyla/unstyled-button@0.2.1
+
 ## 0.2.1
 
 ### Patch Changes

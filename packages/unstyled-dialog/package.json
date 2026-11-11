@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/unstyled-dialog",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Unstyled modal dialog primitive built on the native <dialog> element, with compound components and accessible labelling",
   "license": "MIT",
   "repository": {

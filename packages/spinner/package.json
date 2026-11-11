@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/spinner",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Accessible loading indicators — an indeterminate Spinner and a content-shaped Skeleton placeholder",
   "license": "MIT",
   "repository": {

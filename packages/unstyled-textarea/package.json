@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/unstyled-textarea",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Unstyled multi-line text input (textarea) primitive with accessibility",
   "license": "MIT",
   "repository": {

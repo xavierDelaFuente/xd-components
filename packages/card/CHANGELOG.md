@@ -1,5 +1,12 @@
 # @asnewyla/card
 
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies [fcc4718]
+  - @asnewyla/image@0.2.1
+
 ## 0.2.1
 
 ### Patch Changes
