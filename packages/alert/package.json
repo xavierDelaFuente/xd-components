@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/alert",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Inline message for form errors, confirmations and notices",
   "license": "MIT",
   "repository": {

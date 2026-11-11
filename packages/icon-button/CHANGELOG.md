@@ -1,5 +1,13 @@
 # @asnewyla/icon-button
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [89225c4]
+- Updated dependencies [fcc4718]
+  - @asnewyla/button@0.3.0
+
 ## 0.1.2
 
 ### Patch Changes

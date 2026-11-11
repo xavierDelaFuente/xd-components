@@ -1,6 +1,6 @@
 {
   "name": "@asnewyla/dialog",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Styled modal dialog built on @asnewyla/unstyled-dialog — centered modal by default, with left/right/bottom sheet positions",
   "license": "MIT",
   "repository": {
